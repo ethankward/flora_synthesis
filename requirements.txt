@@ -1,0 +1,8 @@
+django
+requests
+beautifulsoup4
+djangorestframework
+django-cors-headers
+factory_boy
+django-debug-toolbar
+requests-ratelimiter

@@ -1,0 +1,5 @@
+/venv/
+/flora_synthesis/todo
+/flora_synthesis/db.sqlite3
+/flora_synthesis/flora/data/
+/.idea/
