@@ -1,5 +1,6 @@
 import itertools
 import json
+import typing
 
 from django.utils import timezone
 
@@ -46,44 +47,6 @@ def read_observation_data(parameters, observation_ids=None):
     base_url = "https://api.inaturalist.org/v1/observations"
     for url in get_urls_with_ids(base_url, observation_ids):
         yield from read_api_data(url, parameters)
-
-
-class InatChecklistReader(checklist_util.ChecklistReader):
-    def __init__(self, checklist, parameters):
-        super().__init__(checklist, parameters)
-        self.parameters['place_id'] = checklist.external_checklist_id
-        self.parameters['taxon_id'] = 211194
-        self.parameters['per_page'] = 200
-
-    def get_family(self, ancestry):
-        taxon_ids = ancestry.split('/')[::-1][1:]
-        for taxon_id in taxon_ids:
-            try:
-                existing = models.ChecklistFamily.objects.get(checklist=self.checklist, external_id=taxon_id)
-                return existing
-            except models.ChecklistFamily.DoesNotExist:
-                pass
-
-        for taxon_data_item in read_taxon_data(taxon_ids):
-            if taxon_data_item['rank'] == 'family':
-                result = models.ChecklistFamily(checklist=self.checklist, external_id=taxon_data_item['id'],
-                                                family=taxon_data_item['name'])
-                result.save()
-                return result
-
-    def generate_data(self):
-        for observation_data_item in read_observation_data(self.parameters):
-            ancestry = observation_data_item['taxon']['ancestry']
-            taxon_name = observation_data_item['taxon']['name']
-            taxon_id = observation_data_item['taxon']['id']
-            record_id = observation_data_item['id']
-            inat_rank = observation_data_item['taxon']['rank']
-
-            if inat_rank in ['species', 'hybrid', 'variety', 'subspecies']:
-                family = self.get_family(ancestry)
-                yield family, taxon_name, taxon_id, record_id, observation_data_item, inat_rank
-            else:
-                continue
 
 
 class InatRecordsReader(checklist_util.RecordsReader):
@@ -168,8 +131,7 @@ def read_full_checklist(checklist):
     if checklist.latest_date_retrieved is not None:
         start_date = checklist.latest_date_retrieved
     else:
-        start_date = timezone.datetime(year=2023, month=8, day=1).date()
-    start_date = timezone.datetime(year=2015, month=1, day=1).date()
+        start_date = timezone.datetime(year=2015, month=1, day=1).date()
     end_date = timezone.now().date() - timezone.timedelta(days=2)
     years_to_update, months_to_update, dates_to_update = date_util.combine_date_ranges(
         list(date_util.date_range_list(start_date, end_date)))

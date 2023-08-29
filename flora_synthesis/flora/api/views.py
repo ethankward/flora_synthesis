@@ -1,4 +1,7 @@
+from django.db import transaction
+from rest_framework import status
 from rest_framework import viewsets, views
+from rest_framework.decorators import api_view
 from rest_framework.exceptions import APIException
 from rest_framework.response import Response
 
@@ -8,7 +11,6 @@ from flora.api import serializers
 
 class TaxonViewSet(viewsets.ModelViewSet):
     queryset = models.Taxon.objects.all().prefetch_related('subtaxa', 'taxonsynonym_set',
-                                                           'observation_types', 'on_checklists',
                                                            'taxon_checklist_taxa', 'taxon_checklist_taxa__family',
                                                            'taxon_checklist_taxa__observation_types').select_related(
         'parent_species').order_by('family', 'taxon_name')
@@ -22,7 +24,7 @@ class TaxonViewSet(viewsets.ModelViewSet):
                           'endemic': request.data.get("endemic", obj.endemic),
                           'taxon_name': request.data.get("taxon_name", obj.taxon_name),
                           'seinet_id': request.data.get('seinet_id', obj.seinet_id),
-                          'inat_id': request.data.get('inat_id', obj.seinet_id)
+                          'inat_id': request.data.get('inat_id', obj.inat_id)
                           }
 
         serializer = self.serializer_class(data=data_to_change, partial=True, instance=self.get_object())
@@ -33,6 +35,20 @@ class TaxonViewSet(viewsets.ModelViewSet):
             return Response(serializer.data)
         else:
             raise APIException()
+
+
+class TaxonAutocompleteViewSet(viewsets.ModelViewSet):
+    queryset = models.Taxon.objects.all()
+    serializer_class = serializers.TaxonNameSerializer
+
+    def get_queryset(self):
+        result = models.Taxon.objects.all().order_by('taxon_name')
+        search_term = self.request.query_params.get('search_term', None)
+
+        if search_term is not None:
+            result = result.filter(taxon_name__icontains=search_term)
+
+        return result
 
 
 class TaxonSynonymViewSet(viewsets.ModelViewSet):
@@ -57,7 +73,8 @@ class ChecklistRecordViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         result = models.ChecklistRecord.objects.all().select_related('checklist', 'checklist_taxon',
                                                                      'canonical_mapped_taxon',
-                                                                     'observation_type').order_by('checklist', 'date')
+                                                                     'observation_type').filter(active=True).order_by(
+            'checklist', 'date')
         taxon_id = self.request.query_params.get('taxon_id', None)
         if taxon_id is not None and taxon_id.endswith('/'):
             taxon_id = taxon_id[:-1]
@@ -77,8 +94,7 @@ class ChecklistFamilyViewSet(viewsets.ModelViewSet):
 
 
 class ChecklistTaxonViewSet(viewsets.ModelViewSet):
-    queryset = models.ChecklistTaxon.objects.all().prefetch_related('mapped_taxa', 'observation_types').select_related(
-        'family')
+    queryset = models.ChecklistTaxon.objects.all().select_related('family').prefetch_related('observation_types')
     serializer_class = serializers.ChecklistTaxonSerializer
 
 
@@ -92,3 +108,24 @@ class EndemicView(views.APIView):
     def get(self, request):
         data = models.Taxon.EndemicChoices.choices
         return Response(serializers.LifeCycleSerializer([{'value': i[0], 'text': i[1]} for i in data], many=True).data)
+
+
+@api_view(['POST'])
+def make_synonym_of(request):
+    if request.method != 'POST':
+        return
+
+    taxon_id_1 = request.data['taxon_id_1']
+    taxon_id_2 = request.data['taxon_id_2']
+
+    taxon_1 = models.Taxon.objects.get(pk=taxon_id_1)
+    taxon_2 = models.Taxon.objects.get(pk=taxon_id_2)
+
+    synonym = models.TaxonSynonym(
+        synonym=taxon_1.taxon_name,
+        taxon=taxon_2
+    )
+    with transaction.atomic():
+        synonym.save()
+
+    return Response(status=status.HTTP_200_OK)

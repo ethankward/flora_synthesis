@@ -9,3 +9,5 @@ class Command(BaseCommand):
         with transaction.atomic():
             for checklist_record in models.ChecklistRecord.objects.all():
                 checklist_record.save()
+            for checklist_taxon in models.ChecklistTaxon.objects.all():
+                checklist_taxon.save()

@@ -1,3 +1,5 @@
+import typing
+
 from bs4 import BeautifulSoup
 from django.utils import timezone
 
@@ -30,7 +32,7 @@ class SEINETChecklistReader(checklist_util.ChecklistReader):
             if 'Page 1 of ' in div.text:
                 return int(div.text.split('1 of ')[1].split(':')[0])
 
-    def generate_data(self):
+    def generate_data(self) -> typing.Generator[checklist_util.ChecklistReadItem, None, None]:
         total_pages = self.total_pages()
         if total_pages is None:
             return
@@ -54,16 +56,35 @@ class SEINETChecklistReader(checklist_util.ChecklistReader):
                     taxon_name = div.find('span', attrs={'class': 'taxon-span'}).text
                     notes_div = div.find('div', attrs={'class': 'note-div'})
                     taxon_id = int(div.get('id').split('-')[1])
+                    count = 0
+                    canonical_rank = get_canonical_rank(
+                        taxon_name)
+                    if canonical_rank is not None:
+                        if notes_div is not None:
+                            for record_a in notes_div.find_all('a'):
+                                record_id = int(record_a.get('onclick').split('(')[1].split(')')[0])
+                                record_css_id = record_a.get('id', '')
 
-                    if notes_div is not None:
-                        for record_a in notes_div.find_all('a'):
-                            record_id = int(record_a.get('onclick').split('(')[1].split(')')[0])
-                            record_css_id = record_a.get('id', '')
-
-                            if not record_css_id.startswith('lessvouch') and not record_css_id.startswith(
-                                    'morevouch'):
-                                yield family, taxon_name, taxon_id, record_id, None, get_canonical_rank(
-                                    taxon_name).name.lower()
+                                if not record_css_id.startswith('lessvouch') and not record_css_id.startswith(
+                                        'morevouch'):
+                                    yield checklist_util.ChecklistReadItem(
+                                        checklist_family=family,
+                                        taxon_name=taxon_name,
+                                        taxon_id=str(taxon_id),
+                                        record_id=str(record_id),
+                                        observation_data=None,
+                                        given_rank=canonical_rank.name.lower()
+                                    )
+                                    count += 1
+                        if count == 0:
+                            yield checklist_util.ChecklistReadItem(checklist_family=family,
+                                                                   taxon_name=taxon_name,
+                                                                   taxon_id=str(taxon_id),
+                                                                   record_id="placeholder_{}_{}".format(taxon_name,
+                                                                                                        taxon_id),
+                                                                   observation_data=None,
+                                                                   given_rank=canonical_rank.name.lower(),
+                                                                   is_placeholder=True)
 
 
 def parse_seinet_date(date_str: str):

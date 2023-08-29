@@ -80,7 +80,7 @@ class TaxonSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Taxon
         fields = ['pk', 'taxon_name', 'rank', 'genus', 'family', 'life_cycle', 'parent_species', 'subtaxa',
-                  'on_checklists', 'observation_types', 'taxonsynonym_set', 'endemic', 'endemic_values', 'introduced',
+                  'taxonsynonym_set', 'endemic', 'endemic_values', 'introduced',
                   'life_cycle_values', 'life_cycle',
                   'seinet_id', 'inat_id', 'taxon_checklist_taxa', 'endemic_values']
 
@@ -116,7 +116,7 @@ class ChecklistRecordSerializer(serializers.ModelSerializer):
         model = models.ChecklistRecord
         fields = ['pk', 'checklist', 'checklist_taxon', 'canonical_mapped_taxon', 'external_record_id',
                   'observation_type',
-                  'last_refreshed', 'external_url', 'date']
+                  'last_refreshed', 'external_url', 'date', 'observer', 'active', 'placeholder']
 
     def get_external_url(self, obj):
         return obj.external_url()

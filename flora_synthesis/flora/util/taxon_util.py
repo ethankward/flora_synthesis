@@ -50,7 +50,9 @@ class TaxonName:
         elif len(parts) == 5:
             if parts[2] in hybrid_xs:
                 self.parse_species_hybrid(parts)
-
+        elif len(parts) == 6:
+            if parts[2] == 'subsp.' and parts[4] == 'var.':
+                self.parse_subspecies_variety(parts)
         else:
             raise ValueError("Could not parse name: {}, {}".format(original_name, self.rank))
 
@@ -84,6 +86,17 @@ class TaxonName:
         self.genus = genus
         self.parent_species_name = '{} {}'.format(genus, specific_epithet)
         self.canonical_name = '{} {} subsp. {}'.format(genus, specific_epithet, subspecies)
+
+    def parse_subspecies_variety(self, parts):
+        self.rank = models.TaxonRankChoices.SUBSPECIES_VARIETY
+        genus = parts[0].title()
+        specific_epithet = parts[1].lower()
+        subspecies = parts[3].lower()
+        variety = parts[5].lower()
+
+        self.genus = genus
+        self.parent_species_name = '{} {}'.format(genus, specific_epithet)
+        self.canonical_name = '{} {} subsp. {} var. {}'.format(genus, specific_epithet, subspecies, variety)
 
     def parse_hybrid(self, parts, h_index=2):
         self.rank = models.TaxonRankChoices.HYBRID
