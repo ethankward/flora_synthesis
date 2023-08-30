@@ -24,18 +24,15 @@ class Record(base_model.BaseModel):
         return self.full_metadata
 
     def update(self):
-        from flora.util import taxon_util
+        from flora.models.taxon.util import handle_taxon_name
 
         if self.pk is None:
             return
 
         if self.mapped_taxon is None:
             checklist_taxon = self.checklist_taxon
-            mapped_taxon = taxon_util.TaxonName(checklist_taxon.taxon_name,
-                                                family=checklist_taxon.family.family).get_db_item()
+            mapped_taxon = handle_taxon_name.TaxonName(checklist_taxon.taxon_name,
+                                                       family=checklist_taxon.family.family).get_db_item()
             self.mapped_taxon = mapped_taxon
 
         self.last_refreshed = timezone.now()
-
-    def read_external_data(self):
-        pass

@@ -5,6 +5,7 @@ from django.db import models
 
 from flora.models.records import record
 from flora.models.records.inat_record.choices.observation_types import InatObservationTypeChoices
+from flora.models.records.inat_record.util import update_inat_records
 
 
 class InatRecord(record.Record):
@@ -22,3 +23,7 @@ class InatRecord(record.Record):
     def load_data(self) -> typing.Optional[dict]:
         if self.full_metadata is not None:
             return json.loads(self.full_metadata)
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        update_inat_records.Updater(self).update_record()

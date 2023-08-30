@@ -27,15 +27,15 @@ class InatApi:
             yield base_url
         else:
             size = 30
-            for i in range(len(ids) // size + 1):
-                taxon_ids_comma_delimited = ','.join(map(str, ids[size * i:size * (i + 1)]))
+            for i in range(len(ids)//size + 1):
+                taxon_ids_comma_delimited = ','.join(map(str, ids[size*i:size*(i + 1)]))
                 url = base_url + '/' + taxon_ids_comma_delimited
                 yield url
 
     def read_observation_data(self, parameters: dict, observation_ids: typing.List[int] = None):
         base_url = "https://api.inaturalist.org/v1/observations"
         for url in self.get_urls_with_ids(base_url, observation_ids):
-            yield from self.read_api_data(url, parameters)
+            yield from self.read_api_data(url, parameters, paginate=False)
 
     def read_taxon_data(self, taxon_ids: typing.List[int]):
         base_url = "https://api.inaturalist.org/v1/taxa"

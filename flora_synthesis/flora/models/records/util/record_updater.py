@@ -1,8 +1,5 @@
-from flora import models
-
-
 class RecordUpdater:
-    def __init__(self, record: models.Record):
+    def __init__(self, record):
         self.record = record
         self.data = self.record.load_data()
 

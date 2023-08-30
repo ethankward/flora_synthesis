@@ -1,7 +1,7 @@
 from django.utils import timezone
 
-from models.records.util import record_updater
-from models.records.inat_record.choices.observation_types import InatObservationTypeChoices
+from flora.models.records.inat_record.choices.observation_types import InatObservationTypeChoices
+from flora.models.records.util import record_updater
 
 
 class Updater(record_updater.RecordUpdater):

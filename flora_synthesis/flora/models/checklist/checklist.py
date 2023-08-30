@@ -15,6 +15,8 @@ class Checklist(base_model.BaseModel):
 
     latest_date_retrieved = models.DateField(blank=True, null=True)
 
+    earliest_year = models.IntegerField(blank=True, null=True)
+
     def __str__(self):
         return '{} ({})'.format(self.checklist_name, self.get_checklist_type_display())
 

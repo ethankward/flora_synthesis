@@ -2,8 +2,8 @@ import typing
 
 from django.utils import timezone
 
-from models.records.seinet_record.choices.observation_types import SEINETObservationTypeChoices
-from models.records.util import record_updater
+from flora.models.records.seinet_record.choices.observation_types import SEINETObservationTypeChoices
+from flora.models.records.util import record_updater
 
 
 def parse_seinet_date(date_str: str) -> typing.Optional[timezone.datetime]:

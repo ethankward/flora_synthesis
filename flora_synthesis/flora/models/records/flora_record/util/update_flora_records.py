@@ -1,6 +1,6 @@
-from models.records.flora_record.choices.observation_types import FloraObservationTypeChoices
+from flora.models.records.flora_record.choices.observation_types import FloraObservationTypeChoices
 
-from models.records.util import record_updater
+from flora.models.records.util import record_updater
 
 
 def get_observation_type(data: dict) -> FloraObservationTypeChoices:

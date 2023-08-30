@@ -1,13 +1,19 @@
-# from django.db import transaction
-# from rest_framework import status
-# from rest_framework import viewsets, views
-# from rest_framework.decorators import api_view
-# from rest_framework.exceptions import APIException
-# from rest_framework.response import Response
-#
-# from flora import models
-# from flora.api import serializers
-#
+from rest_framework import viewsets
+
+from flora import models
+from flora.api import serializers
+
+
+class ChecklistViewSet(viewsets.ModelViewSet):
+    queryset = models.Checklist.objects.all()
+    serializer_class = serializers.ChecklistSerializer
+
+
+class ChecklistTaxonViewSet(viewsets.ModelViewSet):
+    queryset = models.ChecklistTaxon.objects.all().select_related('family')
+    serializer_class = serializers.ChecklistTaxonSerializer
+
+
 #
 # class TaxonViewSet(viewsets.ModelViewSet):
 #     queryset = models.Taxon.objects.all().prefetch_related('subtaxa', 'taxonsynonym_set',
@@ -56,11 +62,7 @@
 #     serializer_class = serializers.TaxonSynonymSerializer
 #
 #
-# class ChecklistViewSet(viewsets.ModelViewSet):
-#     queryset = models.Checklist.objects.all()
-#     serializer_class = serializers.ChecklistSerializer
-#
-#
+
 # class ChecklistRecordImagesViewSet(viewsets.ModelViewSet):
 #     queryset = models.ChecklistRecordImage.objects.all()
 #     serializer_class = serializers.ChecklistRecordImagesSerializer
@@ -93,10 +95,7 @@
 #     serializer_class = serializers.ChecklistFamilySerializer
 #
 #
-# class ChecklistTaxonViewSet(viewsets.ModelViewSet):
-#     queryset = models.ChecklistTaxon.objects.all().select_related('family').prefetch_related('observation_types')
-#     serializer_class = serializers.ChecklistTaxonSerializer
-#
+
 #
 # class LifeCycleView(views.APIView):
 #     def get(self, request):

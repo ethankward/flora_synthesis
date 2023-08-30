@@ -1,14 +1,16 @@
 import typing
 
 from flora import models
+from flora.models.records.inat_record.util import inat_api
 from flora.models.records.util import checklist_reader
 from flora.util import http_util
-from flora.models.records.inat_record.util import inat_api
 
 SESSION = http_util.get_session()
 
 
 class InatChecklistReader(checklist_reader.ChecklistReader):
+    checklist_record_type = models.InatRecord
+
     def __init__(self, checklist, parameters):
         super().__init__(checklist, parameters)
         self.parameters['place_id'] = checklist.external_checklist_id

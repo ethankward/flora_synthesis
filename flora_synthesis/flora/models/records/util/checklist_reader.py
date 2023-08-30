@@ -2,6 +2,8 @@ import json
 import typing
 from dataclasses import dataclass
 
+from django.utils import timezone
+
 from flora import models
 
 
@@ -58,5 +60,6 @@ class ChecklistReader:
 
             if checklist_read_item.observation_data is not None:
                 checklist_record.full_metadata = json.dumps(checklist_read_item.observation_data)
+                checklist_record.last_refreshed = timezone.now()
 
             checklist_record.save()
