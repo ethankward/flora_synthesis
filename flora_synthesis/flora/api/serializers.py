@@ -26,21 +26,9 @@ class ChecklistSerializer(serializers.ModelSerializer):
                   'latest_date_retrieved']
 
 
-class ChecklistRecordImagesSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.ChecklistRecordImage
-        fields = ['pk', 'checklist_record', 'image_url', 'image_size']
-
-
-class ObservationTypeSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.ObservationType
-        fields = ['pk', 'observation_type', 'observation_type_value']
-
-
 class ChecklistFamilySerializer(serializers.ModelSerializer):
     class Meta:
-        model = models.ChecklistFamily
+        model = models.ChecklistTaxonFamily
         fields = ['pk', 'family', 'checklist', 'external_id']
 
 
@@ -104,19 +92,18 @@ class TaxonSerializer(serializers.ModelSerializer):
         instance.save()
         return instance
 
-
-class ChecklistRecordSerializer(serializers.ModelSerializer):
-    checklist = ChecklistSerializer()
-    checklist_taxon = ChecklistTaxonNameSerializer()
-    canonical_mapped_taxon = TaxonNameSerializer()
-    external_url = serializers.SerializerMethodField()
-    observation_type = ObservationTypeSerializer()
-
-    class Meta:
-        model = models.ChecklistRecord
-        fields = ['pk', 'checklist', 'checklist_taxon', 'canonical_mapped_taxon', 'external_record_id',
-                  'observation_type',
-                  'last_refreshed', 'external_url', 'date', 'observer', 'active', 'placeholder']
-
-    def get_external_url(self, obj):
-        return obj.external_url()
+#
+# class ChecklistRecordSerializer(serializers.ModelSerializer):
+#     checklist = ChecklistSerializer()
+#     checklist_taxon = ChecklistTaxonNameSerializer()
+#     canonical_mapped_taxon = TaxonNameSerializer()
+#     external_url = serializers.SerializerMethodField()
+#
+#     class Meta:
+#         model = models.ChecklistRecord
+#         fields = ['pk', 'checklist', 'checklist_taxon', 'canonical_mapped_taxon', 'external_record_id',
+#                   'observation_type',
+#                   'last_refreshed', 'external_url', 'date', 'observer', 'active', 'placeholder']
+#
+#     def get_external_url(self, obj):
+#         return obj.external_url()

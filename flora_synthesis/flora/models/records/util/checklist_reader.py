@@ -2,7 +2,7 @@ import json
 import typing
 from dataclasses import dataclass
 
-from local_flora import models
+from flora import models
 
 
 @dataclass
@@ -17,6 +17,8 @@ class ChecklistReadItem:
 
 
 class ChecklistReader:
+    checklist_record_type = models.Record
+
     def __init__(self, checklist, parameters=None):
         self.checklist = checklist
         self.parameters = parameters
@@ -40,21 +42,19 @@ class ChecklistReader:
             checklist_taxon.save()
 
             try:
-                checklist_record = models.ChecklistRecord.objects.get(
-                    external_record_id=checklist_read_item.record_id,
-                    checklist=self.checklist,
+                checklist_record = self.checklist_record_type.objects.get(
+                    external_id=checklist_read_item.record_id,
                 )
-            except models.ChecklistRecord.DoesNotExist:
-                checklist_record = models.ChecklistRecord(
-                    external_record_id=checklist_read_item.record_id,
-                    checklist=self.checklist,
+            except self.checklist_record_type.DoesNotExist:
+                checklist_record = self.checklist_record_type(
+                    external_id=checklist_read_item.record_id,
                 )
 
             if reactivate:
                 checklist_record.active = True
 
             checklist_record.checklist_taxon = checklist_taxon
-            checklist_record.placeholder = checklist_read_item.is_placeholder
+            checklist_record.is_placeholder = checklist_read_item.is_placeholder
 
             if checklist_read_item.observation_data is not None:
                 checklist_record.full_metadata = json.dumps(checklist_read_item.observation_data)

@@ -3,24 +3,28 @@ import typing
 from bs4 import BeautifulSoup
 
 from flora import models
-from flora.models.checklist.readers import checklist_reader
-from flora.util import http_util, taxon_util
+from flora.models.records.util import checklist_reader
+from flora.models.taxon.choices import taxon_ranks
+from flora.models.taxon.util import handle_taxon_name
+from flora.util import http_util
 
 SESSION = http_util.get_session()
 
 
-def get_canonical_rank(name):
+def get_canonical_rank(name: str) -> typing.Optional[taxon_ranks.TaxonRankChoices]:
     try:
-        return taxon_util.TaxonName(name).rank
+        return handle_taxon_name.TaxonName(name).rank
     except ValueError:
         return
 
 
 class SEINETChecklistReader(checklist_reader.ChecklistReader):
+    checklist_record_type = models.SEINETRecord
+
     def __init__(self, checklist):
         super().__init__(checklist)
         self.seinet_checklist_id = checklist.external_checklist_id
-        self.base_url = "https://swbiodiversity.org/seinet/checklists/checklist.php?clid=%s"%self.seinet_checklist_id
+        self.base_url = "https://swbiodiversity.org/seinet/checklists/checklist.php?clid=%s" % self.seinet_checklist_id
 
     def get_soup(self, page):
         return BeautifulSoup(SESSION.get(self.base_url, params={'pagenumber': page}).text, 'html.parser')

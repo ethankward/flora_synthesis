@@ -1,9 +1,9 @@
 import typing
 
-from bs4 import BeautifulSoup
 from django.utils import timezone
 
-from flora.models.records.seinet_record.observation_types import SEINETObservationTypeChoices
+from models.records.seinet_record.choices.observation_types import SEINETObservationTypeChoices
+from models.records.util import record_updater
 
 
 def parse_seinet_date(date_str: str) -> typing.Optional[timezone.datetime]:
@@ -19,20 +19,16 @@ def parse_seinet_date(date_str: str) -> typing.Optional[timezone.datetime]:
             pass
 
 
-class Updater:
-    def __init__(self, data: dict):
-        self.data = data
-        self.soup = BeautifulSoup(data, 'html.parser')
-
+class Updater(record_updater.RecordUpdater):
     def get_div_value_if_present(self, div_id: str, func: typing.Callable[[str], typing.Any]) -> typing.Optional[str]:
         try:
-            text = self.soup.find('div', attrs={'id': div_id}).text
+            text = self.data.find('div', attrs={'id': div_id}).text
         except AttributeError:
             return
         return func(text.replace('\t', '').replace('\xa0', ' ').strip())
 
     def get_title(self) -> str:
-        return self.soup.find('div', attrs={'class': 'title1-div'}).text.strip()
+        return self.data.find('div', attrs={'class': 'title1-div'}).text.strip()
 
     def is_general_research_observation(self) -> bool:
         return 'General Research Observations' in self.get_title()
@@ -75,3 +71,21 @@ class Updater:
 
     def get_locality(self) -> str:
         return self.get_div_value_if_present('locality-div', lambda t: t.split('Locality: ')[1])
+
+    def update_record(self):
+        if self.data is not None:
+            self.record.observation_type = self.get_observation_type()
+            self.record.herbarium_institution = self.get_herbarium_institution()
+            self.record.verbatim_date = self.get_verbatim_date()
+            self.record.date = self.get_date()
+            self.record.verbatim_coordinates = self.get_verbatim_coordinates()
+            self.record.latitude, self.record.longitude = self.get_coordinates()
+            self.record.verbatim_elevation = self.get_verbatim_elevation()
+            self.record.observer = self.get_observer()
+            self.record.locality = self.get_locality()
+        else:
+            if self.record.is_placeholder:
+                self.record.observation_type = SEINETObservationTypeChoices.NOTE_PLACEHOLDER
+
+        if self.record.mapped_taxon is not None:
+            self.record.mapped_taxon.seinet_id = self.record.checklist_taxon.external_id

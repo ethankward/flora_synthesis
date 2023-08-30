@@ -12,6 +12,7 @@ class TaxonSynonym(base_model.BaseModel):
 
     def save(self, *args, **kwargs):
         from flora.util import taxon_util
+        from flora.models import Taxon
         super().save(*args, **kwargs)
 
         with transaction.atomic():

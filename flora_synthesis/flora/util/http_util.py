@@ -3,7 +3,7 @@ from requests.packages.urllib3.util.retry import Retry
 from requests_ratelimiter import LimiterSession
 
 
-def get_session():
+def get_session() -> LimiterSession:
     session = LimiterSession(per_second=1)
 
     session.mount('http://', HTTPAdapter(max_retries=Retry(total=5,

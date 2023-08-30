@@ -1,26 +1,15 @@
+import json
+import typing
+
 from django.db import models
 
-from flora.models import record
-
-
-class FloraObservationTypeChoices(models.TextChoices):
-    PRESENT = 'P', 'Present'
-    MISSING = 'M', 'Missing'
-
-
-def get_observation_type(data):
-    if data['observation_type'] == 'True':
-        return FloraObservationTypeChoices.PRESENT
-    else:
-        return FloraObservationTypeChoices.MISSING
+from flora.models.records import record
+from flora.models.records.flora_record.choices.observation_types import FloraObservationTypeChoices
 
 
 class FloraRecord(record.Record):
-    observation_type = models.CharField(max_length=1, choices=FloraObservationTypeChoices)
+    observation_type = models.CharField(max_length=1, choices=FloraObservationTypeChoices.choices)
 
-    def update(self):
-        data = self.get_data()
-        if data is not None:
-            self.observation_type = get_observation_type(data)
-
-        super().update()
+    def load_data(self) -> typing.Optional[dict]:
+        if self.full_metadata is not None:
+            return json.loads(self.full_metadata)

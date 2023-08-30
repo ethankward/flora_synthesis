@@ -1,5 +1,3 @@
-import json
-
 from django.db import models
 from django.utils import timezone
 
@@ -8,6 +6,7 @@ from flora.models import base_model
 
 class Record(base_model.BaseModel):
     active = models.BooleanField(default=True)
+    is_placeholder = models.BooleanField(default=False)
     external_id = models.CharField(max_length=256)
     full_metadata = models.TextField(blank=True, null=True)
     last_refreshed = models.DateTimeField(blank=True, null=True)
@@ -21,9 +20,8 @@ class Record(base_model.BaseModel):
     def external_url(self):
         return
 
-    def get_data(self):
-        if self.full_metadata is not None:
-            return json.loads(self.full_metadata)
+    def load_data(self):
+        return self.full_metadata
 
     def update(self):
         from flora.util import taxon_util
