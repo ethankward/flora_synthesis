@@ -10,10 +10,22 @@ class ChecklistSerializer(serializers.ModelSerializer):
                   'latest_date_retrieved', 'earliest_year']
 
 
+class TaxonNameSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Taxon
+        fields = ['id', 'taxon_name']
+
+
 class ChecklistTaxonSerializer(serializers.ModelSerializer):
+    family = serializers.SerializerMethodField()
+    all_mapped_taxa = TaxonNameSerializer(many=True)
+
     class Meta:
         model = models.ChecklistTaxon
-        fields = ['id', 'taxon_name', 'family', 'external_id', 'rank', 'genus', 'checklist']
+        fields = ['id', 'taxon_name', 'family', 'external_id', 'rank', 'genus', 'checklist', 'all_mapped_taxa']
+
+    def get_family(self, obj):
+        return obj.family.family
 
 
 class LifeCycleSerializer(serializers.Serializer):
@@ -29,25 +41,19 @@ class EndemicSerializer(serializers.Serializer):
 class TaxonSynonymSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.TaxonSynonym
-        fields = ['pk', 'taxon', 'synonym']
+        fields = ['id', 'taxon', 'synonym']
 
 
 class ChecklistTaxonFamilySerializer(serializers.ModelSerializer):
     class Meta:
         model = models.ChecklistTaxonFamily
-        fields = ['pk', 'family', 'checklist', 'external_id']
+        fields = ['id', 'family', 'checklist', 'external_id']
 
 
 class ChecklistTaxonNameSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.ChecklistTaxon
-        fields = ['pk', 'taxon_name']
-
-
-class TaxonNameSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.Taxon
-        fields = ['pk', 'taxon_name']
+        fields = ['id', 'taxon_name']
 
 
 class TaxonSerializer(serializers.ModelSerializer):
@@ -59,13 +65,15 @@ class TaxonSerializer(serializers.ModelSerializer):
     endemic_values = serializers.SerializerMethodField(read_only=False)
 
     rank = serializers.SerializerMethodField()
+    checklists = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Taxon
-        fields = ['pk', 'taxon_name', 'rank', 'genus', 'family', 'life_cycle', 'parent_species', 'subtaxa',
+        fields = ['id', 'taxon_name', 'rank', 'genus', 'family', 'life_cycle', 'parent_species', 'subtaxa',
                   'taxonsynonym_set', 'endemic', 'endemic_values', 'introduced',
                   'life_cycle_values', 'life_cycle',
-                  'seinet_id', 'inat_id', 'taxon_checklist_taxa', 'endemic_values']
+                  'seinet_id', 'inat_id', 'taxon_checklist_taxa', 'endemic_values', 'taxon_checklist_taxa',
+                  'checklists']
 
     def get_life_cycle_values(self, obj):
         return (obj.life_cycle, obj.get_life_cycle_display())
@@ -75,6 +83,9 @@ class TaxonSerializer(serializers.ModelSerializer):
 
     def get_rank(self, obj):
         return obj.get_rank_display()
+
+    def get_checklists(self, obj):
+        return sorted(set([checklist_taxon.checklist.pk for checklist_taxon in obj.taxon_checklist_taxa.all()]))
 
     def update(self, instance, validated_data):
         instance.family = validated_data.get('family', instance.family)
@@ -87,18 +98,13 @@ class TaxonSerializer(serializers.ModelSerializer):
         instance.save()
         return instance
 
-#
-# class ChecklistRecordSerializer(serializers.ModelSerializer):
-#     checklist = ChecklistSerializer()
-#     checklist_taxon = ChecklistTaxonNameSerializer()
-#     canonical_mapped_taxon = TaxonNameSerializer()
-#     external_url = serializers.SerializerMethodField()
-#
-#     class Meta:
-#         model = models.ChecklistRecord
-#         fields = ['pk', 'checklist', 'checklist_taxon', 'canonical_mapped_taxon', 'external_record_id',
-#                   'observation_type',
-#                   'last_refreshed', 'external_url', 'date', 'observer', 'active', 'placeholder']
-#
-#     def get_external_url(self, obj):
-#         return obj.external_url()
+
+class ChecklistRecordSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
+    external_id = serializers.CharField()
+    last_refreshed = serializers.DateTimeField()
+    checklist_taxon = ChecklistTaxonNameSerializer()
+    mapped_taxon = TaxonNameSerializer()
+    checklist = ChecklistSerializer()
+    date = serializers.DateField()
+    observer = serializers.CharField()

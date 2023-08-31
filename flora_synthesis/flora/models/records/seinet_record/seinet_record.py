@@ -43,5 +43,5 @@ class SEINETRecord(record.Record):
             return BeautifulSoup(self.full_metadata, 'html.parser')
 
     def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
         update_seinet_records.Updater(self).update_record()
+        super().save(*args, **kwargs)

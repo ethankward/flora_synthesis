@@ -5,6 +5,8 @@ from dataclasses import dataclass
 from django.utils import timezone
 
 from flora import models
+from flora.models.taxon.choices import taxon_ranks
+from flora.models.taxon.util import handle_taxon_name
 
 
 @dataclass
@@ -15,6 +17,7 @@ class ChecklistReadItem:
     record_id: typing.Optional[str]
     observation_data: typing.Optional[dict]
     given_rank: str
+    canonical_rank: taxon_ranks.TaxonRankChoices
     is_placeholder: bool = False
 
 
@@ -63,3 +66,12 @@ class ChecklistReader:
                 checklist_record.last_refreshed = timezone.now()
 
             checklist_record.save()
+
+            if checklist_record.mapped_taxon is None:
+                mapped_taxon = handle_taxon_name.TaxonName(checklist_taxon.taxon_name,
+                                                           family=checklist_taxon.family.family,
+                                                           given_rank=checklist_read_item.canonical_rank).get_db_item()
+                checklist_record.mapped_taxon = mapped_taxon
+                checklist_record.save()
+
+            checklist_taxon.save()

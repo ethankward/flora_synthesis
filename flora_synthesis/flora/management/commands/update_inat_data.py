@@ -12,3 +12,5 @@ class Command(BaseCommand):
             with transaction.atomic():
                 load_checklist.load_checklist(checklist)
                 load_new_record_data.load_new_record_data(checklist)
+                for record in models.InatRecord.objects.filter(checklist_taxon__checklist=checklist):
+                    record.save()

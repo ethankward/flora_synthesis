@@ -11,7 +11,7 @@ class TaxonSynonym(base_model.BaseModel):
         unique_together = [('synonym',)]
 
     def save(self, *args, **kwargs):
-        from flora.util import taxon_util
+        from flora.models.taxon.util import synonymize
         from flora.models import Taxon
         super().save(*args, **kwargs)
 
@@ -20,4 +20,4 @@ class TaxonSynonym(base_model.BaseModel):
 
             for taxon in to_merge:
                 if taxon != self.taxon:
-                    taxon_util.make_synonym_of(taxon, self.taxon)
+                    synonymize.synonymize(taxon, self.taxon)

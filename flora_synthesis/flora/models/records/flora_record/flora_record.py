@@ -16,5 +16,5 @@ class FloraRecord(record.Record):
             return json.loads(self.full_metadata)
 
     def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
         update_flora_records.Updater(self).update_record()
+        super().save(*args, **kwargs)

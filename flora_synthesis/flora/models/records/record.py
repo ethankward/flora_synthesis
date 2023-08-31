@@ -1,5 +1,4 @@
 from django.db import models
-from django.utils import timezone
 
 from flora.models import base_model
 
@@ -22,17 +21,3 @@ class Record(base_model.BaseModel):
 
     def load_data(self):
         return self.full_metadata
-
-    def update(self):
-        from flora.models.taxon.util import handle_taxon_name
-
-        if self.pk is None:
-            return
-
-        if self.mapped_taxon is None:
-            checklist_taxon = self.checklist_taxon
-            mapped_taxon = handle_taxon_name.TaxonName(checklist_taxon.taxon_name,
-                                                       family=checklist_taxon.family.family).get_db_item()
-            self.mapped_taxon = mapped_taxon
-
-        self.last_refreshed = timezone.now()

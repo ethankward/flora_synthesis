@@ -47,3 +47,8 @@ class Updater(record_updater.RecordUpdater):
         self.record.date = self.get_date()
         self.record.latitude, self.record.longitude = self.get_coordinates()
         self.record.observer = self.get_observer()
+
+        if self.record.mapped_taxon is not None:
+            mapped_taxon = self.record.mapped_taxon
+            mapped_taxon.inat_id = self.record.checklist_taxon.external_id
+            mapped_taxon.save()

@@ -135,6 +135,8 @@ class TaxonName:
         else:
             parent_species = None
 
+        print('here', self.genus, self.family, parent_species, self.canonical_name, self.rank)
+
         db_taxon, created = models.Taxon.objects.get_or_create(
             genus=self.genus,
             family=self.family,

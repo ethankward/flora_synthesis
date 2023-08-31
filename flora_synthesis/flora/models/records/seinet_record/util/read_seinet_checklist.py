@@ -24,7 +24,7 @@ class SEINETChecklistReader(checklist_reader.ChecklistReader):
     def __init__(self, checklist):
         super().__init__(checklist)
         self.seinet_checklist_id = checklist.external_checklist_id
-        self.base_url = "https://swbiodiversity.org/seinet/checklists/checklist.php?clid=%s" % self.seinet_checklist_id
+        self.base_url = "https://swbiodiversity.org/seinet/checklists/checklist.php?clid=%s"%self.seinet_checklist_id
 
     def get_soup(self, page):
         return BeautifulSoup(SESSION.get(self.base_url, params={'pagenumber': page}).text, 'html.parser')
@@ -77,7 +77,8 @@ class SEINETChecklistReader(checklist_reader.ChecklistReader):
                                         taxon_id=str(taxon_id),
                                         record_id=str(record_id),
                                         observation_data=None,
-                                        given_rank=canonical_rank.name.lower()
+                                        given_rank=canonical_rank.name.lower(),
+                                        canonical_rank=canonical_rank
                                     )
                                     count += 1
                         if count == 0:
@@ -88,4 +89,5 @@ class SEINETChecklistReader(checklist_reader.ChecklistReader):
                                                                                                           taxon_id),
                                                                      observation_data=None,
                                                                      given_rank=canonical_rank.name.lower(),
-                                                                     is_placeholder=True)
+                                                                     is_placeholder=True,
+                                                                     canonical_rank=canonical_rank)

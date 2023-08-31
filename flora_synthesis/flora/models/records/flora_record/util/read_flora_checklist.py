@@ -17,17 +17,21 @@ class LocalFloraReader(checklist_reader.ChecklistReader):
     def generate_data(self) -> typing.Generator[checklist_reader.ChecklistReadItem, None, None]:
         for row in self.data:
             external_id, checklist_taxon_name, checklist_family, obs_type, mapped_taxon_name = row.split('\t')
-
+            if mapped_taxon_name == 'None':
+                mapped_taxon_name = None
             data = {'observation_type': obs_type, 'mapped_taxon_name': mapped_taxon_name}
             family, _ = models.ChecklistTaxonFamily.objects.get_or_create(
                 checklist=self.checklist, family=checklist_family
             )
+            canonical_rank = handle_taxon_name.TaxonName(checklist_taxon_name).rank
+
             yield checklist_reader.ChecklistReadItem(
                 checklist_family=family,
                 taxon_name=checklist_taxon_name,
                 taxon_id=external_id,
                 record_id=external_id,
                 observation_data=data,
-                given_rank=handle_taxon_name.TaxonName(checklist_taxon_name).rank,
+                given_rank=canonical_rank.name,
+                canonical_rank=canonical_rank,
                 is_placeholder=True
             )

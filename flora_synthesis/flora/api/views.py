@@ -21,9 +21,10 @@ class ChecklistTaxonViewSet(viewsets.ModelViewSet):
 
 
 class TaxonViewSet(viewsets.ModelViewSet):
-    queryset = models.Taxon.objects.all().prefetch_related('subtaxa', 'taxonsynonym_set',
-                                                           'taxon_checklist_taxa', 'taxon_checklist_taxa__family',
-                                                           'taxon_checklist_taxa__observation_types').select_related(
+    queryset = models.Taxon.objects.all().prefetch_related('subtaxa', 'taxonsynonym_set', 'taxon_checklist_taxa',
+                                                           'taxon_checklist_taxa__checklist',
+                                                           'taxon_checklist_taxa__all_mapped_taxa',
+                                                           'taxon_checklist_taxa__family').select_related(
         'parent_species').order_by('family', 'taxon_name')
     serializer_class = serializers.TaxonSerializer
 
@@ -67,29 +68,54 @@ class TaxonSynonymViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.TaxonSynonymSerializer
 
 
-#
-# class ChecklistRecordViewSet(viewsets.ModelViewSet):
-#     queryset = models.ChecklistRecord.objects.all()
-#     serializer_class = serializers.ChecklistRecordSerializer
-#
-#     def get_queryset(self):
-#         result = models.ChecklistRecord.objects.all().select_related('checklist', 'checklist_taxon',
-#                                                                      'canonical_mapped_taxon',
-#                                                                      'observation_type').filter(active=True).order_by(
-#             'checklist', 'date')
-#         taxon_id = self.request.query_params.get('taxon_id', None)
-#         if taxon_id is not None and taxon_id.endswith('/'):
-#             taxon_id = taxon_id[:-1]
-#         if taxon_id is not None:
-#             result = result.filter(canonical_mapped_taxon=taxon_id)
-#         return result
-#
-#
-# class ObservationTypeViewSet(viewsets.ModelViewSet):
-#     queryset = models.ObservationType.objects.all()
-#     serializer_class = serializers.ObservationTypeSerializer
-#
-#
+def get_checklist_record_data_item(record):
+    data_item = {'id': record.id,
+                 'external_id': record.external_id,
+                 'last_refreshed': record.last_refreshed,
+                 'checklist_taxon': record.checklist_taxon,
+                 'mapped_taxon': record.mapped_taxon,
+                 'checklist': record.checklist_taxon.checklist,
+                 'date': None,
+                 'observer': None}
+    if hasattr(record, 'date'):
+        data_item['date'] = record.date
+    if hasattr(record, 'observer'):
+        data_item['observer'] = record.observer
+
+    return data_item
+
+
+class ChecklistRecordView(views.APIView):
+    def get(self, request, **kwargs):
+        checklist_record_id = kwargs['checklist_record_id']
+        checklist_type = kwargs['checklist_type']
+        if checklist_type == 'f':
+            record = models.FloraRecord.objects.get(pk=checklist_record_id)
+        elif checklist_type == 's':
+            record = models.SEINETRecord.objects.get(pk=checklist_record_id)
+        elif checklist_type == 'i':
+            record = models.InatRecord.objects.get(pk=checklist_record_id)
+        else:
+            raise APIException()
+
+        return Response(serializers.ChecklistRecordSerializer(get_checklist_record_data_item(record)).data)
+
+
+class ChecklistRecordsView(views.APIView):
+    def get(self, request, **kwargs):
+        print(kwargs)
+        taxon_id = request.query_params.get('taxon_id', None)
+
+        result = []
+        for model in [models.FloraRecord, models.InatRecord, models.SEINETRecord]:
+            for record in model.objects.filter(mapped_taxon=taxon_id).select_related('checklist_taxon',
+                                                                                     'checklist_taxon__checklist',
+                                                                                     'mapped_taxon'):
+                result.append(get_checklist_record_data_item(record))
+
+        return Response(serializers.ChecklistRecordSerializer(result, many=True).data)
+
+
 class ChecklistTaxonFamilyViewSet(viewsets.ModelViewSet):
     queryset = models.ChecklistTaxonFamily.objects.all()
     serializer_class = serializers.ChecklistTaxonFamilySerializer

@@ -88,4 +88,6 @@ class Updater(record_updater.RecordUpdater):
                 self.record.observation_type = SEINETObservationTypeChoices.NOTE_PLACEHOLDER
 
         if self.record.mapped_taxon is not None:
-            self.record.mapped_taxon.seinet_id = self.record.checklist_taxon.external_id
+            mapped_taxon = self.record.mapped_taxon
+            mapped_taxon.seinet_id = self.record.checklist_taxon.external_id
+            mapped_taxon.save()

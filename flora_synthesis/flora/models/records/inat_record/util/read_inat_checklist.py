@@ -3,9 +3,21 @@ import typing
 from flora import models
 from flora.models.records.inat_record.util import inat_api
 from flora.models.records.util import checklist_reader
+from flora.models.taxon.choices import taxon_ranks
 from flora.util import http_util
 
 SESSION = http_util.get_session()
+
+
+def get_canonical_rank(rank: str):
+    if rank == 'species':
+        return taxon_ranks.TaxonRankChoices.SPECIES
+    elif rank == 'hybrid':
+        return taxon_ranks.TaxonRankChoices.HYBRID
+    elif rank == 'variety':
+        return taxon_ranks.TaxonRankChoices.VARIETY
+    elif rank == 'subspecies':
+        return taxon_ranks.TaxonRankChoices.SUBSPECIES
 
 
 class InatChecklistReader(checklist_reader.ChecklistReader):
@@ -50,7 +62,6 @@ class InatChecklistReader(checklist_reader.ChecklistReader):
                     taxon_id=taxon_id,
                     record_id=record_id,
                     observation_data=observation_data_item,
-                    given_rank=inat_rank
+                    given_rank=inat_rank,
+                    canonical_rank=get_canonical_rank(inat_rank)
                 )
-            else:
-                continue
