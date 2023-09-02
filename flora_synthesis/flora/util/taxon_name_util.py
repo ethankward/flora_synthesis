@@ -21,6 +21,8 @@ class TaxonName:
 
         hybrid_xs = ['×', 'x']
 
+        original_name = original_name.strip()
+
         while '  ' in original_name:
             original_name = original_name.replace('  ', ' ')
 
@@ -35,26 +37,43 @@ class TaxonName:
                 elif given_rank == taxon_ranks.TaxonRankChoices.SUBSPECIES:
                     self.parse_subspecies(parts)
 
-            if parts[1] in hybrid_xs:
+            elif parts[1] in hybrid_xs:
                 self.parse_hybrid(parts)
+            else:
+                self.raise_parse_exception()
 
         elif len(parts) == 4:
             if parts[2] == 'var.':
+                if given_rank not in [None, taxon_ranks.TaxonRankChoices.VARIETY]:
+                    self.raise_parse_exception()
                 self.parse_variety(parts, var_index=3)
-
             elif parts[2] == 'subsp.':
+                if given_rank not in [None, taxon_ranks.TaxonRankChoices.SUBSPECIES]:
+                    self.raise_parse_exception()
                 self.parse_subspecies(parts, ssp_index=3)
-
             elif parts[2] in hybrid_xs:
+                if given_rank not in [None, taxon_ranks.TaxonRankChoices.HYBRID]:
+                    self.raise_parse_exception()
                 self.parse_hybrid(parts, h_index=3)
+            else:
+                self.raise_parse_exception()
+
         elif len(parts) == 5:
             if parts[2] in hybrid_xs:
                 self.parse_species_hybrid(parts)
+            else:
+                self.raise_parse_exception()
+
         elif len(parts) == 6:
             if parts[2] == 'subsp.' and parts[4] == 'var.':
                 self.parse_subspecies_variety(parts)
+            else:
+                self.raise_parse_exception()
         else:
-            raise ValueError("Could not parse name: {}, {}".format(original_name, self.rank))
+            self.raise_parse_exception()
+
+    def raise_parse_exception(self):
+        raise ValueError("Could not parse name: {}, {}".format(self.original_name, self.rank))
 
     def parse_species(self, parts):
         self.rank = taxon_ranks.TaxonRankChoices.SPECIES
@@ -105,7 +124,7 @@ class TaxonName:
         name = parts[h_index]
 
         self.genus = genus
-        self.canonical_name = '{} × {}'.format(genus, name)
+        self.canonical_name = '{} {} × {}'.format(genus, parts[1], name)
 
     def parse_species_hybrid(self, parts):
         self.rank = taxon_ranks.TaxonRankChoices.HYBRID
@@ -135,8 +154,6 @@ class TaxonName:
         else:
             parent_species = None
 
-        print('here', self.genus, self.family, parent_species, self.canonical_name, self.rank)
-
         db_taxon, created = models.Taxon.objects.get_or_create(
             genus=self.genus,
             family=self.family,
@@ -144,6 +161,7 @@ class TaxonName:
             taxon_name=self.canonical_name,
             rank=self.rank
         )
+
         if created:
             print('Created new taxon: {}'.format(db_taxon))
 

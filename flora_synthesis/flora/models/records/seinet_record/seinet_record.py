@@ -5,7 +5,6 @@ from django.db import models
 
 from flora.models.records import record
 from flora.models.records.seinet_record.choices.observation_types import SEINETObservationTypeChoices
-from flora.models.records.seinet_record.util import update_seinet_records
 from flora.util import http_util
 
 SESSION = http_util.get_session()
@@ -43,5 +42,6 @@ class SEINETRecord(record.Record):
             return BeautifulSoup(self.full_metadata, 'html.parser')
 
     def save(self, *args, **kwargs):
-        update_seinet_records.Updater(self).update_record()
+        from flora.util import seinet_util
+        seinet_util.SEINetUpdater(self).update_record()
         super().save(*args, **kwargs)

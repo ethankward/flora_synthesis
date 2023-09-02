@@ -2,6 +2,7 @@ from django.db import models
 
 from flora.models import base_model
 from flora.models.taxon.choices import taxon_introduced_statuses, taxon_life_cycles, taxon_endemic_statuses, taxon_ranks
+from flora.util import merge_objects
 
 
 class Taxon(base_model.BaseModel):
@@ -36,3 +37,22 @@ class Taxon(base_model.BaseModel):
 
     def __str__(self):
         return self.taxon_name
+
+    def synonymize(self, taxon):
+        from flora.models import TaxonSynonym
+        to_delete_taxon_id = self.pk
+        to_merge_into_taxon_id = taxon.pk
+
+        taxon_to_delete = models.Taxon.objects.get(pk=to_delete_taxon_id)
+        taxon_to_merge_into = models.Taxon.objects.get(pk=to_merge_into_taxon_id)
+
+        assert to_delete_taxon_id != to_merge_into_taxon_id
+
+        old_taxon_name = taxon_to_delete.taxon_name
+
+        synonym, _ = TaxonSynonym.objects.get_or_create(
+            taxon=taxon_to_merge_into,
+            synonym=old_taxon_name
+        )
+
+        merge_objects.merge_objects(taxon_to_delete, taxon_to_merge_into)

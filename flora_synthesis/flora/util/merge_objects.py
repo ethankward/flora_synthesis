@@ -2,8 +2,6 @@ from django.db import transaction
 from django.db.models.fields.related import ManyToManyField
 from django.db.models.fields.reverse_related import ManyToOneRel, ManyToManyRel, OneToOneRel
 
-from flora import models
-
 
 def merge_objects(object_to_delete, object_to_keep):
     fields = object_to_delete._meta.get_fields()
@@ -69,22 +67,3 @@ def merge_objects(object_to_delete, object_to_keep):
                 getattr(object_to_keep, m2mr.name).add(obj)
 
         object_to_delete.delete()
-
-
-def synonymize(taxon_to_delete, taxon):
-    to_delete_taxon_id = taxon_to_delete.pk
-    to_merge_into_taxon_id = taxon.pk
-
-    taxon_to_delete = models.Taxon.objects.get(pk=to_delete_taxon_id)
-    taxon_to_merge_into = models.Taxon.objects.get(pk=to_merge_into_taxon_id)
-
-    assert to_delete_taxon_id != to_merge_into_taxon_id
-
-    old_taxon_name = taxon_to_delete.taxon_name
-
-    synonym, _ = models.TaxonSynonym.objects.get_or_create(
-        taxon=taxon_to_merge_into,
-        synonym=old_taxon_name
-    )
-
-    merge_objects(taxon_to_delete, taxon_to_merge_into)

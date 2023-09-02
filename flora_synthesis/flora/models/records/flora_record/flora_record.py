@@ -5,7 +5,6 @@ from django.db import models
 
 from flora.models.records import record
 from flora.models.records.flora_record.choices.observation_types import FloraObservationTypeChoices
-from flora.models.records.flora_record.util import update_flora_records
 
 
 class FloraRecord(record.Record):
@@ -16,5 +15,7 @@ class FloraRecord(record.Record):
             return json.loads(self.full_metadata)
 
     def save(self, *args, **kwargs):
-        update_flora_records.Updater(self).update_record()
+        from flora.util import local_flora_util
+
+        local_flora_util.LocalFloraUpdater(self).update_record()
         super().save(*args, **kwargs)

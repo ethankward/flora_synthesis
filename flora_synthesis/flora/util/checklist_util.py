@@ -6,7 +6,7 @@ from django.utils import timezone
 
 from flora import models
 from flora.models.taxon.choices import taxon_ranks
-from flora.models.taxon.util import handle_taxon_name
+from flora.util import taxon_name_util
 
 
 @dataclass
@@ -24,9 +24,9 @@ class ChecklistReadItem:
 class ChecklistReader:
     checklist_record_type = models.Record
 
-    def __init__(self, checklist, parameters=None):
+    def __init__(self, checklist):
         self.checklist = checklist
-        self.parameters = parameters
+        self.parameters = {}
 
     def generate_data(self) -> typing.Generator[ChecklistReadItem, None, None]:
         pass
@@ -68,10 +68,30 @@ class ChecklistReader:
             checklist_record.save()
 
             if checklist_record.mapped_taxon is None:
-                mapped_taxon = handle_taxon_name.TaxonName(checklist_taxon.taxon_name,
-                                                           family=checklist_taxon.family.family,
-                                                           given_rank=checklist_read_item.canonical_rank).get_db_item()
+                mapped_taxon = taxon_name_util.TaxonName(checklist_taxon.taxon_name,
+                                                         family=checklist_taxon.family.family,
+                                                         given_rank=checklist_read_item.canonical_rank).get_db_item()
                 checklist_record.mapped_taxon = mapped_taxon
                 checklist_record.save()
 
             checklist_taxon.save()
+
+    def load_checklist(self):
+        pass
+
+
+class RecordReader:
+    def __init__(self, checklist):
+        self.checklist = checklist
+
+    def read_records(self, records=None, limit=10):
+        pass
+
+
+class RecordUpdater:
+    def __init__(self, record):
+        self.record = record
+        self.data = self.record.load_data()
+
+    def update_record(self):
+        pass

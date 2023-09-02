@@ -3,37 +3,6 @@ import factory
 from flora import models
 
 
-class TaxonFamilyFactory(factory.django.DjangoModelFactory):
-    family = factory.Sequence(lambda n: "family {}".format(n))
-
-    class Meta:
-        model = models.TaxonFamily
-
-
-class TaxonGenusFactory(factory.django.DjangoModelFactory):
-    genus = factory.Sequence(lambda n: "genus {}".format(n))
-
-    class Meta:
-        model = models.TaxonGenus
-
-
-class TaxonFactory(factory.django.DjangoModelFactory):
-    genus = factory.SubFactory(TaxonGenusFactory)
-    family = factory.SubFactory(TaxonFamilyFactory)
-    taxon_name = factory.Sequence(lambda n: "taxon {}".format(n))
-
-    class Meta:
-        model = models.Taxon
-
-
-class TaxonSynonymFactory(factory.django.DjangoModelFactory):
-    taxon = factory.SubFactory(TaxonFactory)
-    synonym = factory.Sequence(lambda n: "synonym {}".format(n))
-
-    class Meta:
-        model = models.TaxonSynonym
-
-
 class ChecklistFactory(factory.django.DjangoModelFactory):
     checklist_name = factory.Sequence(lambda n: "checklist {}".format(n))
 
@@ -58,9 +27,43 @@ class ChecklistTaxonFactory(factory.django.DjangoModelFactory):
         model = models.ChecklistTaxon
 
 
-class ChecklistRecordFactory(factory.django.DjangoModelFactory):
-    checklist = factory.SubFactory(ChecklistFactory)
-    checklist_taxon = factory.SubFactory(ChecklistTaxonFactory)
+class TaxonFactory(factory.django.DjangoModelFactory):
+    taxon_name = factory.Sequence(lambda n: "taxon {}".format(n))
 
     class Meta:
-        model = models.ChecklistRecord
+        model = models.Taxon
+
+
+class TaxonSynonymFactory(factory.django.DjangoModelFactory):
+    taxon = factory.SubFactory(TaxonFactory)
+    synonym = factory.Sequence(lambda n: "synonym {}".format(n))
+
+    class Meta:
+        model = models.TaxonSynonym
+
+
+class FloraRecordFactory(factory.django.DjangoModelFactory):
+    external_id = factory.Sequence(lambda n: "flora_record_{}".format(n))
+    checklist_taxon = factory.SubFactory(ChecklistTaxonFactory)
+    mapped_taxon = factory.SubFactory(TaxonFactory)
+
+    class Meta:
+        model = models.FloraRecord
+
+
+class SEINETRecordFactory(factory.django.DjangoModelFactory):
+    external_id = factory.Sequence(lambda n: "seinet_record_{}".format(n))
+    checklist_taxon = factory.SubFactory(ChecklistTaxonFactory)
+    mapped_taxon = factory.SubFactory(TaxonFactory)
+
+    class Meta:
+        model = models.SEINETRecord
+
+
+class InatRecordFactory(factory.django.DjangoModelFactory):
+    external_id = factory.Sequence(lambda n: "seinet_record_{}".format(n))
+    checklist_taxon = factory.SubFactory(ChecklistTaxonFactory)
+    mapped_taxon = factory.SubFactory(TaxonFactory)
+
+    class Meta:
+        model = models.InatRecord

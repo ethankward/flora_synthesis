@@ -76,10 +76,10 @@ class TaxonSerializer(serializers.ModelSerializer):
                   'checklists']
 
     def get_life_cycle_values(self, obj):
-        return (obj.life_cycle, obj.get_life_cycle_display())
+        return obj.life_cycle, obj.get_life_cycle_display()
 
     def get_endemic_values(self, obj):
-        return (obj.endemic, obj.get_endemic_display())
+        return obj.endemic, obj.get_endemic_display()
 
     def get_rank(self, obj):
         return obj.get_rank_display()
