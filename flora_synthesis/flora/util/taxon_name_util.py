@@ -36,9 +36,10 @@ class TaxonName:
                     self.parse_variety(parts)
                 elif given_rank == taxon_ranks.TaxonRankChoices.SUBSPECIES:
                     self.parse_subspecies(parts)
-
+                elif given_rank == taxon_ranks.TaxonRankChoices.HYBRID:
+                    self.parse_hybrid_3(parts)
             elif parts[1] in hybrid_xs:
-                self.parse_hybrid(parts)
+                self.parse_hybrid_3(parts)
             else:
                 self.raise_parse_exception()
 
@@ -54,13 +55,13 @@ class TaxonName:
             elif parts[2] in hybrid_xs:
                 if given_rank not in [None, taxon_ranks.TaxonRankChoices.HYBRID]:
                     self.raise_parse_exception()
-                self.parse_hybrid(parts, h_index=3)
+                self.parse_hybrid_4(parts)
             else:
                 self.raise_parse_exception()
 
         elif len(parts) == 5:
             if parts[2] in hybrid_xs:
-                self.parse_species_hybrid(parts)
+                self.parse_hybrid_5(parts)
             else:
                 self.raise_parse_exception()
 
@@ -120,16 +121,25 @@ class TaxonName:
         self.parent_species_name = '{} {}'.format(genus, specific_epithet)
         self.canonical_name = '{} {} subsp. {} var. {}'.format(genus, specific_epithet, subspecies, variety)
 
-    def parse_hybrid(self, parts, h_index=2):
+    def parse_hybrid_3(self, parts):
         self.rank = taxon_ranks.TaxonRankChoices.HYBRID
 
         genus = parts[0].title()
-        name = parts[h_index]
+        name = parts[2]
+
+        self.genus = genus
+        self.canonical_name = '{} × {}'.format(genus, name)
+
+    def parse_hybrid_4(self, parts):
+        self.rank = taxon_ranks.TaxonRankChoices.HYBRID
+
+        genus = parts[0].title()
+        name = parts[3]
 
         self.genus = genus
         self.canonical_name = '{} {} × {}'.format(genus, parts[1], name)
 
-    def parse_species_hybrid(self, parts):
+    def parse_hybrid_5(self, parts):
         self.rank = taxon_ranks.TaxonRankChoices.HYBRID
 
         genus = parts[0].title()
@@ -156,6 +166,7 @@ class TaxonName:
             parent_species = TaxonName(self.parent_species_name, family=self.family).get_db_item()
         else:
             parent_species = None
+
 
         db_taxon, created = models.Taxon.objects.get_or_create(
             genus=self.genus,

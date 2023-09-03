@@ -21,12 +21,22 @@ class ChecklistTaxonViewSet(viewsets.ModelViewSet):
 
 
 class TaxonViewSet(viewsets.ModelViewSet):
-    queryset = models.Taxon.objects.all().prefetch_related('subtaxa', 'taxonsynonym_set', 'taxon_checklist_taxa',
-                                                           'taxon_checklist_taxa__checklist',
-                                                           'taxon_checklist_taxa__all_mapped_taxa',
-                                                           'taxon_checklist_taxa__family').select_related(
-        'parent_species').order_by('family', 'taxon_name')
+    queryset = models.Taxon.objects.all()
     serializer_class = serializers.TaxonSerializer
+
+    def get_queryset(self):
+        result = models.Taxon.objects.all().prefetch_related('subtaxa', 'taxonsynonym_set', 'taxon_checklist_taxa',
+                                                             'taxon_checklist_taxa__checklist',
+                                                             'taxon_checklist_taxa__all_mapped_taxa',
+                                                             'taxon_checklist_taxa__family').select_related(
+            'parent_species').order_by('family', 'taxon_name')
+
+        checklist_id = self.request.query_params.get('checklist', None)
+
+        if checklist_id is not None:
+            result = result.filter(taxon_checklist_taxa__checklist=checklist_id)
+
+        return result
 
     def update(self, request, *args, **kwargs):
         obj = self.get_object()
@@ -76,7 +86,10 @@ def get_checklist_record_data_item(record):
                  'mapped_taxon': record.mapped_taxon,
                  'checklist': record.checklist_taxon.checklist,
                  'date': None,
-                 'observer': None}
+                 'observer': None,
+                 'external_url': record.external_url(),
+                 'observation_type': record.get_observation_type_display()}
+
     if hasattr(record, 'date'):
         data_item['date'] = record.date
     if hasattr(record, 'observer'):
@@ -103,15 +116,22 @@ class ChecklistRecordView(views.APIView):
 
 class ChecklistRecordsView(views.APIView):
     def get(self, request, **kwargs):
-        print(kwargs)
         taxon_id = request.query_params.get('taxon_id', None)
 
         result = []
-        for model in [models.FloraRecord, models.InatRecord, models.SEINETRecord]:
-            for record in model.objects.filter(mapped_taxon=taxon_id).select_related('checklist_taxon',
-                                                                                     'checklist_taxon__checklist',
-                                                                                     'mapped_taxon'):
-                result.append(get_checklist_record_data_item(record))
+        if taxon_id is not None:
+            taxon = models.Taxon.objects.get(pk=taxon_id)
+
+            for model in [models.FloraRecord, models.InatRecord, models.SEINETRecord]:
+                for record in model.objects.filter(mapped_taxon=taxon).select_related('checklist_taxon',
+                                                                                      'checklist_taxon__checklist',
+                                                                                      'mapped_taxon'):
+                    result.append(get_checklist_record_data_item(record))
+                for subtaxon in taxon.subtaxa.all():
+                    for record in model.objects.filter(mapped_taxon=subtaxon).select_related('checklist_taxon',
+                                                                                             'checklist_taxon__checklist',
+                                                                                             'mapped_taxon'):
+                        result.append(get_checklist_record_data_item(record))
 
         return Response(serializers.ChecklistRecordSerializer(result, many=True).data)
 
@@ -150,5 +170,33 @@ def make_synonym_of(request):
     )
     with transaction.atomic():
         synonym.save()
+
+    return Response(status=status.HTTP_200_OK)
+
+
+@api_view(['POST'])
+def update_checklist_record_mapped_taxon(request):
+    if request.method != 'POST':
+        return
+
+    checklist_type = request.data['checklist_type']
+    checklist_record_id = request.data['checklist_record_id']
+    mapped_to_id = request.data['mapped_to_id']
+
+    mapped_taxon = models.Taxon.objects.get(pk=mapped_to_id)
+
+    if checklist_type == 'f':
+        checklist_record = models.FloraRecord.objects.get(pk=checklist_record_id)
+    elif checklist_type == 's':
+        checklist_record = models.SEINETRecord.objects.get(pk=checklist_record_id)
+    elif checklist_type == 'i':
+        checklist_record = models.InatRecord.objects.get(pk=checklist_record_id)
+    else:
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+
+    with transaction.atomic():
+        checklist_record.mapped_taxon = mapped_taxon
+        checklist_record.save()
+        checklist_record.checklist_taxon.save()
 
     return Response(status=status.HTTP_200_OK)

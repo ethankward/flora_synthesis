@@ -6,6 +6,7 @@ from flora.models import base_model
 class Record(base_model.BaseModel):
     active = models.BooleanField(default=True)
     is_placeholder = models.BooleanField(default=False)
+    checklist = models.ForeignKey("checklist", on_delete=models.CASCADE)
     external_id = models.CharField(max_length=256)
     full_metadata = models.TextField(blank=True, null=True)
     last_refreshed = models.DateTimeField(blank=True, null=True)
@@ -14,7 +15,7 @@ class Record(base_model.BaseModel):
 
     class Meta:
         abstract = True
-        unique_together = [('external_id',)]
+        unique_together = [('checklist', 'external_id')]
 
     def external_url(self):
         return

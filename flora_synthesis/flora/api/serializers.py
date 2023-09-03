@@ -61,8 +61,9 @@ class TaxonSerializer(serializers.ModelSerializer):
     taxon_checklist_taxa = ChecklistTaxonSerializer(many=True)
     parent_species = TaxonNameSerializer()
     subtaxa = TaxonNameSerializer(many=True)
-    life_cycle_values = serializers.SerializerMethodField(read_only=False)
-    endemic_values = serializers.SerializerMethodField(read_only=False)
+    life_cycle = serializers.SerializerMethodField(read_only=False)
+    endemic = serializers.SerializerMethodField(read_only=False)
+    introduced = serializers.SerializerMethodField(read_only=False)
 
     rank = serializers.SerializerMethodField()
     checklists = serializers.SerializerMethodField()
@@ -70,16 +71,19 @@ class TaxonSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Taxon
         fields = ['id', 'taxon_name', 'rank', 'genus', 'family', 'life_cycle', 'parent_species', 'subtaxa',
-                  'taxonsynonym_set', 'endemic', 'endemic_values', 'introduced',
-                  'life_cycle_values', 'life_cycle',
-                  'seinet_id', 'inat_id', 'taxon_checklist_taxa', 'endemic_values', 'taxon_checklist_taxa',
+                  'taxonsynonym_set', 'endemic', 'introduced',
+                  'life_cycle',
+                  'seinet_id', 'inat_id', 'taxon_checklist_taxa', 'taxon_checklist_taxa',
                   'checklists']
 
-    def get_life_cycle_values(self, obj):
-        return obj.life_cycle, obj.get_life_cycle_display()
+    def get_life_cycle(self, obj):
+        return {'value': obj.life_cycle, 'display': obj.get_life_cycle_display()}
 
-    def get_endemic_values(self, obj):
-        return obj.endemic, obj.get_endemic_display()
+    def get_endemic(self, obj):
+        return {'value': obj.endemic, 'display': obj.get_endemic_display()}
+
+    def get_introduced(self, obj):
+        return {'value': obj.introduced, 'display': obj.get_introduced_display()}
 
     def get_rank(self, obj):
         return obj.get_rank_display()
@@ -108,3 +112,5 @@ class ChecklistRecordSerializer(serializers.Serializer):
     checklist = ChecklistSerializer()
     date = serializers.DateField()
     observer = serializers.CharField()
+    external_url = serializers.URLField()
+    observation_type = serializers.CharField()

@@ -42,8 +42,9 @@ def combine_date_ranges(dates) -> typing.Generator[dict, None, None]:
                     timezone.datetime(year=date.year, month=date.month, day=1).date(),
                     last_day_of_month(date)
             )]):
-                yield {'year': date.year, 'month': date.month}
-                full_months.add((date.year, date.month))
+                if (date.year, date.month) not in full_months:
+                    yield {'year': date.year, 'month': date.month}
+                    full_months.add((date.year, date.month))
 
     for date in dates:
         if date.year not in full_years:

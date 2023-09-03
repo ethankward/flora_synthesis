@@ -16,6 +16,8 @@ urlpatterns = [
     path('api/life_cycles/', api.views.LifeCycleView.as_view(), name="life_cycles"),
     path('api/endemic/', api.views.EndemicView.as_view(), name="endemic"),
     path('api/make_synonym_of/', api.views.make_synonym_of),
+    path('api/make_synonym_of/', api.views.make_synonym_of),
+    path('api/update_checklist_record_mapping/', api.views.update_checklist_record_mapped_taxon),
     path('api/checklist_records/<str:checklist_type>/<int:checklist_record_id>/',
          api.views.ChecklistRecordView.as_view(),
          name='checklist_record'),

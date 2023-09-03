@@ -113,3 +113,17 @@ class TaxonNameTests(TestCase):
         t1 = taxon_name_util.TaxonName("Heterotheca sp.", family="Asteraceae")
         self.assertEqual(t1.rank, taxon_ranks.TaxonRankChoices.GENUS)
         self.assertEqual(t1.canonical_name, "Heterotheca sp.")
+
+    def test_hybrid_with_rank(self):
+        t1 = taxon_name_util.TaxonName('Apocynum x floribundum', family='Apocynaceae',
+                                       given_rank=taxon_ranks.TaxonRankChoices.HYBRID)
+        self.assertEqual(t1.canonical_name, 'Apocynum × floribundum')
+
+    def test_hybrid_4(self):
+        t1 = taxon_name_util.TaxonName('a b x c', family='Apocynaceae',
+                                       given_rank=taxon_ranks.TaxonRankChoices.HYBRID)
+        self.assertEqual(t1.canonical_name, 'A b × c')
+
+    def test_hybrid_5(self):
+        t1 = taxon_name_util.TaxonName('a b × c d')
+        self.assertEqual(t1.canonical_name, 'A b × c d')

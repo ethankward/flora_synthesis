@@ -50,10 +50,12 @@ class ChecklistReader:
             try:
                 checklist_record = self.checklist_record_type.objects.get(
                     external_id=checklist_read_item.record_id,
+                    checklist=self.checklist
                 )
             except self.checklist_record_type.DoesNotExist:
                 checklist_record = self.checklist_record_type(
                     external_id=checklist_read_item.record_id,
+                    checklist=self.checklist
                 )
 
             if reactivate:
@@ -72,6 +74,7 @@ class ChecklistReader:
                 mapped_taxon = taxon_name_util.TaxonName(checklist_taxon.taxon_name,
                                                          family=checklist_taxon.family.family,
                                                          given_rank=checklist_read_item.canonical_rank).get_db_item()
+
                 checklist_record.mapped_taxon = mapped_taxon
                 checklist_record.save()
 
