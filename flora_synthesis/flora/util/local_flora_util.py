@@ -3,19 +3,16 @@ import typing
 
 from flora import models
 from flora.models.records.flora_record.choices.observation_types import FloraObservationTypeChoices
-from flora.util import checklist_util, taxon_name_util
 from flora.models.taxon.choices import taxon_ranks
+from flora.util import checklist_util, taxon_name_util
 
 
-def get_canonical_rank(name: str) -> typing.Optional[taxon_ranks.TaxonRankChoices]:
-    try:
-        return taxon_name_util.TaxonName(name).rank
-    except ValueError:
-        return None
+def get_canonical_rank(name: str) -> taxon_ranks.TaxonRankChoices:
+    return taxon_name_util.TaxonName(name).rank
 
 
 class LocalFloraUpdater(checklist_util.RecordUpdater):
-    def get_observation_type(self):
+    def get_observation_type(self) -> FloraObservationTypeChoices:
         if self.data['observation_type'] == 'True':
             return FloraObservationTypeChoices.PRESENT
         else:

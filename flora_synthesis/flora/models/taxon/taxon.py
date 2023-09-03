@@ -43,8 +43,8 @@ class Taxon(base_model.BaseModel):
         to_delete_taxon_id = self.pk
         to_merge_into_taxon_id = taxon.pk
 
-        taxon_to_delete = models.Taxon.objects.get(pk=to_delete_taxon_id)
-        taxon_to_merge_into = models.Taxon.objects.get(pk=to_merge_into_taxon_id)
+        taxon_to_delete = Taxon.objects.get(pk=to_delete_taxon_id)
+        taxon_to_merge_into = Taxon.objects.get(pk=to_merge_into_taxon_id)
 
         assert to_delete_taxon_id != to_merge_into_taxon_id
 

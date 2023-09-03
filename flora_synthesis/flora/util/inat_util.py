@@ -84,7 +84,7 @@ class InatApi:
                     break
                 yield from results
 
-    def get_urls_with_ids(self, base_url: str, ids: typing.List[int] = None):
+    def get_urls_with_ids(self, base_url: str, ids: typing.Optional[typing.List[int]] = None):
         if ids is None:
             yield base_url
         else:
@@ -94,7 +94,7 @@ class InatApi:
                 url = base_url + '/' + taxon_ids_comma_delimited
                 yield url
 
-    def read_observation_data(self, parameters: dict, observation_ids: typing.List[int] = None):
+    def read_observation_data(self, parameters: dict, observation_ids: typing.Optional[typing.List[int]] = None):
         base_url = "https://api.inaturalist.org/v1/observations"
         for url in self.get_urls_with_ids(base_url, observation_ids):
             yield from self.read_api_data(url, parameters, paginate=False)
@@ -106,10 +106,7 @@ class InatApi:
 
 
 class InatRecordsReader(checklist_util.RecordReader):
-    def __init__(self, checklist):
-        super().__init__(checklist)
-
-    def read_records(self, records=None, limit=10):
+    def read_records(self, records: typing.Optional[typing.List[models.InatRecord]] = None, limit: int = 10):
         if records is None:
             records = models.InatRecord.objects.filter(
                 Q(last_refreshed__isnull=True) | Q(last_refreshed__lt=timezone.now() - timezone.timedelta(days=60)),
@@ -135,12 +132,12 @@ class InatRecordsReader(checklist_util.RecordReader):
 class InatChecklistReader(checklist_util.ChecklistReader):
     checklist_record_type = models.InatRecord
 
-    def __init__(self, checklist):
+    def __init__(self, checklist: models.Checklist):
         super().__init__(checklist)
         self.inat_api = InatApi(session=SESSION)
 
-    def get_family(self, ancestry):
-        taxon_ids = ancestry.split('/')[::-1][1:]
+    def get_family(self, ancestry: str):
+        taxon_ids = list(map(int, ancestry.split('/')[::-1][1:]))
         for taxon_id in taxon_ids:
             try:
                 existing = models.ChecklistTaxonFamily.objects.get(checklist=self.checklist, external_id=taxon_id)
@@ -155,7 +152,7 @@ class InatChecklistReader(checklist_util.ChecklistReader):
                 result.save()
                 return result
 
-    def update_parameters(self, new_parameters):
+    def update_parameters(self, new_parameters: dict):
         self.parameters = new_parameters
         self.parameters['place_id'] = self.checklist.external_checklist_id
         self.parameters['taxon_id'] = 211194

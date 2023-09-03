@@ -108,3 +108,8 @@ class TaxonNameTests(TestCase):
         self.assertEqual(t1.taxon_name, "A b var. c")
         self.assertEqual(t1.parent_species.taxon_name, "A b")
         self.assertEqual(t1.parent_species.family, "Asteraceae")
+
+    def test_name_sp(self):
+        t1 = taxon_name_util.TaxonName("Heterotheca sp.", family="Asteraceae")
+        self.assertEqual(t1.rank, taxon_ranks.TaxonRankChoices.GENUS)
+        self.assertEqual(t1.canonical_name, "Heterotheca sp.")

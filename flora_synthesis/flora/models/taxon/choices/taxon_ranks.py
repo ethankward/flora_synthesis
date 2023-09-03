@@ -7,3 +7,4 @@ class TaxonRankChoices(models.TextChoices):
     VARIETY = 'V', 'Variety'
     SUBSPECIES_VARIETY = 'Q', 'Subspecies variety'
     HYBRID = 'H', 'Hybrid'
+    GENUS = 'G', 'Genus'

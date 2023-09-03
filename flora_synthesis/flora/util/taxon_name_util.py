@@ -81,6 +81,9 @@ class TaxonName:
         genus = parts[0].title()
         specific_epithet = parts[1].lower()
 
+        if specific_epithet == "sp.":
+            self.rank = taxon_ranks.TaxonRankChoices.GENUS
+
         self.genus = genus
         self.canonical_name = '{} {}'.format(genus, specific_epithet)
 

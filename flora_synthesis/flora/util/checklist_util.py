@@ -24,16 +24,17 @@ class ChecklistReadItem:
 class ChecklistReader:
     checklist_record_type = models.Record
 
-    def __init__(self, checklist):
+    def __init__(self, checklist: models.Checklist):
         self.checklist = checklist
         self.parameters = {}
 
     def generate_data(self) -> typing.Generator[ChecklistReadItem, None, None]:
         pass
 
-    def read_all(self, reactivate=False):
+    def read_all(self, reactivate: bool = False):
         for checklist_read_item in self.generate_data():
 
+            checklist_taxon: models.ChecklistTaxon
             checklist_taxon, _ = models.ChecklistTaxon.objects.get_or_create(
                 checklist=self.checklist,
                 taxon_name=checklist_read_item.taxon_name,
@@ -81,15 +82,15 @@ class ChecklistReader:
 
 
 class RecordReader:
-    def __init__(self, checklist):
+    def __init__(self, checklist: models.Checklist):
         self.checklist = checklist
 
-    def read_records(self, records=None, limit=10):
+    def read_records(self, records: typing.Optional[typing.List[models.Record]] = None, limit: int = 10):
         pass
 
 
 class RecordUpdater:
-    def __init__(self, record):
+    def __init__(self, record: models.Record):
         self.record = record
         self.data = self.record.load_data()
 

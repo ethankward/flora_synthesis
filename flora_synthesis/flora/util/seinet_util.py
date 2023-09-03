@@ -21,7 +21,7 @@ def get_canonical_rank(name: str) -> typing.Optional[taxon_ranks.TaxonRankChoice
 
 def parse_seinet_date(date_str: str) -> typing.Optional[timezone.datetime]:
     if date_str in ['s.d.', 'unknown']:
-        return
+        return None
 
     date_formats = ["%Y-%m-%d"]
 
@@ -107,7 +107,7 @@ class SEINetUpdater(checklist_util.RecordUpdater):
 
 
 class SEINETRecordReader(checklist_util.RecordReader):
-    def read_records(self, records=None, limit=10):
+    def read_records(self, records: typing.Optional[typing.List[models.SEINETRecord]] = None, limit: int = 10):
         if records is None:
             records = models.SEINETRecord.objects.filter(
                 Q(last_refreshed__isnull=True) | Q(last_refreshed__lt=timezone.now() - timezone.timedelta(days=60)),
@@ -126,15 +126,15 @@ class SEINETRecordReader(checklist_util.RecordReader):
 class SEINETChecklistReader(checklist_util.ChecklistReader):
     checklist_record_type = models.SEINETRecord
 
-    def __init__(self, checklist):
+    def __init__(self, checklist: models.Checklist):
         super().__init__(checklist)
         self.seinet_checklist_id = checklist.external_checklist_id
         self.base_url = "https://swbiodiversity.org/seinet/checklists/checklist.php?clid=%s" % self.seinet_checklist_id
 
-    def get_soup(self, page):
+    def get_soup(self, page: int):
         return BeautifulSoup(SESSION.get(self.base_url, params={'pagenumber': page}).text, 'html.parser')
 
-    def total_pages(self):
+    def total_pages(self) -> typing.Optional[int]:
         soup = self.get_soup(1)
 
         for div in soup.find_all('div', {'class': 'printoff'}):
@@ -145,7 +145,6 @@ class SEINETChecklistReader(checklist_util.ChecklistReader):
         total_pages = self.total_pages()
         if total_pages is None:
             return
-        family_name = None
         family = None
 
         for page in range(1, total_pages + 1):
