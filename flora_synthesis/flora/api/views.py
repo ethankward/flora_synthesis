@@ -20,6 +20,16 @@ class ChecklistTaxonViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.ChecklistTaxonSerializer
 
 
+class PrimaryChecklistTaxonViewSet(viewsets.ModelViewSet):
+    queryset = models.Taxon.objects.all()
+    serializer_class = serializers.MinimalTaxonSerializer
+
+    def get_queryset(self):
+        result = models.Taxon.objects.all().order_by('taxon_name')
+        result = result.filter(taxon_checklist_taxa__checklist__primary_checklist=True)
+        return result
+
+
 class TaxonViewSet(viewsets.ModelViewSet):
     queryset = models.Taxon.objects.all()
     serializer_class = serializers.TaxonSerializer
@@ -76,6 +86,20 @@ class TaxonAutocompleteViewSet(viewsets.ModelViewSet):
 class TaxonSynonymViewSet(viewsets.ModelViewSet):
     queryset = models.TaxonSynonym.objects.all()
     serializer_class = serializers.TaxonSynonymSerializer
+
+    def update(self, request, *args, **kwargs):
+        obj = self.get_object()
+        data_to_change = {'synonym': request.data.get("synonym", obj.synonym)}
+        serializer = self.serializer_class(data=data_to_change, partial=True, instance=self.get_object())
+
+        if serializer.is_valid():
+            self.perform_update(serializer)
+            return Response(serializer.data)
+        else:
+            print(data_to_change)
+            print(serializer.errors)
+
+            raise APIException()
 
 
 def get_checklist_record_data_item(record):
@@ -170,6 +194,32 @@ def make_synonym_of(request):
     )
     with transaction.atomic():
         synonym.save()
+
+    return Response(status=status.HTTP_200_OK)
+
+
+@api_view(['PUT'])
+def create_new_synonym(request):
+    taxon_id = request.data['taxon_id']
+    synonym = request.data['synonym']
+
+    taxon = models.Taxon.objects.get(pk=taxon_id)
+    synonym = models.TaxonSynonym(
+        taxon=taxon,
+        synonym=synonym
+    )
+    with transaction.atomic():
+        synonym.save()
+
+    return Response(status=status.HTTP_201_CREATED, data={"synonym_id": synonym.pk})
+
+
+@api_view(['POST'])
+def delete_taxon_synonym(request):
+    synonym_id = request.data['synonym_id']
+
+    synonym = models.TaxonSynonym.objects.get(pk=synonym_id)
+    synonym.delete()
 
     return Response(status=status.HTTP_200_OK)
 

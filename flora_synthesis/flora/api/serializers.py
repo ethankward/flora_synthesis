@@ -43,6 +43,11 @@ class TaxonSynonymSerializer(serializers.ModelSerializer):
         model = models.TaxonSynonym
         fields = ['id', 'taxon', 'synonym']
 
+    def update(self, instance, validated_data):
+        instance.synonym = validated_data.get('synonym', instance.synonym)
+        instance.save()
+        return instance
+
 
 class ChecklistTaxonFamilySerializer(serializers.ModelSerializer):
     class Meta:
@@ -56,8 +61,29 @@ class ChecklistTaxonNameSerializer(serializers.ModelSerializer):
         fields = ['id', 'taxon_name']
 
 
+class MinimalTaxonSerializer(serializers.ModelSerializer):
+    life_cycle = serializers.SerializerMethodField(read_only=False)
+    endemic = serializers.SerializerMethodField(read_only=False)
+    introduced = serializers.SerializerMethodField(read_only=False)
+
+    class Meta:
+        model = models.Taxon
+        fields = ['id', 'taxon_name', 'rank', 'genus', 'family',
+                  'life_cycle', 'endemic', 'introduced',
+                  'seinet_id', 'inat_id']
+
+    def get_life_cycle(self, obj):
+        return {'value': obj.life_cycle, 'display': obj.get_life_cycle_display()}
+
+    def get_endemic(self, obj):
+        return {'value': obj.endemic, 'display': obj.get_endemic_display()}
+
+    def get_introduced(self, obj):
+        return {'value': obj.introduced, 'display': obj.get_introduced_display()}
+
+
 class TaxonSerializer(serializers.ModelSerializer):
-    taxonsynonym_set = TaxonSynonymSerializer(many=True)
+    synonyms = serializers.SerializerMethodField(read_only=False)
     taxon_checklist_taxa = ChecklistTaxonSerializer(many=True)
     parent_species = TaxonNameSerializer()
     subtaxa = TaxonNameSerializer(many=True)
@@ -71,10 +97,9 @@ class TaxonSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Taxon
         fields = ['id', 'taxon_name', 'rank', 'genus', 'family', 'life_cycle', 'parent_species', 'subtaxa',
-                  'taxonsynonym_set', 'endemic', 'introduced',
-                  'life_cycle',
-                  'seinet_id', 'inat_id', 'taxon_checklist_taxa', 'taxon_checklist_taxa',
-                  'checklists']
+                  'synonyms', 'endemic', 'introduced',
+                  'seinet_id', 'inat_id',
+                  'taxon_checklist_taxa', 'checklists']
 
     def get_life_cycle(self, obj):
         return {'value': obj.life_cycle, 'display': obj.get_life_cycle_display()}
@@ -84,6 +109,10 @@ class TaxonSerializer(serializers.ModelSerializer):
 
     def get_introduced(self, obj):
         return {'value': obj.introduced, 'display': obj.get_introduced_display()}
+
+    def get_synonyms(self, obj):
+        synonyms = obj.taxonsynonym_set.all()
+        return [{'value': s.id, 'display': s.synonym} for s in synonyms]
 
     def get_rank(self, obj):
         return obj.get_rank_display()

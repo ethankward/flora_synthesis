@@ -19,6 +19,8 @@ class Checklist(base_model.BaseModel):
 
     earliest_year = models.IntegerField(blank=True, null=True)
 
+    primary_checklist = models.BooleanField(default=False)
+
     def __str__(self):
         return '{} ({})'.format(self.checklist_name, self.get_checklist_type_display())
 
