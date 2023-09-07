@@ -23,13 +23,11 @@ class LocalFloraUpdater(checklist_util.RecordUpdater):
             self.record.observation_type = self.get_observation_type()
             mapped_taxon_name = self.data['mapped_taxon_name']
 
-            if mapped_taxon_name is not None:
+            if mapped_taxon_name != 'None' and self.record.mapped_taxon is None:
                 mapped_taxon = taxon_name_util.TaxonName(mapped_taxon_name,
                                                          family=self.record.checklist_taxon.family.family).get_db_item()
 
                 self.record.mapped_taxon = mapped_taxon
-                if self.record.pk == 107:
-                    print(self.record.checklist_taxon.checklist, self.data, mapped_taxon, self.record.pk)
 
 
 class LocalFloraReader(checklist_util.ChecklistReader):

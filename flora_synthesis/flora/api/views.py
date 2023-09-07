@@ -6,8 +6,7 @@ from rest_framework.response import Response
 
 from flora import models
 from flora.api import serializers
-from flora.models.taxon.choices import taxon_endemic_statuses
-from flora.models.taxon.choices import taxon_life_cycles
+from flora.models.taxon.choices import taxon_endemic_statuses, taxon_life_cycles, taxon_introduced_statuses
 
 
 class ChecklistViewSet(viewsets.ModelViewSet):
@@ -25,8 +24,9 @@ class PrimaryChecklistTaxonViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.MinimalTaxonSerializer
 
     def get_queryset(self):
-        result = models.Taxon.objects.all().order_by('taxon_name')
-        result = result.filter(taxon_checklist_taxa__checklist__primary_checklist=True)
+        result = models.Taxon.objects.all().select_related('first_observation_date', 'last_observation_date').order_by(
+            'taxon_name')
+        result = result.filter(taxon_checklist_taxa__checklist__primary_checklist=True).distinct()
         return result
 
 
@@ -39,7 +39,7 @@ class TaxonViewSet(viewsets.ModelViewSet):
                                                              'taxon_checklist_taxa__checklist',
                                                              'taxon_checklist_taxa__all_mapped_taxa',
                                                              'taxon_checklist_taxa__family').select_related(
-            'parent_species').order_by('family', 'taxon_name')
+            'parent_species', 'first_observation_date', 'last_observation_date').order_by('family', 'taxon_name')
 
         checklist_id = self.request.query_params.get('checklist', None)
 
@@ -54,6 +54,7 @@ class TaxonViewSet(viewsets.ModelViewSet):
         data_to_change = {'family': request.data.get("family", obj.family),
                           'life_cycle': request.data.get("life_cycle", obj.life_cycle),
                           'endemic': request.data.get("endemic", obj.endemic),
+                          'introduced': request.data.get("introduced", obj.introduced),
                           'taxon_name': request.data.get("taxon_name", obj.taxon_name),
                           'seinet_id': request.data.get('seinet_id', obj.seinet_id),
                           'inat_id': request.data.get('inat_id', obj.inat_id)
@@ -168,13 +169,21 @@ class ChecklistTaxonFamilyViewSet(viewsets.ModelViewSet):
 class LifeCycleView(views.APIView):
     def get(self, request):
         data = taxon_life_cycles.LifeCycleChoices.choices
-        return Response(serializers.LifeCycleSerializer([{'value': i[0], 'text': i[1]} for i in data], many=True).data)
+        return Response(
+            serializers.LifeCycleSerializer([{'value': i[0], 'display': i[1]} for i in data], many=True).data)
 
 
 class EndemicView(views.APIView):
     def get(self, request):
         data = taxon_endemic_statuses.EndemicChoices.choices
-        return Response(serializers.LifeCycleSerializer([{'value': i[0], 'text': i[1]} for i in data], many=True).data)
+        return Response(serializers.EndemicSerializer([{'value': i[0], 'display': i[1]} for i in data], many=True).data)
+
+
+class IntroducedView(views.APIView):
+    def get(self, request):
+        data = taxon_introduced_statuses.IntroducedChoices.choices
+        return Response(
+            serializers.IntroducedSerializer([{'value': i[0], 'display': i[1]} for i in data], many=True).data)
 
 
 @api_view(['POST'])

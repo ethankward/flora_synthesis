@@ -17,6 +17,7 @@ urlpatterns = [
     path("api/", include(router.urls)),
     path('api/life_cycles/', api.views.LifeCycleView.as_view(), name="life_cycles"),
     path('api/endemic/', api.views.EndemicView.as_view(), name="endemic"),
+    path('api/introduced/', api.views.IntroducedView.as_view(), name="introduced"),
     path('api/make_synonym_of/', api.views.make_synonym_of),
     path('api/create_new_synonym/', api.views.create_new_synonym),
     path('api/delete_taxon_synonym/', api.views.delete_taxon_synonym),
