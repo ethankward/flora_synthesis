@@ -10,9 +10,8 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
-from pathlib import Path
 import os
-
+from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -24,11 +23,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-w6_@e!)gt=l%-%%b&9hc@rd0u5pac!0lc+(ii3kbaaa_o7#ezz'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get('PRODUCTION', 'false') == 'false'
+DEBUG = os.environ.get('DEBUG', 'false') == 'true'
+PRODUCTION = os.environ.get('PRODUCTION', 'false') == 'true'
+
 
 ALLOWED_HOSTS = ['127.0.0.1']
 
-ALLOWED_HOSTS.append('.vercel.app')
+if PRODUCTION:
+    ALLOWED_HOSTS.append('.vercel.app')
 
 # Application definition
 
@@ -80,7 +82,7 @@ WSGI_APPLICATION = 'flora_synthesis.wsgi.app'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-if DEBUG:
+if not PRODUCTION:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
@@ -145,7 +147,6 @@ CORS_ALLOWED_ORIGINS = [
 INTERNAL_IPS = [
     "127.0.0.1",
 ]
-
 
 #
 # REST_FRAMEWORK = {
