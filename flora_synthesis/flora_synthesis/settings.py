@@ -97,6 +97,7 @@ else:
             'USER': os.environ.get('POSTGRES_USER'),
             'PASSWORD': os.environ.get('POSTGRESS_PASSWORD'),
             'HOST': os.environ.get('POSTGRESS_HOST'),
+            'PORT': '5432'
         }
     }
 
