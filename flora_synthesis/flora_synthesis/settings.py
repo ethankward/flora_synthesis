@@ -46,6 +46,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     'django.contrib.sessions.middleware.SessionMiddleware',
     "debug_toolbar.middleware.DebugToolbarMiddleware",
     "corsheaders.middleware.CorsMiddleware",
@@ -145,6 +146,9 @@ CORS_ALLOWED_ORIGINS = [
 INTERNAL_IPS = [
     "127.0.0.1",
 ]
+
+STATIC_ROOT = BASE_DIR / "assets"
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 #
 # REST_FRAMEWORK = {
