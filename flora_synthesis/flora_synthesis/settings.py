@@ -29,6 +29,9 @@ RAILWAY = True
 
 if not PRODUCTION:
     DEBUG = True
+else:
+    RAILWAY = False
+
 
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '127.0.0.1').split(',')
 
