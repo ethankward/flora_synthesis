@@ -93,11 +93,11 @@ else:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
-            'NAME': 'florasynthesis',
+            'URL': os.environ.get('POSTGRES_URL'),
+            'NAME': os.environ.get("POSTGRES_DATABASE"),
             'USER': os.environ.get('POSTGRES_USER'),
             'PASSWORD': os.environ.get('POSTGRES_PASSWORD'),
             'HOST': os.environ.get('POSTGRES_HOST'),
-            'PORT': '5432'
         }
     }
 
