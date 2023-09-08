@@ -1,6 +1,6 @@
 django
 gunicorn
-corsheaders
+django-cors-headers
 psycopg2-binary
 requests
 beautifulsoup4
