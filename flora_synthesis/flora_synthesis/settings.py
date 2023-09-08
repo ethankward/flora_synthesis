@@ -95,8 +95,8 @@ else:
             'ENGINE': 'django.db.backends.postgresql',
             'NAME': 'florasynthesis',
             'USER': os.environ.get('POSTGRES_USER'),
-            'PASSWORD': os.environ.get('POSTGRESS_PASSWORD'),
-            'HOST': os.environ.get('POSTGRESS_HOST'),
+            'PASSWORD': os.environ.get('POSTGRES_PASSWORD'),
+            'HOST': os.environ.get('POSTGRES_HOST'),
             'PORT': '5432'
         }
     }
