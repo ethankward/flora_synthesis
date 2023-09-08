@@ -148,7 +148,12 @@ INTERNAL_IPS = [
 ]
 
 STATIC_ROOT = BASE_DIR / "assets"
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+
+STORAGES = {
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
 
 #
 # REST_FRAMEWORK = {
