@@ -14,6 +14,7 @@ router.register(r"checklist_taxon_families", api.views.ChecklistTaxonFamilyViewS
 router.register(r"checklist_taxa", api.views.ChecklistTaxonViewSet)
 
 urlpatterns = [
+    path("", views.test),
     path("api/", include(router.urls)),
     path('api/life_cycles/', api.views.LifeCycleView.as_view(), name="life_cycles"),
     path('api/endemic/', api.views.EndemicView.as_view(), name="endemic"),
