@@ -29,9 +29,6 @@ PRODUCTION = os.environ.get('PRODUCTION', 'false') == 'true'
 
 ALLOWED_HOSTS = ['127.0.0.1']
 
-if PRODUCTION:
-    ALLOWED_HOSTS.append('.vercel.app')
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -93,7 +90,6 @@ else:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
-            #'URL': os.environ.get('POSTGRES_URL'),
             'NAME': os.environ.get("POSTGRES_DATABASE"),
             'USER': os.environ.get('POSTGRES_USER'),
             'PASSWORD': os.environ.get('POSTGRES_PASSWORD'),
