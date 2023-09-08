@@ -25,7 +25,10 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-w6_@e!)gt=l%-%%b&9hc@rd0u5
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', 'false') == 'true'
 PRODUCTION = os.environ.get('PRODUCTION', 'false') == 'true'
+RAILWAY = True
 
+if not PRODUCTION:
+    DEBUG = True
 
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '127.0.0.1').split(',')
 
@@ -81,12 +84,17 @@ WSGI_APPLICATION = 'flora_synthesis.wsgi.application'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 if not PRODUCTION:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR/'db.sqlite3',
+    if RAILWAY:
+        from flora_synthesis import railway_settings
+
+        DATABASES = railway_settings.DATABASES
+    else:
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.sqlite3',
+                'NAME': BASE_DIR/'db.sqlite3',
+            }
         }
-    }
 
 else:
     DATABASES = {
@@ -147,7 +155,7 @@ INTERNAL_IPS = [
     "127.0.0.1",
 ]
 
-STATIC_ROOT = BASE_DIR / "assets"
+STATIC_ROOT = BASE_DIR/"assets"
 
 STORAGES = {
     "staticfiles": {
@@ -155,8 +163,7 @@ STORAGES = {
     },
 }
 
-#
-# REST_FRAMEWORK = {
-#     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
-#     'PAGE_SIZE': 25
-# }
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'flora_synthesis.rest_pagination.GetAllToggle',
+    'PAGE_SIZE': 25
+}
