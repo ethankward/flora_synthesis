@@ -1,4 +1,4 @@
-from rest_framework.pagination import LimitOffsetPagination
+from rest_framework.pagination import LimitOffsetPagination, BasePagination
 
 
 class GetAllToggle(LimitOffsetPagination):
@@ -6,4 +6,4 @@ class GetAllToggle(LimitOffsetPagination):
         if request.query_params.get('get_all', False) == 'true':
             return None
 
-        return super(self).paginate_queryset(queryset, request, view=view)
+        return super().paginate_queryset(queryset, request, view=view)
