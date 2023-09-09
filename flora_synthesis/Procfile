@@ -1,1 +1,1 @@
-web: python manage.py migrate && python manage.py collectstatic && gunicorn 'flora_synthesis.wsgi'
+web: python manage.py migrate && python manage.py collectstatic && gunicorn -b '127.0.0.1:8000' -b '[::]:8000' 'flora_synthesis.wsgi'
