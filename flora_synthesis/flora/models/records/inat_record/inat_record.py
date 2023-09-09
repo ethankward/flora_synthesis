@@ -26,4 +26,8 @@ class InatRecord(record.Record):
     def save(self, *args, **kwargs):
         from flora.util import inat_util
         inat_util.InatUpdater(self).update_record()
+
+        if self.observation_type == InatObservationTypeChoices.CASUAL:
+            self.active = False
+
         super().save(*args, **kwargs)

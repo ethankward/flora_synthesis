@@ -29,7 +29,6 @@ class ChecklistTaxon(base_model.BaseModel):
             seinet_records = models.SEINETRecord.objects.filter(checklist_taxon=self, active=True)
             inat_records = models.InatRecord.objects.filter(checklist_taxon=self, active=True)
             flora_records = models.FloraRecord.objects.filter(checklist_taxon=self, active=True)
-
             for record in itertools.chain(seinet_records, inat_records, flora_records):
                 mapped_taxon = record.mapped_taxon
                 if mapped_taxon is not None:

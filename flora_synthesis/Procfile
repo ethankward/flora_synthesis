@@ -1,1 +1,1 @@
-web: python manage.py migrate && python manage.py collectstatic && python manage.py update_inat_data && gunicorn 'flora_synthesis.wsgi'
+web: python manage.py migrate && python manage.py collectstatic && python manage.py update_all && gunicorn 'flora_synthesis.wsgi'

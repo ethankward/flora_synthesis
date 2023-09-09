@@ -22,3 +22,7 @@ class Record(base_model.BaseModel):
 
     def load_data(self):
         return self.full_metadata
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        self.checklist_taxon.save()
