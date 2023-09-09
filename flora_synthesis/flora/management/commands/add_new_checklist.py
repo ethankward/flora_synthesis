@@ -21,6 +21,7 @@ class Command(BaseCommand):
                                                             checklist_types.ChecklistTypeChoices.values)
         result.checklist_name = input("Checklist name: ")
         result.checklist_state = input("Checklist state: ")
+        result.primary_checklist = input("Primary checklist (y/n): ") == "y"
 
         if result.checklist_type == checklist_types.ChecklistTypeChoices.INAT:
             result.external_checklist_id = input("iNaturalist checklist ID: ")

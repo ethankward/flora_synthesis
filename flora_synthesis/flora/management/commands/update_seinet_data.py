@@ -9,6 +9,7 @@ from flora.util import seinet_util
 class Command(BaseCommand):
     def handle(self, *args, **options):
         for checklist in models.Checklist.objects.filter(checklist_type=checklist_types.ChecklistTypeChoices.SEINET):
+            print(checklist)
             with transaction.atomic():
                 checklist.load()
                 seinet_util.SEINETRecordReader(checklist).read_records(limit=10)
