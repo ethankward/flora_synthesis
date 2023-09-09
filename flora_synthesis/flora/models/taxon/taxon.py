@@ -41,6 +41,7 @@ class Taxon(base_model.BaseModel):
     class Meta:
         unique_together = [('taxon_name',)]
         indexes = [
+            models.Index(fields=['taxon_name']),
             models.Index(fields=["family", "taxon_name"])
         ]
 
