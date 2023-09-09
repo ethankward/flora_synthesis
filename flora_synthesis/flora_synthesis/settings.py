@@ -25,7 +25,7 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-w6_@e!)gt=l%-%%b&9hc@rd0u5
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', 'false') == 'true'
 PRODUCTION = os.environ.get('PRODUCTION', 'false') == 'true'
-RAILWAY = False
+RAILWAY = True
 
 if not PRODUCTION:
     DEBUG = True
@@ -33,6 +33,9 @@ else:
     RAILWAY = False
 
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '127.0.0.1').split(',')
+
+if PRODUCTION:
+    CSRF_TRUSTED_ORIGINS = ['https://{}.YOUR_DOMAIN.COM'.format(os.getenv('ALLOWED_HOSTS'))]
 
 # Application definition
 
@@ -46,7 +49,8 @@ INSTALLED_APPS = [
     'corsheaders',
     'debug_toolbar',
     'flora',
-    'rest_framework'
+    'rest_framework',
+    'rest_framework.authtoken'
 ]
 
 MIDDLEWARE = [
