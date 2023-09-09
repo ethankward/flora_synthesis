@@ -9,6 +9,9 @@ class TaxonSynonym(base_model.BaseModel):
 
     class Meta:
         unique_together = [('synonym',)]
+        indexes = [
+            models.Index(fields=['synonym']),
+        ]
 
     def save(self, *args, **kwargs):
         from flora.models import Taxon
