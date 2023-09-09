@@ -25,13 +25,12 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-w6_@e!)gt=l%-%%b&9hc@rd0u5
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', 'false') == 'true'
 PRODUCTION = os.environ.get('PRODUCTION', 'false') == 'true'
-RAILWAY = True
+RAILWAY = False
 
 if not PRODUCTION:
     DEBUG = True
 else:
     RAILWAY = False
-
 
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '127.0.0.1').split(',')
 
@@ -166,7 +165,8 @@ STORAGES = {
     },
 }
 
-REST_FRAMEWORK = {
-    'DEFAULT_PAGINATION_CLASS': 'flora_synthesis.rest_pagination.GetAllToggle',
-    'PAGE_SIZE': 25
-}
+# if not PRODUCTION:
+#     REST_FRAMEWORK = {
+#         'DEFAULT_PAGINATION_CLASS': 'flora_synthesis.rest_pagination.GetAllToggle',
+#         'PAGE_SIZE': 25
+#     }
