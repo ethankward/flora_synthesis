@@ -169,6 +169,13 @@ STORAGES = {
     },
 }
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ]
+}
+
+
 # if not PRODUCTION:
 #     REST_FRAMEWORK = {
 #         'DEFAULT_PAGINATION_CLASS': 'flora_synthesis.rest_pagination.GetAllToggle',
