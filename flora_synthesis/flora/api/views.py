@@ -42,9 +42,17 @@ class TaxonViewSet(viewsets.ModelViewSet):
             'parent_species', 'first_observation_date', 'last_observation_date').order_by('family', 'taxon_name')
 
         checklist_id = self.request.query_params.get('checklist', None)
+        genus = self.request.query_params.get('genus', None)
+        family = self.request.query_params.get('family', None)
 
         if checklist_id is not None:
             result = result.filter(taxon_checklist_taxa__checklist=checklist_id)
+
+        if genus is not None:
+            result = result.filter(genus=genus)
+
+        if family is not None:
+            result = result.filter(family=family)
 
         return result
 
