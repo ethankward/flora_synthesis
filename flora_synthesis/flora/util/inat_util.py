@@ -36,7 +36,9 @@ class InatUpdater(checklist_util.RecordUpdater):
         return self.data['observed_on']
 
     def get_date(self):
-        return timezone.datetime.strptime(self.get_verbatim_date(), "%Y-%m-%d")
+        verbatim_date = self.get_verbatim_date()
+        if verbatim_date is not None:
+            return timezone.datetime.strptime(self.get_verbatim_date(), "%Y-%m-%d")
 
     def get_coordinates(self):
         if self.data['geojson'] is None:
