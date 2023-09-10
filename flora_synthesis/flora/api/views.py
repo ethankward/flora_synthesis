@@ -121,7 +121,8 @@ def get_checklist_record_data_item(record):
                  'date': None,
                  'observer': None,
                  'external_url': record.external_url(),
-                 'observation_type': record.get_observation_type_display()}
+                 'observation_type': record.get_observation_type_display(),
+                 'notes': list(record.notes.all())}
 
     if hasattr(record, 'date'):
         data_item['date'] = record.date
@@ -265,5 +266,59 @@ def update_checklist_record_mapped_taxon(request):
         checklist_record.mapped_taxon = mapped_taxon
         checklist_record.save()
         checklist_record.checklist_taxon.save()
+
+    return Response(status=status.HTTP_200_OK)
+
+
+@api_view(['PUT'])
+def create_new_checklist_record_note(request):
+    checklist_record_id = request.data['checklist_record_id']
+    checklist_type = request.data['checklist_record_type']
+    note = request.data['note']
+
+    if checklist_type == 'f':
+        record = models.FloraRecord.objects.get(pk=checklist_record_id)
+    elif checklist_type == 's':
+        record = models.SEINETRecord.objects.get(pk=checklist_record_id)
+    elif checklist_type == 'i':
+        record = models.InatRecord.objects.get(pk=checklist_record_id)
+    else:
+        raise APIException()
+
+    note = models.ChecklistRecordNote(note=note)
+    note.save()
+    record.notes.add(note)
+
+    return Response(status=status.HTTP_201_CREATED, data={"note_id": note.pk})
+
+
+@api_view(['POST'])
+def delete_checklist_record_note(request):
+    note_id = request.data['note_id']
+
+    note = models.ChecklistRecordNote.objects.get(pk=note_id)
+    note.delete()
+
+    return Response(status=status.HTTP_200_OK)
+
+
+@api_view(['POST'])
+def update_checklist_record_note(request):
+    note_id = request.data['note_id']
+    note_text = request.data['note']
+
+    note = models.ChecklistRecordNote.objects.get(pk=note_id)
+    note.note = note_text
+    note.save()
+
+    return Response(status=status.HTTP_200_OK)
+
+
+@api_view(['POST'])
+def delete_taxon_synonym(request):
+    synonym_id = request.data['synonym_id']
+
+    synonym = models.TaxonSynonym.objects.get(pk=synonym_id)
+    synonym.delete()
 
     return Response(status=status.HTTP_200_OK)

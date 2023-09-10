@@ -12,6 +12,7 @@ class Record(base_model.BaseModel):
     last_refreshed = models.DateTimeField(blank=True, null=True)
     checklist_taxon = models.ForeignKey("ChecklistTaxon", on_delete=models.CASCADE)
     mapped_taxon = models.ForeignKey("Taxon", on_delete=models.SET_NULL, blank=True, null=True)
+    notes = models.ManyToManyField("ChecklistRecordNote", blank=True)
 
     class Meta:
         abstract = True

@@ -6,7 +6,6 @@ from flora import api
 router = routers.DefaultRouter()
 router.register(r"taxa", api.views.TaxonViewSet, basename="taxa")
 router.register(r"primary_taxa", api.views.PrimaryChecklistTaxonViewSet, basename="primary_taxa")
-
 router.register(r"taxon_synonyms", api.views.TaxonSynonymViewSet)
 router.register(r"taxa_autocomplete", api.views.TaxonAutocompleteViewSet)
 router.register(r"checklists", api.views.ChecklistViewSet)
@@ -27,5 +26,10 @@ urlpatterns = [
          api.views.ChecklistRecordView.as_view(),
          name='checklist_record'),
     path('api/checklist_records/', api.views.ChecklistRecordsView.as_view(),
-         name='checklist_records')
+         name='checklist_records'),
+
+    path('api/create_new_checklist_record_note/', api.views.create_new_checklist_record_note),
+    path('api/delete_checklist_record_note/', api.views.delete_checklist_record_note),
+    path('api/update_checklist_record_note/', api.views.update_checklist_record_note),
+
 ]

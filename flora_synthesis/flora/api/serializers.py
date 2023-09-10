@@ -66,7 +66,6 @@ class ChecklistTaxonNameSerializer(serializers.ModelSerializer):
         fields = ['id', 'taxon_name']
 
 
-
 class ObservationDateSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.ObservationDate
@@ -148,6 +147,12 @@ class TaxonSerializer(serializers.ModelSerializer):
         return instance
 
 
+class ChecklistRecordNoteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.ChecklistRecordNote
+        fields = ['id', 'note', 'added_on']
+
+
 class ChecklistRecordSerializer(serializers.Serializer):
     id = serializers.IntegerField()
     external_id = serializers.CharField()
@@ -159,3 +164,4 @@ class ChecklistRecordSerializer(serializers.Serializer):
     observer = serializers.CharField()
     external_url = serializers.URLField()
     observation_type = serializers.CharField()
+    notes = ChecklistRecordNoteSerializer(many=True)
