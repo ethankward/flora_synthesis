@@ -2,6 +2,7 @@ import itertools
 import json
 import typing
 
+from django.db import transaction
 from django.db.models import Q
 from django.utils import timezone
 from requests_ratelimiter import LimiterSession
@@ -184,10 +185,11 @@ class InatChecklistReader(checklist_util.ChecklistReader):
                 )
 
     def load_checklist(self):
-        for date_params in self.checklist.missing_dates():
-            print('Updating {}'.format(date_params))
-            self.update_parameters(date_params)
-            self.read_all()
+        for date_params, end_date in list(self.checklist.missing_dates()):
+            with transaction.atomic():
+                print('Updating {}'.format(date_params))
+                self.update_parameters(date_params)
+                self.read_all()
 
-        self.checklist.latest_date_retrieved = timezone.now().date() - timezone.timedelta(days=2)
-        self.checklist.save()
+                self.checklist.latest_date_retrieved = end_date.date()
+                self.checklist.save()
