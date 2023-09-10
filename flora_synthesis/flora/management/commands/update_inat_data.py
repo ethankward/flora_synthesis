@@ -8,10 +8,10 @@ from flora.util import inat_util
 
 def run():
     for checklist in models.Checklist.objects.filter(checklist_type=checklist_types.ChecklistTypeChoices.INAT):
-        with transaction.atomic():
-            checklist.load()
-            inat_util.InatRecordsReader(checklist).read_records(limit=10)
+        checklist.load()
+        inat_util.InatRecordsReader(checklist).read_records(limit=10)
 
+        with transaction.atomic():
             for record in models.InatRecord.objects.filter(checklist_taxon__checklist=checklist):
                 record.save()
 
