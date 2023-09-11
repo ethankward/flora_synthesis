@@ -84,7 +84,7 @@ class TaxonAutocompleteViewSet(viewsets.ModelViewSet):
 
 class FamiliesListView(views.APIView):
     def get(self, request):
-        data = models.Taxon.objects.all().values_list('family').distinct()
+        data = models.Taxon.objects.all().order_by('family').values_list('family').distinct()
         return Response(serializers.TaxonFamilySerializer([{'family': family[0]} for family in data], many=True).data)
 
 
