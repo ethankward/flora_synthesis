@@ -17,14 +17,14 @@ def get_placeholder_id(taxon_id: int) -> str:
 class SEINETRecord(record.Record):
     observation_type = models.CharField(max_length=1, choices=SEINETObservationTypeChoices.choices)
 
-    verbatim_coordinates = models.CharField(max_length=32, blank=True, null=True)
+    verbatim_coordinates = models.TextField(blank=True, null=True)
     latitude = models.DecimalField(max_digits=32, decimal_places=12, blank=True, null=True)
     longitude = models.DecimalField(max_digits=32, decimal_places=12, blank=True, null=True)
 
-    verbatim_date = models.CharField(max_length=32, blank=True, null=True)
+    verbatim_date = models.TextField(blank=True, null=True)
     date = models.DateField(blank=True, null=True)
 
-    verbatim_elevation = models.CharField(max_length=32, blank=True, null=True)
+    verbatim_elevation = models.TextField(blank=True, null=True)
     elevation_ft = models.IntegerField(blank=True, null=True)
 
     locality = models.TextField(blank=True, null=True)
