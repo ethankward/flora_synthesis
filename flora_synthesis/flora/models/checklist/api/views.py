@@ -20,9 +20,10 @@ class ChecklistStaleRecordCountViewSet(viewsets.ModelViewSet):
 @api_view(['POST'])
 def update(request):
     checklist_id = request.data['checklist_id']
+    page = request.data['page']
     checklist = models.Checklist.objects.get(pk=checklist_id)
 
-    checklist.load()
+    checklist.load(page=page)
 
     return Response(status=status.HTTP_200_OK)
 

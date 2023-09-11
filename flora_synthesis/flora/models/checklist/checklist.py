@@ -27,11 +27,11 @@ class Checklist(base_model.BaseModel):
     class Meta:
         unique_together = [('checklist_name',)]
 
-    def load(self):
+    def load(self, page=None):
         from flora.util import seinet_util, inat_util, local_flora_util
 
         if self.checklist_type == checklist_types.ChecklistTypeChoices.SEINET:
-            seinet_util.SEINETChecklistReader(self).load_checklist()
+            seinet_util.SEINETChecklistReader(self).load_checklist(page=page)
         elif self.checklist_type == checklist_types.ChecklistTypeChoices.INAT:
             inat_util.InatChecklistReader(self).load_checklist()
         elif self.checklist_type == checklist_types.ChecklistTypeChoices.FLORA:
