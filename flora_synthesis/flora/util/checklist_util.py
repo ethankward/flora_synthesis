@@ -29,11 +29,11 @@ class ChecklistReader:
         self.checklist = checklist
         self.parameters = {}
 
-    def generate_data(self) -> typing.Generator[ChecklistReadItem, None, None]:
+    def generate_data(self, page=None) -> typing.Generator[ChecklistReadItem, None, None]:
         pass
 
-    def read_all(self, reactivate: bool = False):
-        for checklist_read_item in self.generate_data():
+    def read_all(self, reactivate: bool = False, page=None):
+        for checklist_read_item in self.generate_data(page=page):
 
             checklist_taxon: models.ChecklistTaxon
             checklist_taxon, _ = models.ChecklistTaxon.objects.get_or_create(
