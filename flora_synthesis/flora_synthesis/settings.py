@@ -192,4 +192,5 @@ Q_CLUSTER = {
     'workers': 4,
     'max_attempts': 1,
     'orm': 'default',
+    'poll': 30
 }
