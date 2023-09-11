@@ -50,7 +50,8 @@ INSTALLED_APPS = [
     'debug_toolbar',
     'flora',
     'rest_framework',
-    'rest_framework.authtoken'
+    'rest_framework.authtoken',
+    'django_q'
 ]
 
 MIDDLEWARE = [
@@ -184,3 +185,11 @@ if PRODUCTION:
 #         'DEFAULT_PAGINATION_CLASS': 'flora_synthesis.rest_pagination.GetAllToggle',
 #         'PAGE_SIZE': 25
 #     }
+
+Q_CLUSTER = {
+    'retry': 600,
+    'timeout': 500,
+    'workers': 4,
+    'max_attempts': 1,
+    'orm': 'default',
+}

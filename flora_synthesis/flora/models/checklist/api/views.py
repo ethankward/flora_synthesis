@@ -1,4 +1,5 @@
-from django.db import transaction
+from django.conf import settings
+from django_q.tasks import async_task
 from rest_framework import viewsets, status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -23,7 +24,10 @@ def update(request):
     page = request.data['page']
     checklist = models.Checklist.objects.get(pk=checklist_id)
 
-    checklist.load(page=page)
+    if settings.PRODUCTION:
+        async_task(lambda: checklist.load(page=page))
+    else:
+        checklist.load(page=page)
 
     return Response(status=status.HTTP_200_OK)
 
@@ -36,7 +40,9 @@ def retrieve(request):
     assert n_records in [10, 25, 50]
     checklist = models.Checklist.objects.get(pk=checklist_id)
 
-    with transaction.atomic():
+    if settings.PRODUCTION:
+        async_task(lambda: checklist.read_record_data(limit=n_records))
+    else:
         checklist.read_record_data(limit=n_records)
 
     return Response(status=status.HTTP_200_OK)

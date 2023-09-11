@@ -10,3 +10,4 @@ django-cors-headers
 factory_boy
 django-debug-toolbar
 requests-ratelimiter
+django-q2
