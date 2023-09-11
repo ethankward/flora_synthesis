@@ -129,7 +129,7 @@ class SEINETChecklistReader(checklist_util.ChecklistReader):
     def __init__(self, checklist: models.Checklist):
         super().__init__(checklist)
         self.seinet_checklist_id = checklist.external_checklist_id
-        self.base_url = "https://swbiodiversity.org/seinet/checklists/checklist.php?clid=%s" % self.seinet_checklist_id
+        self.base_url = "https://swbiodiversity.org/seinet/checklists/checklist.php?clid=%s"%self.seinet_checklist_id
 
     def get_soup(self, page: int):
         return BeautifulSoup(SESSION.get(self.base_url, params={'pagenumber': page}).text, 'html.parser')
@@ -199,3 +199,6 @@ class SEINETChecklistReader(checklist_util.ChecklistReader):
     def load_checklist(self):
         models.SEINETRecord.objects.filter(checklist_taxon__checklist=self.checklist).update(active=False)
         self.read_all(reactivate=True)
+
+        self.checklist.latest_date_retrieved = timezone.now().date()
+        self.checklist.save()
