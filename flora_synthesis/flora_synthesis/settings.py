@@ -178,9 +178,8 @@ if PRODUCTION:
             'rest_framework.authentication.TokenAuthentication',
         ]
     }
-
-
-# if not PRODUCTION:
+#
+# else:
 #     REST_FRAMEWORK = {
 #         'DEFAULT_PAGINATION_CLASS': 'flora_synthesis.rest_pagination.GetAllToggle',
 #         'PAGE_SIZE': 25

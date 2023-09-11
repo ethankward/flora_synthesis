@@ -18,7 +18,7 @@ class TaxonViewSet(viewsets.ModelViewSet):
                                                              'taxon_checklist_taxa__checklist',
                                                              'taxon_checklist_taxa__all_mapped_taxa',
                                                              'taxon_checklist_taxa__family').select_related(
-            'parent_species', 'first_observation_date', 'last_observation_date').order_by('family', 'taxon_name')
+            'parent_species', 'first_observation_date', 'last_observation_date')
 
         checklist_id = self.request.query_params.get('checklist', None)
         genus = self.request.query_params.get('genus', None)
@@ -32,6 +32,8 @@ class TaxonViewSet(viewsets.ModelViewSet):
 
         if family is not None:
             result = result.filter(family=family)
+
+        result = result.order_by('family', 'taxon_name')
 
         return result
 
@@ -84,7 +86,8 @@ class TaxonAutocompleteViewSet(viewsets.ModelViewSet):
 
 class FamiliesListView(views.APIView):
     def get(self, request):
-        data = models.Taxon.objects.all().order_by('family').values_list('family').distinct()
+        data = models.Taxon.objects.all().filter(taxon_checklist_taxa__checklist__primary_checklist=True).order_by(
+            'family').values_list('family').distinct()
         return Response(serializers.TaxonFamilySerializer([{'family': family[0]} for family in data], many=True).data)
 
 
