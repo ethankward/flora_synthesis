@@ -25,7 +25,7 @@ def update(request):
     checklist = models.Checklist.objects.get(pk=checklist_id)
 
     if settings.PRODUCTION:
-        async_task(lambda: checklist.load(page=page))
+        async_task(checklist.load, kwargs={'page': page})
     else:
         checklist.load(page=page)
 
@@ -40,9 +40,6 @@ def retrieve(request):
     assert n_records in [10, 25, 50]
     checklist = models.Checklist.objects.get(pk=checklist_id)
 
-    if settings.PRODUCTION:
-        async_task(lambda: checklist.read_record_data(limit=n_records))
-    else:
-        checklist.read_record_data(limit=n_records)
+    async_task(checklist.read_record_data, kwargs={'limit': n_records})
 
     return Response(status=status.HTTP_200_OK)
