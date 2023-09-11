@@ -1,4 +1,5 @@
 from django.db import transaction
+from django.utils import timezone
 from rest_framework import views, status
 from rest_framework.decorators import api_view
 from rest_framework.exceptions import APIException
@@ -17,12 +18,19 @@ def get_checklist_record_data_item(record):
                  'checklist': record.checklist_taxon.checklist,
                  'date': None,
                  'observer': None,
+                 'sort_key': None,
                  'external_url': record.external_url(),
                  'observation_type': record.get_observation_type_display(),
                  'notes': list(record.notes.all())}
 
     if hasattr(record, 'date'):
         data_item['date'] = record.date
+
+    if data_item['date'] is None:
+        data_item['sort_key'] = timezone.datetime(year=1800, month=1, day=1).date()
+    else:
+        data_item['sort_key'] = data_item['date']
+
     if hasattr(record, 'observer'):
         data_item['observer'] = record.observer
 
@@ -63,6 +71,8 @@ class ChecklistRecordsView(views.APIView):
                                                                                              'checklist_taxon__checklist',
                                                                                              'mapped_taxon'):
                         result.append(get_checklist_record_data_item(record))
+
+        result.sort(key=lambda x: x['sort_key'])
 
         return Response(serializers.ChecklistRecordSerializer(result, many=True).data)
 
