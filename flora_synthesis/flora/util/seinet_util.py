@@ -141,13 +141,18 @@ class SEINETChecklistReader(checklist_util.ChecklistReader):
             if 'Page 1 of ' in div.text:
                 return int(div.text.split('1 of ')[1].split(':')[0])
 
-    def generate_data(self) -> typing.Generator[checklist_util.ChecklistReadItem, None, None]:
+    def generate_data(self, page=None) -> typing.Generator[checklist_util.ChecklistReadItem, None, None]:
         total_pages = self.total_pages()
         if total_pages is None:
             return
         family = None
 
-        for page in range(1, total_pages + 1):
+        if page is None:
+            pages = range(1, total_pages + 1)
+        else:
+            pages = [page]
+
+        for page in pages:
             soup = self.get_soup(page)
 
             taxalist_div = soup.find('div', attrs={'id': 'taxalist-div'})
@@ -196,9 +201,9 @@ class SEINETChecklistReader(checklist_util.ChecklistReader):
                                                                    is_placeholder=True,
                                                                    canonical_rank=canonical_rank)
 
-    def load_checklist(self):
+    def load_checklist(self, page=None):
         models.SEINETRecord.objects.filter(checklist_taxon__checklist=self.checklist).update(active=False)
-        self.read_all(reactivate=True)
+        self.read_all(reactivate=True, page=page)
 
         self.checklist.latest_date_retrieved = timezone.now().date()
         self.checklist.save()
