@@ -19,6 +19,7 @@ class ChecklistReadItem:
     given_rank: str
     canonical_rank: taxon_ranks.TaxonRankChoices
     is_placeholder: bool = False
+    note: str = None
 
 
 class ChecklistReader:
@@ -77,6 +78,11 @@ class ChecklistReader:
 
                 checklist_record.mapped_taxon = mapped_taxon
                 checklist_record.save()
+
+            if checklist_read_item.note is not None:
+                checklist_record_note = models.ChecklistRecordNote(note=checklist_read_item.note)
+                checklist_record_note.save()
+                checklist_record.notes.add(checklist_record_note)
 
             checklist_taxon.save()
 

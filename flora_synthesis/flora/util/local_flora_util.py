@@ -40,7 +40,12 @@ class LocalFloraReader(checklist_util.ChecklistReader):
 
     def generate_data(self) -> typing.Generator[checklist_util.ChecklistReadItem, None, None]:
         for row in self.data:
-            external_id, checklist_taxon_name, checklist_family, obs_type, mapped_taxon_name = row.split('\t')
+            if len(row.split('\t')) == 5:
+                external_id, checklist_taxon_name, checklist_family, obs_type, mapped_taxon_name = row.split('\t')
+                note = None
+            else:
+                external_id, checklist_taxon_name, checklist_family, obs_type, mapped_taxon_name, note = row.split('\t')
+
             if mapped_taxon_name == 'None':
                 mapped_taxon_name = None
             data = {'observation_type': obs_type, 'mapped_taxon_name': mapped_taxon_name}
@@ -56,7 +61,8 @@ class LocalFloraReader(checklist_util.ChecklistReader):
                 observation_data=data,
                 given_rank=canonical_rank.name,
                 canonical_rank=canonical_rank,
-                is_placeholder=True
+                is_placeholder=True,
+                note=note
             )
 
     def load_checklist(self):
