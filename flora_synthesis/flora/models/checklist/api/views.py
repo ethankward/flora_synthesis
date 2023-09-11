@@ -22,8 +22,7 @@ def update(request):
     checklist_id = request.data['checklist_id']
     checklist = models.Checklist.objects.get(pk=checklist_id)
 
-    with transaction.atomic():
-        checklist.load()
+    checklist.load()
 
     return Response(status=status.HTTP_200_OK)
 
