@@ -37,9 +37,12 @@ def retrieve(request):
     checklist_id = request.data['checklist_id']
     n_records = request.data['n_records']
 
-    assert n_records in [10, 25, 50]
+    assert n_records <= 250
     checklist = models.Checklist.objects.get(pk=checklist_id)
 
-    async_task(checklist.read_record_data, limit=n_records)
+    if settings.PRODUCTION:
+        async_task(checklist.read_record_data, limit=n_records)
+    else:
+        checklist.read_record_data(limit=n_records)
 
     return Response(status=status.HTTP_200_OK)

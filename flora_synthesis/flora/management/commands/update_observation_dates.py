@@ -5,6 +5,7 @@ from flora import models
 
 
 def run():
+    print('updating dates')
     with transaction.atomic():
         models.ObservationDate.objects.all().delete()
         for checklist in models.Checklist.objects.filter(primary_checklist=True):

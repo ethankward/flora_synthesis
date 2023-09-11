@@ -1,10 +1,13 @@
+from django.conf import settings
 from django.db import transaction
+from django_q.tasks import async_task
 from rest_framework import viewsets, views, status
 from rest_framework.decorators import api_view
 from rest_framework.exceptions import APIException
 from rest_framework.response import Response
-
+import time
 from flora import models
+from flora.management.commands.update_observation_dates import run as run_update_observation_dates
 from flora.models.taxon.api import serializers
 from flora.models.taxon.choices import taxon_endemic_statuses, taxon_life_cycles, taxon_introduced_statuses
 
@@ -128,5 +131,15 @@ def make_synonym_of(request):
     )
     with transaction.atomic():
         synonym.save()
+
+    return Response(status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+def update_observation_dates(request):
+    if settings.PRODUCTION:
+        async_task(run_update_observation_dates)
+    else:
+        run_update_observation_dates()
 
     return Response(status=status.HTTP_200_OK)

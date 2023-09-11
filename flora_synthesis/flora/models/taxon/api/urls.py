@@ -15,4 +15,5 @@ def get_urlpatterns(router: routers.DefaultRouter):
         path('api/endemic/', views.EndemicView.as_view(), name="endemic"),
         path('api/introduced/', views.IntroducedView.as_view(), name="introduced"),
         path('api/make_synonym_of/', views.make_synonym_of),
+        path('api/update_observation_dates/', views.update_observation_dates, name="update_observation_dates"),
     ]
