@@ -15,8 +15,17 @@ class LocalFloraUpdater(checklist_util.RecordUpdater):
     def get_observation_type(self) -> FloraObservationTypeChoices:
         if self.data['observation_type'] == 'True':
             return FloraObservationTypeChoices.PRESENT
-        else:
+        elif self.data['observation_type'] == 'False':
             return FloraObservationTypeChoices.MISSING
+        else:
+            if self.data['observation_type'] == 'P':
+                return FloraObservationTypeChoices.PRESENT
+            elif self.data['observation_type'] == 'M':
+                return FloraObservationTypeChoices.MISSING
+            elif self.data['observation_type'] == 'S':
+                return FloraObservationTypeChoices.SUSPECTED
+            else:
+                return FloraObservationTypeChoices.UNKNOWN
 
     def update_record(self):
         if self.data is not None:
@@ -38,7 +47,7 @@ class LocalFloraReader(checklist_util.ChecklistReader):
         self.path = os.path.join("flora", "data", "{}.txt".format(checklist.local_checklist_fn))
         self.data = open(self.path).read().split('\n')
 
-    def generate_data(self) -> typing.Generator[checklist_util.ChecklistReadItem, None, None]:
+    def generate_data(self, page=None) -> typing.Generator[checklist_util.ChecklistReadItem, None, None]:
         for row in self.data:
             if len(row.split('\t')) == 5:
                 external_id, checklist_taxon_name, checklist_family, obs_type, mapped_taxon_name = row.split('\t')
