@@ -48,6 +48,10 @@ class Taxon(base_model.BaseModel):
     def __str__(self):
         return self.taxon_name
 
+    def save(self, *args, **kwargs):
+        self.genus = self.taxon_name.split(' ')[0]
+        super().save(*args, **kwargs)
+
     def synonymize(self, taxon):
         from flora.models import TaxonSynonym
         to_delete_taxon_id = self.pk

@@ -32,3 +32,13 @@ class TaxonTests(TestCase):
         t1.synonymize(t2)
 
         self.assertEqual(0, t2.subtaxa.all().count())
+
+    def test_save_genus(self):
+        t1 = factory.TaxonFactory(taxon_name='A b', genus='C')
+        t2 = factory.TaxonFactory(taxon_name='A c', genus=None)
+
+        t1.save()
+        self.assertEqual('A', t1.genus)
+
+        t2.save()
+        self.assertEqual('A', t2.genus)
