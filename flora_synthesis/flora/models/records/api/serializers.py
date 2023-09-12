@@ -6,8 +6,6 @@ from flora.models.checklist_taxon.api.serializers import ChecklistTaxonNameSeria
 from flora.models.taxon.api.serializers import TaxonNameSerializer
 
 
-
-
 class ChecklistRecordSerializer(serializers.Serializer):
     id = serializers.IntegerField()
     external_id = serializers.CharField()
@@ -20,3 +18,4 @@ class ChecklistRecordSerializer(serializers.Serializer):
     external_url = serializers.URLField()
     observation_type = serializers.CharField()
     notes = ChecklistRecordNoteSerializer(many=True)
+    active = serializers.BooleanField()

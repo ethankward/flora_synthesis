@@ -21,7 +21,8 @@ def get_checklist_record_data_item(record):
                  'sort_key': None,
                  'external_url': record.external_url(),
                  'observation_type': record.get_observation_type_display(),
-                 'notes': list(record.notes.all())}
+                 'notes': list(record.notes.all()),
+                 'active': record.active}
 
     if hasattr(record, 'date'):
         data_item['date'] = record.date
@@ -65,6 +66,7 @@ class ChecklistRecordsView(views.APIView):
                 for record in model.objects.filter(mapped_taxon=taxon).select_related('checklist_taxon',
                                                                                       'checklist_taxon__checklist',
                                                                                       'mapped_taxon'):
+
                     result.append(get_checklist_record_data_item(record))
                 for subtaxon in taxon.subtaxa.all():
                     for record in model.objects.filter(mapped_taxon=subtaxon).select_related('checklist_taxon',
