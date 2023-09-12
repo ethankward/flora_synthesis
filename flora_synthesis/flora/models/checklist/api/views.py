@@ -21,13 +21,12 @@ class ChecklistStaleRecordCountViewSet(viewsets.ModelViewSet):
 @api_view(['POST'])
 def update(request):
     checklist_id = request.data['checklist_id']
-    page = request.data['page']
     checklist = models.Checklist.objects.get(pk=checklist_id)
 
     if settings.PRODUCTION:
-        async_task(checklist.load, page=page)
+        async_task(checklist.load)
     else:
-        checklist.load(page=page)
+        checklist.load()
 
     return Response(status=status.HTTP_200_OK)
 
