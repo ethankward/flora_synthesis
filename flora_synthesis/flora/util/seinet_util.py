@@ -85,6 +85,9 @@ class SEINetUpdater(checklist_util.RecordUpdater):
     def get_locality(self) -> str:
         return self.get_div_value_if_present('locality-div', lambda t: t.split('Locality: ')[1])
 
+    def get_type_status(self) -> str:
+        return self.get_div_value_if_present('typestatus-div', lambda t: t.split('Type Status: ')[1])
+
     def update_record(self):
         if self.data is not None:
             self.record.observation_type = self.get_observation_type()
@@ -96,6 +99,7 @@ class SEINetUpdater(checklist_util.RecordUpdater):
             self.record.verbatim_elevation = self.get_verbatim_elevation()
             self.record.observer = self.get_observer()
             self.record.locality = self.get_locality()
+            self.record.type_status = self.get_type_status()
         else:
             if self.record.is_placeholder:
                 self.record.observation_type = SEINETObservationTypeChoices.NOTE_PLACEHOLDER

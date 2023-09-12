@@ -32,6 +32,8 @@ class SEINETRecord(record.Record):
 
     observer = models.TextField(blank=True, null=True)
 
+    type_status = models.TextField(blank=True, null=True)
+
     def external_url(self) -> typing.Optional[str]:
         if self.observation_type != SEINETObservationTypeChoices.NOTE_PLACEHOLDER:
             return "https://swbiodiversity.org/seinet/collections/individual/index.php?occid={}".format(
