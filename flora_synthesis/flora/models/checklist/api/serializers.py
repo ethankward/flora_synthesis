@@ -31,5 +31,4 @@ class ChecklistStaleRecordCount(serializers.ModelSerializer):
 
         return records.objects.filter(
             Q(last_refreshed__isnull=True) | Q(last_refreshed__lt=timezone.now() - timezone.timedelta(days=60)),
-            checklist_taxon__checklist=obj,
-        ).count()
+            checklist_taxon__checklist=obj, is_placeholder=False).count()
