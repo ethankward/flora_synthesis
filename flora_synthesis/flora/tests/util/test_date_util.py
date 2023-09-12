@@ -26,5 +26,6 @@ class DateUtilNameTests(TestCase):
               {'created_on': '2023-8-5'}]
 
         t2 = list(date_util.combine_date_ranges(list(date_util.date_range_list(start_date, end_date))))
+        t2 = [i[0] for i in t2]
 
         self.assertListEqual(t1, t2)
