@@ -5,11 +5,12 @@ from rest_framework import viewsets, views, status
 from rest_framework.decorators import api_view
 from rest_framework.exceptions import APIException
 from rest_framework.response import Response
-import time
+
 from flora import models
 from flora.management.commands.update_observation_dates import run as run_update_observation_dates
 from flora.models.taxon.api import serializers
-from flora.models.taxon.choices import taxon_endemic_statuses, taxon_life_cycles, taxon_introduced_statuses
+from flora.models.taxon.choices import taxon_endemic_statuses, taxon_life_cycles, taxon_introduced_statuses, taxon_ranks
+from flora.util import taxon_name_util
 
 
 class TaxonViewSet(viewsets.ModelViewSet):
@@ -114,6 +115,13 @@ class IntroducedView(views.APIView):
             serializers.IntroducedSerializer([{'value': i[0], 'display': i[1]} for i in data], many=True).data)
 
 
+class RankChoicesView(views.APIView):
+    def get(self, request):
+        data = taxon_ranks.TaxonRankChoices.choices
+        return Response(
+            serializers.IntroducedSerializer([{'value': i[0], 'display': i[1]} for i in data], many=True).data)
+
+
 @api_view(['POST'])
 def make_synonym_of(request):
     if request.method != 'POST':
@@ -143,3 +151,11 @@ def update_observation_dates(request):
         run_update_observation_dates()
 
     return Response(status=status.HTTP_200_OK)
+
+
+@api_view(['POST'])
+def create_new_taxon(request):
+    taxon_name = request.data['taxon_name']
+    taxon_family = request.data['taxon_family']
+    taxon = taxon_name_util.TaxonName(taxon_name, family=taxon_family).get_db_item()
+    return Response(status=status.HTTP_201_CREATED, data={"taxon_id": taxon.id})
