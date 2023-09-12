@@ -23,3 +23,12 @@ class TaxonTests(TestCase):
         self.assertEqual(t2.parent_species, t3)
         self.assertEqual(1, t3.subtaxa.all().count())
         self.assertTrue(t2 in t3.subtaxa.all())
+
+    def test_synonymize_with_subtaxa(self):
+        t1 = factory.TaxonFactory(taxon_name="Mammlilaria gummifera", rank=taxon_ranks.TaxonRankChoices.SPECIES)
+        t2 = factory.TaxonFactory(taxon_name="Mammlilaria heyderi", rank=taxon_ranks.TaxonRankChoices.SPECIES)
+
+        t1.subtaxa.add(t2)
+        t1.synonymize(t2)
+
+        self.assertEqual(0, t2.subtaxa.all().count())
