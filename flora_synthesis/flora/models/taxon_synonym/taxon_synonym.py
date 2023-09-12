@@ -23,3 +23,6 @@ class TaxonSynonym(base_model.BaseModel):
             for taxon in to_merge:
                 if taxon != self.taxon:
                     taxon.synonymize(self.taxon)
+
+                    if self.taxon in self.taxon.subtaxa.all():
+                        self.taxon.subtaxa.remove(self.taxon)
