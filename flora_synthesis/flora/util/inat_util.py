@@ -164,7 +164,7 @@ class InatChecklistReader(checklist_util.ChecklistReader):
         self.parameters['taxon_id'] = 211194
         self.parameters['per_page'] = 200
 
-    def generate_data(self) -> typing.Generator[checklist_util.ChecklistReadItem, None, None]:
+    def generate_data(self, page=None) -> typing.Generator[checklist_util.ChecklistReadItem, None, None]:
         for observation_data_item in self.inat_api.read_observation_data(self.parameters):
             ancestry = observation_data_item['taxon']['ancestry']
             taxon_name = observation_data_item['taxon']['name']
