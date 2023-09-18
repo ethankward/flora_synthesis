@@ -7,6 +7,7 @@ def run():
     print('updating dates')
     models.ObservationDate.objects.all().delete()
     for checklist in models.Checklist.objects.filter(primary_checklist=True):
+        print(checklist)
         for inat_record in models.InatRecord.objects.filter(
                 checklist_taxon__checklist=checklist).select_related('mapped_taxon'):
             if inat_record.date is not None and inat_record.mapped_taxon is not None:

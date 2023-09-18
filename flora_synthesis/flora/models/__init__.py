@@ -3,6 +3,7 @@ from flora.models.checklist_record_note.checklist_record_note import ChecklistRe
 from flora.models.checklist_taxon.checklist_taxon import ChecklistTaxon
 from flora.models.checklist_taxon_family.checklist_taxon_family import ChecklistTaxonFamily
 from flora.models.observation_date.observation_date import ObservationDate
+from flora.models.personal_collection_record.personal_collection_record import PersonalCollectionRecord
 from flora.models.records.flora_record.flora_record import FloraRecord
 from flora.models.records.inat_record.inat_record import InatRecord
 from flora.models.records.record import Record

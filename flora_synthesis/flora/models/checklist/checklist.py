@@ -21,6 +21,8 @@ class Checklist(base_model.BaseModel):
 
     primary_checklist = models.BooleanField(default=False)
 
+    collector_name = models.CharField(max_length=256, blank=True, null=True)
+
     def __str__(self):
         return '{} ({})'.format(self.checklist_name, self.get_checklist_type_display())
 

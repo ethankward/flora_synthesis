@@ -48,6 +48,8 @@ class ChecklistRecordView(views.APIView):
             record = models.SEINETRecord.objects.get(pk=checklist_record_id)
         elif checklist_type == 'i':
             record = models.InatRecord.objects.get(pk=checklist_record_id)
+        elif checklist_type == 'p':
+            record = models.PersonalCollectionRecord.objects.get(pk=checklist_record_id)
         else:
             raise APIException()
 
