@@ -9,7 +9,7 @@ from flora.models.checklist.api import serializers
 
 
 class ChecklistViewSet(viewsets.ModelViewSet):
-    queryset = models.Checklist.objects.all()
+    queryset = models.Checklist.objects.all().order_by('checklist_name')
     serializer_class = serializers.ChecklistSerializer
 
 
