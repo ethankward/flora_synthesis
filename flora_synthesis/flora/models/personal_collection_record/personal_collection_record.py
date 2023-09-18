@@ -29,3 +29,5 @@ class PersonalCollectionRecord(models.Model):
     associated_collectors = models.TextField(blank=True, null=True)
 
     associated_species = models.TextField(blank=True, null=True)
+
+    identification_notes = models.TextField(blank=True, null=True)

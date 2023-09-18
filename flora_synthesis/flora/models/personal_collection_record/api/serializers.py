@@ -12,7 +12,8 @@ class PersonalCollectionRecordSerializer(serializers.ModelSerializer):
         fields = ['id', 'date', 'status', 'status_display', 'inat_record_id', 'seinet_record_id', 'family',
                   'preliminary_taxon', 'specific_taxon', 'latitude', 'longitude', 'elevation_ft', 'locality',
                   'habitat',
-                  'associated_collectors', 'associated_species', 'collection_number', 'time', 'specific_taxon_name']
+                  'associated_collectors', 'associated_species', 'collection_number', 'time', 'specific_taxon_name',
+                  'identification_notes']
 
     def get_status_display(self, obj):
         return obj.get_status_display()
