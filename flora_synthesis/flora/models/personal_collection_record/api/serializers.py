@@ -13,7 +13,7 @@ class PersonalCollectionRecordSerializer(serializers.ModelSerializer):
                   'preliminary_taxon', 'specific_taxon', 'latitude', 'longitude', 'elevation_ft', 'locality',
                   'habitat',
                   'associated_collectors', 'associated_species', 'collection_number', 'time', 'specific_taxon_name',
-                  'identification_notes', 'description']
+                  'identification_notes', 'description', 'land_ownership']
 
     def get_status_display(self, obj):
         return obj.get_status_display()

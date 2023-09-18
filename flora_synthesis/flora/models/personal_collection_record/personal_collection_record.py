@@ -32,3 +32,5 @@ class PersonalCollectionRecord(models.Model):
 
     identification_notes = models.TextField(blank=True, null=True)
     description = models.TextField(blank=True, null=True)
+
+    land_ownership = models.TextField(blank=True, null=True)
