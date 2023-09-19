@@ -32,7 +32,8 @@ class TaxonSerializer(serializers.ModelSerializer):
                   'introduced', 'introduced_display',
                   'seinet_id', 'inat_id',
                   'taxon_checklist_taxa', 'checklists',
-                  'first_observation_date', 'last_observation_date']
+                  'first_observation_date', 'last_observation_date', 'first_observation_date_url',
+                  'last_observation_date_url']
 
     def get_synonyms(self, obj):
         synonyms = obj.taxonsynonym_set.all()
@@ -69,7 +70,9 @@ class MinimalTaxonSerializer(serializers.ModelSerializer):
         model = models.Taxon
         fields = ['id', 'taxon_name', 'rank', 'genus', 'family',
                   'life_cycle', 'endemic', 'introduced',
-                  'seinet_id', 'inat_id', 'first_observation_date', 'last_observation_date']
+                  'seinet_id', 'inat_id', 'first_observation_date', 'last_observation_date',
+                  'first_observation_date_url',
+                  'last_observation_date_url']
 
     def get_life_cycle(self, obj):
         return {'value': obj.life_cycle, 'display': obj.get_life_cycle_display()}

@@ -22,7 +22,7 @@ class TaxonViewSet(viewsets.ModelViewSet):
                                                              'taxon_checklist_taxa__checklist',
                                                              'taxon_checklist_taxa__all_mapped_taxa',
                                                              'taxon_checklist_taxa__family').select_related(
-            'parent_species', 'first_observation_date', 'last_observation_date')
+            'parent_species')
 
         checklist_id = self.request.query_params.get('checklist', None)
         genus = self.request.query_params.get('genus', None)

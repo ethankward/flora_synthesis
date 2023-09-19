@@ -32,8 +32,10 @@ class Taxon(base_model.BaseModel):
     inat_id = models.IntegerField(blank=True, null=True)
     seinet_id = models.IntegerField(blank=True, null=True)
 
-    last_observation_date = models.DateField(blank=True, null=True)
     first_observation_date = models.DateField(blank=True, null=True)
+    first_observation_date_url = models.URLField(blank=True, null=True)
+    last_observation_date = models.DateField(blank=True, null=True)
+    last_observation_date_url = models.URLField(blank=True, null=True)
 
     class Meta:
         unique_together = [('taxon_name',)]
