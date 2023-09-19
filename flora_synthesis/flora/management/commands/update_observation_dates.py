@@ -5,6 +5,7 @@ from flora import models
 
 
 def run():
+    print('Updating observation dates')
     mapped_records = {}
     record_models = [models.InatRecord, models.SEINETRecord]
     for record_model in record_models:
@@ -14,6 +15,7 @@ def run():
             if taxon not in mapped_records:
                 mapped_records[taxon] = set([])
             mapped_records[taxon].add(record.date)
+    print('{} taxa with dates'.format(len(mapped_records)))
 
     with transaction.atomic():
         models.Taxon.objects.all().update(first_observation_date=None, last_observation_date=None)
@@ -23,6 +25,8 @@ def run():
                 taxon.first_observation_date = dates[0]
                 taxon.last_observation_date = dates[-1]
                 taxon.save()
+
+    print('Finished update')
 
 
 class Command(BaseCommand):
