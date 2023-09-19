@@ -10,11 +10,19 @@ def run():
     record_models = [models.InatRecord, models.SEINETRecord]
     for record_model in record_models:
         for record in record_model.objects.filter(mapped_taxon__isnull=False, checklist__primary_checklist=True,
-                                                  date__isnull=False).select_related('mapped_taxon'):
+                                                  date__isnull=False).select_related('mapped_taxon',
+                                                                                     'mapped_taxon__parent_species'):
             taxon = record.mapped_taxon
             if taxon not in mapped_records:
                 mapped_records[taxon] = set([])
             mapped_records[taxon].add((record.date, record.external_url()))
+
+            parent_taxon = taxon.parent_species
+            if parent_taxon is not None:
+                if parent_taxon not in mapped_records:
+                    mapped_records[parent_taxon] = set([])
+                mapped_records[parent_taxon].add((record.date, record.external_url()))
+
     print('{} taxa with dates'.format(len(mapped_records)))
 
     with transaction.atomic():
