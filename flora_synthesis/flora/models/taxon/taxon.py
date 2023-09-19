@@ -32,11 +32,8 @@ class Taxon(base_model.BaseModel):
     inat_id = models.IntegerField(blank=True, null=True)
     seinet_id = models.IntegerField(blank=True, null=True)
 
-    observation_dates = models.ManyToManyField("ObservationDate", blank=True)
-    last_observation_date = models.ForeignKey("ObservationDate", blank=True, null=True, on_delete=models.SET_NULL,
-                                              related_name="last_observation_date")
-    first_observation_date = models.ForeignKey("ObservationDate", blank=True, null=True, on_delete=models.SET_NULL,
-                                               related_name="first_observation_date")
+    last_observation_date = models.DateField(blank=True, null=True)
+    first_observation_date = models.DateField(blank=True, null=True)
 
     class Meta:
         unique_together = [('taxon_name',)]

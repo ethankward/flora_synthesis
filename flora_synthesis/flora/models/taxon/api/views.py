@@ -68,7 +68,7 @@ class PrimaryChecklistTaxonViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.MinimalTaxonSerializer
 
     def get_queryset(self):
-        result = models.Taxon.objects.all().select_related('first_observation_date', 'last_observation_date').order_by(
+        result = models.Taxon.objects.all().order_by(
             'taxon_name')
         result = result.filter(taxon_checklist_taxa__checklist__primary_checklist=True).distinct()
         return result

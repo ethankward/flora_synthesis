@@ -2,7 +2,6 @@ from rest_framework import serializers
 
 from flora import models
 from flora.models.checklist_taxon.api.serializers import ChecklistTaxonSerializer
-from flora.models.observation_date.api.serializers import ObservationDateSerializer
 
 
 class TaxonNameSerializer(serializers.ModelSerializer):
@@ -23,8 +22,6 @@ class TaxonSerializer(serializers.ModelSerializer):
 
     rank = serializers.SerializerMethodField()
     checklists = serializers.SerializerMethodField()
-    first_observation_date = ObservationDateSerializer()
-    last_observation_date = ObservationDateSerializer()
 
     class Meta:
         model = models.Taxon
@@ -67,8 +64,6 @@ class MinimalTaxonSerializer(serializers.ModelSerializer):
     life_cycle = serializers.SerializerMethodField(read_only=False)
     endemic = serializers.SerializerMethodField(read_only=False)
     introduced = serializers.SerializerMethodField(read_only=False)
-    first_observation_date = ObservationDateSerializer()
-    last_observation_date = ObservationDateSerializer()
 
     class Meta:
         model = models.Taxon
