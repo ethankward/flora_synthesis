@@ -4,6 +4,7 @@ from django.db import models
 class StatusTypes(models.TextChoices):
     p = "p", "Personal collection"
     h = "h", "Submitted to herbarium"
+    t = "t", "Thrown out"
 
 
 class PersonalCollectionRecord(models.Model):
