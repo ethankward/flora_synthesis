@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.db import transaction
+from django.db.models import Prefetch
 from django_q.tasks import async_task
 from rest_framework import viewsets, views, status
 from rest_framework.decorators import api_view
@@ -18,10 +19,9 @@ class TaxonViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.TaxonSerializer
 
     def get_queryset(self):
-        result = models.Taxon.objects.all().prefetch_related('subtaxa', 'taxonsynonym_set', 'taxon_checklist_taxa',
-                                                             'taxon_checklist_taxa__checklist',
-                                                             'taxon_checklist_taxa__all_mapped_taxa',
-                                                             'taxon_checklist_taxa__family').select_related(
+        result = models.Taxon.objects.all().prefetch_related('subtaxa', 'taxonsynonym_set',
+
+                                                             ).select_related(
             'parent_species')
 
         checklist_id = self.request.query_params.get('checklist', None)
@@ -29,8 +29,15 @@ class TaxonViewSet(viewsets.ModelViewSet):
         family = self.request.query_params.get('family', None)
 
         if checklist_id is not None:
+            pf = Prefetch('taxon_checklist_taxa', queryset=models.ChecklistTaxon.objects.filter(checklist=checklist_id))
             result = result.filter(taxon_checklist_taxa__checklist=checklist_id)
+            result = result.prefetch_related(pf)
+        else:
+            result = result.prefetch_related('taxon_checklist_taxa')
 
+        result = result.prefetch_related('taxon_checklist_taxa__checklist',
+                                         'taxon_checklist_taxa__all_mapped_taxa',
+                                         'taxon_checklist_taxa__family')
         if genus is not None:
             result = result.filter(genus=genus)
 
