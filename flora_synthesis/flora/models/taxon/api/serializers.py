@@ -22,6 +22,7 @@ class TaxonSerializer(serializers.ModelSerializer):
 
     rank = serializers.SerializerMethodField()
     checklists = serializers.SerializerMethodField()
+    primary_checklist = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Taxon
@@ -38,11 +39,17 @@ class TaxonSerializer(serializers.ModelSerializer):
                   'local_population_strict_western_range_limit', 'local_population_strict_southern_range_limit',
                   'local_population_northern_edge_range_limit', 'local_population_eastern_edge_range_limit',
                   'local_population_western_edge_range_limit', 'local_population_southern_edge_range_limit',
-                  'local_population_disjunct', 'has_collections']
+                  'local_population_disjunct', 'has_collections', 'primary_checklist']
 
     def get_synonyms(self, obj):
         synonyms = obj.taxonsynonym_set.all()
         return [{'value': s.id, 'display': s.synonym} for s in synonyms]
+
+    def get_primary_checklist(self, obj):
+        for checklist_taxon in obj.taxon_checklist_taxa.all():
+            if checklist_taxon.checklist.primary_checklist:
+                return True
+        return False
 
     def get_rank(self, obj):
         return obj.get_rank_display()
