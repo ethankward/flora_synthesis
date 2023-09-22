@@ -25,7 +25,7 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-w6_@e!)gt=l%-%%b&9hc@rd0u5
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', 'false') == 'true'
 PRODUCTION = os.environ.get('PRODUCTION', 'false') == 'true'
-RAILWAY = False
+RAILWAY = True
 
 if not PRODUCTION:
     DEBUG = True
@@ -187,8 +187,8 @@ if PRODUCTION:
 #     }
 
 Q_CLUSTER = {
-    'retry': 600,
-    'timeout': 500,
+    'retry': 6000,
+    'timeout': 5000,
     'workers': 4,
     'max_attempts': 1,
     'orm': 'default',
