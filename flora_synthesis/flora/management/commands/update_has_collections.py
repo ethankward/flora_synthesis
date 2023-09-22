@@ -24,9 +24,8 @@ def run():
 
     print('{} taxa with collections'.format(len(taxa_with_collections)))
 
-    with transaction.atomic():
-        models.Taxon.objects.all().update(has_collections=False)
-        models.Taxon.objects.filter(pk__in=taxa_with_collections).update(has_collections=True)
+    models.Taxon.objects.all().update(has_collections=False)
+    models.Taxon.objects.filter(pk__in=taxa_with_collections).update(has_collections=True)
 
     print('Finished update')
 
