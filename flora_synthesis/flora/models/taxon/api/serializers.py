@@ -38,7 +38,7 @@ class TaxonSerializer(serializers.ModelSerializer):
                   'local_population_strict_western_range_limit', 'local_population_strict_southern_range_limit',
                   'local_population_northern_edge_range_limit', 'local_population_eastern_edge_range_limit',
                   'local_population_western_edge_range_limit', 'local_population_southern_edge_range_limit',
-                  'local_population_disjunct']
+                  'local_population_disjunct', 'has_collections']
 
     def get_synonyms(self, obj):
         synonyms = obj.taxonsynonym_set.all()
