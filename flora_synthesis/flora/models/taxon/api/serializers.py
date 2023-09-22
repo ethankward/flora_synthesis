@@ -33,7 +33,12 @@ class TaxonSerializer(serializers.ModelSerializer):
                   'seinet_id', 'inat_id',
                   'taxon_checklist_taxa', 'checklists',
                   'first_observation_date', 'last_observation_date', 'first_observation_date_url',
-                  'last_observation_date_url']
+                  'last_observation_date_url',
+                  'local_population_strict_northern_range_limit', 'local_population_strict_eastern_range_limit',
+                  'local_population_strict_western_range_limit', 'local_population_strict_southern_range_limit',
+                  'local_population_northern_edge_range_limit', 'local_population_eastern_edge_range_limit',
+                  'local_population_western_edge_range_limit', 'local_population_southern_edge_range_limit',
+                  'local_population_disjunct']
 
     def get_synonyms(self, obj):
         synonyms = obj.taxonsynonym_set.all()
@@ -72,7 +77,13 @@ class MinimalTaxonSerializer(serializers.ModelSerializer):
                   'life_cycle', 'endemic', 'introduced',
                   'seinet_id', 'inat_id', 'first_observation_date', 'last_observation_date',
                   'first_observation_date_url',
-                  'last_observation_date_url']
+                  'last_observation_date_url',
+                  'local_population_strict_northern_range_limit', 'local_population_strict_eastern_range_limit',
+                  'local_population_strict_western_range_limit', 'local_population_strict_southern_range_limit',
+                  'local_population_northern_edge_range_limit', 'local_population_eastern_edge_range_limit',
+                  'local_population_western_edge_range_limit', 'local_population_southern_edge_range_limit',
+                  'local_population_disjunct'
+                  ]
 
     def get_life_cycle(self, obj):
         return {'value': obj.life_cycle, 'display': obj.get_life_cycle_display()}

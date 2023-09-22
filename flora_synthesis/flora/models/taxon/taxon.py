@@ -37,6 +37,19 @@ class Taxon(base_model.BaseModel):
     last_observation_date = models.DateField(blank=True, null=True)
     last_observation_date_url = models.URLField(blank=True, null=True)
 
+    # population distribution
+    local_population_strict_northern_range_limit = models.BooleanField(blank=True, null=True)
+    local_population_strict_eastern_range_limit = models.BooleanField(blank=True, null=True)
+    local_population_strict_western_range_limit = models.BooleanField(blank=True, null=True)
+    local_population_strict_southern_range_limit = models.BooleanField(blank=True, null=True)
+
+    local_population_northern_edge_range_limit = models.BooleanField(blank=True, null=True)
+    local_population_eastern_edge_range_limit = models.BooleanField(blank=True, null=True)
+    local_population_western_edge_range_limit = models.BooleanField(blank=True, null=True)
+    local_population_southern_edge_range_limit = models.BooleanField(blank=True, null=True)
+
+    local_population_disjunct = models.BooleanField(blank=True, null=True)
+
     class Meta:
         unique_together = [('taxon_name',)]
         indexes = [

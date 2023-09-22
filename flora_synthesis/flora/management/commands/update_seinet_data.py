@@ -1,10 +1,10 @@
+import time
+
 from django.core.management import BaseCommand
 from django.db import transaction
 
 from flora import models
 from flora.models.checklist.choices import checklist_types
-from flora.util import seinet_util
-import time
 
 
 def run():
