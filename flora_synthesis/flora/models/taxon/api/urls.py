@@ -16,6 +16,6 @@ def get_urlpatterns(router: routers.DefaultRouter):
         path('api/introduced/', views.IntroducedView.as_view(), name="introduced"),
         path('api/taxon_ranks/', views.RankChoicesView.as_view(), name="ranks"),
         path('api/make_synonym_of/', views.make_synonym_of),
-        path('api/update_observation_dates/', views.update_observation_dates, name="update_observation_dates"),
+        path('api/update_computed_values/', views.update_computed_values, name="update_computed_values"),
         path('api/create_new_taxon/', views.create_new_taxon),
     ]

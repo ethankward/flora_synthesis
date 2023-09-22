@@ -32,10 +32,13 @@ class Taxon(base_model.BaseModel):
     inat_id = models.IntegerField(blank=True, null=True)
     seinet_id = models.IntegerField(blank=True, null=True)
 
+    # computed values
     first_observation_date = models.DateField(blank=True, null=True)
     first_observation_date_url = models.URLField(blank=True, null=True)
     last_observation_date = models.DateField(blank=True, null=True)
     last_observation_date_url = models.URLField(blank=True, null=True)
+
+    has_collections = models.BooleanField(blank=True, null=True)
 
     # population distribution
     local_population_strict_northern_range_limit = models.BooleanField(blank=True, null=True)
