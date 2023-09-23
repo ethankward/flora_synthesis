@@ -45,6 +45,7 @@ class TaxonViewSet(viewsets.ModelViewSet):
         if family is not None:
             result = result.filter(family=family)
 
+        result = result.distinct()
         result = result.order_by('family', 'taxon_name')
 
         return result
