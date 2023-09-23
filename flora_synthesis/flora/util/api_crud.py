@@ -19,14 +19,14 @@ class CRUDViewGenerator:
         @api_view(['PUT'])
         def create_object(request: Request):
             new_object = self.creation_function(request)
-            return Response(status=status.HTTP_201_CREATED, data={'object_id': new_object.pk})
+            return Response(status=status.HTTP_201_CREATED, data={'id': new_object.pk})
 
         return create_object
 
     def get_deletion_view(self) -> typing.Callable[[Request], Response]:
         @api_view(['POST'])
         def delete_object(request: Request) -> Response:
-            object_id = request.data['object_id']
+            object_id = request.data['id']
             object_to_delete = self.model.objects.get(pk=object_id)
             object_to_delete.delete()
 
@@ -37,7 +37,7 @@ class CRUDViewGenerator:
     def get_update_view(self) -> typing.Callable[[Request], Response]:
         @api_view(['POST'])
         def update_object(request: Request) -> Response:
-            object_id = request.data['object_id']
+            object_id = request.data['id']
 
             object_to_update = self.model.objects.get(pk=object_id)
             self.update_function(object_to_update, request)

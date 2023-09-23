@@ -10,6 +10,15 @@ class TaxonNameSerializer(serializers.ModelSerializer):
         fields = ['id', 'taxon_name']
 
 
+class TaxonUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Taxon
+        fields = ['id', 'taxon_name', 'family', 'seinet_id', 'inat_id', 'introduced', 'endemic', 'life_cycle']
+        extra_kwargs = {
+            field: {'required': False} for field in fields
+        }
+
+
 class TaxonSerializer(serializers.ModelSerializer):
     synonyms = serializers.SerializerMethodField(read_only=False)
     taxon_checklist_taxa = ChecklistTaxonSerializer(many=True)

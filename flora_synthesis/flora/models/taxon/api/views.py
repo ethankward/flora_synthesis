@@ -4,20 +4,25 @@ from django.db.models import Prefetch
 from django_q.tasks import async_task
 from rest_framework import viewsets, views, status
 from rest_framework.decorators import api_view
-from rest_framework.exceptions import APIException
+from rest_framework.mixins import UpdateModelMixin
 from rest_framework.response import Response
 
 from flora import models
-from flora.management.commands.update_observation_dates import run as run_update_observation_dates
 from flora.management.commands.update_has_collections import run as run_update_has_collections
+from flora.management.commands.update_observation_dates import run as run_update_observation_dates
 from flora.models.taxon.api import serializers
 from flora.models.taxon.choices import taxon_endemic_statuses, taxon_life_cycles, taxon_introduced_statuses, taxon_ranks
-from flora.util import taxon_name_util
 
 
-class TaxonViewSet(viewsets.ModelViewSet):
+class TaxonViewSet(viewsets.ModelViewSet, UpdateModelMixin):
     queryset = models.Taxon.objects.all()
     serializer_class = serializers.TaxonSerializer
+
+    def get_serializer(self, *args, **kwargs):
+        if self.request.method == "GET":
+            return serializers.TaxonSerializer(*args, **kwargs)
+        else:
+            return serializers.TaxonUpdateSerializer(*args, **kwargs)
 
     def get_queryset(self):
         result = models.Taxon.objects.all().prefetch_related('subtaxa', 'taxonsynonym_set',
@@ -49,27 +54,6 @@ class TaxonViewSet(viewsets.ModelViewSet):
         result = result.order_by('family', 'taxon_name')
 
         return result
-
-    def update(self, request, *args, **kwargs):
-        obj = self.get_object()
-
-        data_to_change = {'family': request.data.get("family", obj.family),
-                          'life_cycle': request.data.get("life_cycle", obj.life_cycle),
-                          'endemic': request.data.get("endemic", obj.endemic),
-                          'introduced': request.data.get("introduced", obj.introduced),
-                          'taxon_name': request.data.get("taxon_name", obj.taxon_name),
-                          'seinet_id': request.data.get('seinet_id', obj.seinet_id),
-                          'inat_id': request.data.get('inat_id', obj.inat_id)
-                          }
-
-        serializer = self.serializer_class(data=data_to_change, partial=True, instance=self.get_object())
-
-        if serializer.is_valid():
-            self.perform_update(serializer)
-
-            return Response(serializer.data)
-        else:
-            raise APIException()
 
 
 class PrimaryChecklistTaxonViewSet(viewsets.ModelViewSet):
@@ -162,11 +146,3 @@ def update_computed_values(request):
         run_update_has_collections()
 
     return Response(status=status.HTTP_200_OK)
-
-
-@api_view(['POST'])
-def create_new_taxon(request):
-    taxon_name = request.data['taxon_name']
-    taxon_family = request.data['taxon_family']
-    taxon = taxon_name_util.TaxonName(taxon_name, family=taxon_family).get_db_item()
-    return Response(status=status.HTTP_201_CREATED, data={"taxon_id": taxon.id})

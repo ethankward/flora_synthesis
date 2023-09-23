@@ -1,3 +1,4 @@
+import re
 import typing
 
 from bs4 import BeautifulSoup
@@ -22,6 +23,19 @@ def get_canonical_rank(name: str) -> typing.Optional[taxon_ranks.TaxonRankChoice
 def parse_seinet_date(date_str: str) -> typing.Optional[timezone.datetime]:
     if date_str in ['s.d.', 'unknown']:
         return None
+
+    if ' - ' in date_str:
+        date_str = date_str.split(' - ')[0]
+
+    if re.match(r'\d\d\d\d-00-00', date_str):
+        year = int(date_str.split('-')[0])
+        if year != 0:
+            return timezone.datetime(year=year, month=1, day=1)
+    if re.match(r'\d\d\d\d-\d\d-00', date_str):
+        year = int(date_str.split('-')[0])
+        month = int(date_str.split('-')[1])
+        if year != 0:
+            return timezone.datetime(year=year, month=month, day=1)
 
     date_formats = ["%Y-%m-%d"]
 
@@ -63,6 +77,8 @@ class SEINetUpdater(checklist_util.RecordUpdater):
         return self.get_div_value_if_present('verbeventid-div', lambda t: t.split(': ')[1])
 
     def get_date(self) -> str:
+        if self.record.date is not None:
+            return self.record.date
         return self.get_div_value_if_present('eventdate-div', lambda t: parse_seinet_date(t.split(': ')[1]))
 
     def get_verbatim_coordinates(self) -> str:
