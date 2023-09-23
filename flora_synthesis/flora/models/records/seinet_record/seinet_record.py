@@ -24,6 +24,8 @@ class SEINETRecord(record.Record):
     verbatim_date = models.TextField(blank=True, null=True)
     date = models.DateField(blank=True, null=True)
 
+    unknown_date = models.BooleanField(default=False)
+
     verbatim_elevation = models.TextField(blank=True, null=True)
     elevation_ft = models.IntegerField(blank=True, null=True)
 
