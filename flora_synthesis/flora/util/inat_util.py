@@ -141,6 +141,7 @@ class InatChecklistReader(checklist_util.ChecklistReader):
     def __init__(self, checklist: models.Checklist):
         super().__init__(checklist)
         self.inat_api = InatApi(session=SESSION)
+        self.observation_ids = None
 
     def get_family(self, ancestry: str):
         taxon_ids = list(map(int, ancestry.split('/')[::-1][1:]))
@@ -165,7 +166,7 @@ class InatChecklistReader(checklist_util.ChecklistReader):
         self.parameters['per_page'] = 200
 
     def generate_data(self, page=None) -> typing.Generator[checklist_util.ChecklistReadItem, None, None]:
-        for observation_data_item in self.inat_api.read_observation_data(self.parameters):
+        for observation_data_item in self.inat_api.read_observation_data(self.parameters, self.observation_ids):
             ancestry = observation_data_item['taxon']['ancestry']
             taxon_name = observation_data_item['taxon']['name']
             taxon_id = observation_data_item['taxon']['id']
@@ -193,3 +194,8 @@ class InatChecklistReader(checklist_util.ChecklistReader):
 
                 self.checklist.latest_date_retrieved = end_date.date()
                 self.checklist.save()
+
+    def load_specific_observations(self, observation_ids):
+        self.observation_ids = observation_ids
+        with transaction.atomic():
+            self.read_all()

@@ -12,4 +12,5 @@ def get_urlpatterns(router: routers.DefaultRouter):
     return [
         path('api/update_checklist/', views.update, name="update_checklist"),
         path('api/retrieve_checklist/', views.retrieve, name="retrieve_checklist"),
+        path('api/import_inat_observation/', views.import_inat_observation, name="import_inat_observation")
     ]

@@ -27,7 +27,6 @@ class CRUDViewGenerator:
         @api_view(['POST'])
         def delete_object(request: Request) -> Response:
             object_id = request.data['object_id']
-            print('here', object_id)
             object_to_delete = self.model.objects.get(pk=object_id)
             object_to_delete.delete()
 

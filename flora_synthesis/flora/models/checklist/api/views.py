@@ -5,6 +5,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
 from flora import models
+from flora.management.commands.import_inat_obs import import_inat_obs
 from flora.models.checklist.api import serializers
 
 
@@ -43,5 +44,17 @@ def retrieve(request):
         async_task(checklist.read_record_data, limit=n_records)
     else:
         checklist.read_record_data(limit=n_records)
+
+    return Response(status=status.HTTP_200_OK)
+
+
+@api_view(['POST'])
+def import_inat_observation(request):
+    checklist_id = request.data['checklist_id']
+    observation_id = request.data['observation_id']
+
+    checklist = models.Checklist.objects.get(pk=checklist_id)
+
+    import_inat_obs(checklist, observation_id)
 
     return Response(status=status.HTTP_200_OK)
