@@ -60,7 +60,6 @@ def run():
 
             for collector in get_matches(observer_str, all_aliases, all_collectors):
                 record_collectors.append(collector)
-                print(seinet_record, collector)
                 if collector not in collector_dates:
                     collector_dates[collector] = []
                 if seinet_record.date is not None:
