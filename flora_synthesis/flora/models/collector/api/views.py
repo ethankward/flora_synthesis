@@ -4,6 +4,12 @@ from flora import models
 from flora.models.collector.api import serializers
 
 
+class CollectorListViewset(viewsets.ModelViewSet):
+    queryset = models.Collector.objects.all().order_by(
+        'name')
+    serializer_class = serializers.CollectorListSerializer
+
+
 class CollectorViewset(viewsets.ModelViewSet):
     queryset = models.Collector.objects.all().prefetch_related('collector_aliases',
                                                                'collector_seinet_collection_records',

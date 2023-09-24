@@ -38,25 +38,39 @@ def run():
 
     collector_dates = {}
 
+    seinet_record_collectors_through_model = models.SEINETRecord.collectors.through
+
+    through_object_set = set([])
+
     with transaction.atomic():
+
+        seinet_record_collectors_through_model.objects.all().delete()
+
         for seinet_record in models.SEINETRecord.objects.filter(observer__isnull=False, active=True):
-            seinet_record.collectors.clear()
+            # seinet_record.collectors.clear()
 
             observer_str = seinet_record.observer
 
+            record_collectors = []
+
             for collector in get_matches(observer_str, all_aliases):
-                seinet_record.collectors.add(collector)
+                record_collectors.append(collector)
                 print(seinet_record, collector)
                 if collector not in collector_dates:
                     collector_dates[collector] = []
                 if seinet_record.date is not None:
                     collector_dates[collector].append(seinet_record.date)
 
+                through_object_set.add((collector.id, seinet_record.id))
+
+        through_objects = [seinet_record_collectors_through_model(collector_id=i[0], seinetrecord_id=i[1]) for i in
+                           through_object_set]
+        seinet_record_collectors_through_model.objects.bulk_create(through_objects)
+
         models.Collector.objects.update(first_collection_year=None, last_collection_year=None)
         for collector in collector_dates:
 
             if collector_dates[collector]:
-
                 dates = sorted(collector_dates[collector])
                 first_year = dates[0].year
                 last_year = dates[-1].year

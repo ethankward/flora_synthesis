@@ -4,6 +4,12 @@ from flora import models
 from flora.models.collector_alias.api.serializers import CollectorAliasSerializer
 
 
+class CollectorListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Collector
+        fields = ['id', 'name', 'external_url', 'first_collection_year', 'last_collection_year']
+
+
 class CollectorSerializer(serializers.ModelSerializer):
     collector_aliases = CollectorAliasSerializer(many=True, required=False)
     seinet_collection_records = serializers.SerializerMethodField()
