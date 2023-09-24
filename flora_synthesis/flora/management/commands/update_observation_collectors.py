@@ -18,23 +18,28 @@ def get_canonical_name(name):
     return name.replace(' ', '').replace('.', '').lower()
 
 
-def get_match(name, all_aliases):
+def get_match(name, all_aliases, all_collectors):
     for alias in all_aliases:
         if get_canonical_name(alias.alias) == get_canonical_name(name):
             return alias.collector
 
+    for collector in all_collectors:
+        if get_canonical_name(collector.name) == get_canonical_name(name):
+            return collector
 
-def get_matches(observer_str, all_aliases):
+
+def get_matches(observer_str, all_aliases, all_collectors):
     names = split_observer_str(observer_str)
 
     for name in names:
-        match = get_match(name, all_aliases)
+        match = get_match(name, all_aliases, all_collectors)
         if match is not None:
             yield match
 
 
 def run():
     all_aliases = list(models.CollectorAlias.objects.all().select_related('collector'))
+    all_collectors = list(models.Collector.objects.all())
 
     collector_dates = {}
 
@@ -53,7 +58,7 @@ def run():
 
             record_collectors = []
 
-            for collector in get_matches(observer_str, all_aliases):
+            for collector in get_matches(observer_str, all_aliases, all_collectors):
                 record_collectors.append(collector)
                 print(seinet_record, collector)
                 if collector not in collector_dates:
