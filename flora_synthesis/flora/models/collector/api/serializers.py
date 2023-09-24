@@ -1,7 +1,6 @@
 from rest_framework import serializers
 
 from flora import models
-from flora.models.collector_alias.api.serializers import CollectorAliasSerializer
 
 
 class CollectorListSerializer(serializers.ModelSerializer):
@@ -11,7 +10,7 @@ class CollectorListSerializer(serializers.ModelSerializer):
 
 
 class CollectorSerializer(serializers.ModelSerializer):
-    collector_aliases = CollectorAliasSerializer(many=True, required=False)
+    collector_aliases = serializers.SerializerMethodField()
     seinet_collection_records = serializers.SerializerMethodField()
 
     class Meta:
@@ -33,4 +32,11 @@ class CollectorSerializer(serializers.ModelSerializer):
 
                 result.append(data_item)
 
+        result.sort(key=lambda x: (x['date'] is None, x['date']))
+        return result
+
+    def get_collector_aliases(self, obj):
+        result = []
+        for alias in obj.collector_aliases.all():
+            result.append({'value': alias.id, 'display': alias.alias})
         return result
