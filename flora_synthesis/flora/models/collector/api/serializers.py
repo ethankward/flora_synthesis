@@ -27,7 +27,8 @@ class CollectorSerializer(serializers.ModelSerializer):
                              'date': record.date,
                              'external_url': record.external_url(),
                              'observation_type': record.get_observation_type_display(),
-                             'taxon_name': record.checklist_taxon.taxon_name
+                             'taxon_name': record.checklist_taxon.taxon_name,
+                             'observer': record.observer
                              }
 
                 result.append(data_item)
