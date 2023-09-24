@@ -7,6 +7,7 @@ from rest_framework.response import Response
 
 from flora import models
 from flora.models.records.api import serializers
+from flora.models.records.seinet_record.choices.observation_types import SEINETObservationTypeChoices
 
 
 def get_checklist_record_data_item(record):
@@ -58,7 +59,8 @@ class ChecklistRecordView(views.APIView):
 
 class ChecklistRecordNoCollectionsView(views.APIView):
     def get(self, request, **kwargs):
-        records = models.SEINETRecord.objects.filter(collectors__isnull=True, active=True).select_related(
+        records = models.SEINETRecord.objects.filter(collectors__isnull=True, active=True).exclude(
+            observation_type=SEINETObservationTypeChoices.NOTE_PLACEHOLDER).select_related(
             'checklist_taxon',
             'checklist_taxon__checklist',
             'mapped_taxon', 'checklist')
