@@ -1,0 +1,15 @@
+from django.db import models
+
+
+class Collector(models.Model):
+    name = models.TextField()
+    external_url = models.URLField(blank=True, null=True)
+
+    first_collection_year = models.IntegerField(blank=True, null=True)
+    last_collection_year = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        unique_together = [('name',)]
+
+    def __str__(self):
+        return self.name
