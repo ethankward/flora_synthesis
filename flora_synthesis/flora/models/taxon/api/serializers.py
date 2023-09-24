@@ -13,7 +13,9 @@ class TaxonNameSerializer(serializers.ModelSerializer):
 class TaxonUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Taxon
-        fields = ['id', 'taxon_name', 'family', 'seinet_id', 'inat_id', 'introduced', 'endemic', 'life_cycle']
+        fields = ['id', 'taxon_name', 'family', 'seinet_id', 'inat_id', 'introduced', 'endemic', 'life_cycle',
+                  'local_population_strict_northern_range_limit', 'local_population_strict_eastern_range_limit',
+                  'local_population_strict_western_range_limit', 'local_population_strict_southern_range_limit', ]
         extra_kwargs = {
             field: {'required': False} for field in fields
         }
