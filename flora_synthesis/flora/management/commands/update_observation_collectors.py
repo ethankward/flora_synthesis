@@ -5,7 +5,7 @@ from flora import models
 
 
 def split_observer_str(observer_str):
-    delimiters = [', ', ' & ', ' and ', '|', '; ']
+    delimiters = [', ', ' & ', ' and ', '|', '; ', ' or ']
 
     for delimiter in delimiters:
         if delimiter in observer_str:
