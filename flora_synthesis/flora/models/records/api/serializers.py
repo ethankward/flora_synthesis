@@ -19,3 +19,10 @@ class ChecklistRecordSerializer(serializers.Serializer):
     observation_type = serializers.CharField()
     notes = ChecklistRecordNoteSerializer(many=True)
     active = serializers.BooleanField()
+
+
+class ChecklistRecordNoCollectorSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
+    observer = serializers.CharField()
+    date = serializers.DateField()
+    external_url = serializers.URLField()

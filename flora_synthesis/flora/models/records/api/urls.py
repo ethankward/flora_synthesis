@@ -12,4 +12,5 @@ def get_urlpatterns(router: routers.DefaultRouter):
              name='checklist_record'),
         path('api/checklist_records/', views.ChecklistRecordsView.as_view(),
              name='checklist_records'),
+        path('api/checklist_records_no_collector', views.ChecklistRecordNoCollectionsView.as_view(), name='checklist_records_no_collector')
     ]

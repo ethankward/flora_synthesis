@@ -56,6 +56,20 @@ class ChecklistRecordView(views.APIView):
         return Response(serializers.ChecklistRecordSerializer(get_checklist_record_data_item(record)).data)
 
 
+class ChecklistRecordNoCollectionsView(views.APIView):
+    def get(self, request, **kwargs):
+        records = models.SEINETRecord.objects.filter(collectors__isnull=True, active=True).select_related(
+            'checklist_taxon',
+            'checklist_taxon__checklist',
+            'mapped_taxon', 'checklist')
+        result = []
+        for record in records:
+            result.append({'id': record.id, 'observer': record.observer,
+                           'date': record.date, 'external_url': record.external_url()})
+
+        return Response(serializers.ChecklistRecordNoCollectorSerializer(result, many=True).data)
+
+
 class ChecklistRecordsView(views.APIView):
     def get(self, request, **kwargs):
         taxon_id = request.query_params.get('taxon_id', None)
@@ -68,7 +82,6 @@ class ChecklistRecordsView(views.APIView):
                 for record in model.objects.filter(mapped_taxon=taxon).select_related('checklist_taxon',
                                                                                       'checklist_taxon__checklist',
                                                                                       'mapped_taxon'):
-
                     result.append(get_checklist_record_data_item(record))
                 for subtaxon in taxon.subtaxa.all():
                     for record in model.objects.filter(mapped_taxon=subtaxon).select_related('checklist_taxon',
