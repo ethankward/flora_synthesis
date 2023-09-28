@@ -8,10 +8,10 @@ from rest_framework.mixins import UpdateModelMixin
 from rest_framework.response import Response
 
 from flora import models
+from flora.management.commands.remove_orphan_checklist_taxa import run as run_remove_orphan_checklist_taxa
 from flora.management.commands.update_has_collections import run as run_update_has_collections
-from flora.management.commands.update_observation_dates import run as run_update_observation_dates
 from flora.management.commands.update_observation_collectors import run as run_update_observation_collectors
-
+from flora.management.commands.update_observation_dates import run as run_update_observation_dates
 from flora.models.taxon.api import serializers
 from flora.models.taxon.choices import taxon_endemic_statuses, taxon_life_cycles, taxon_introduced_statuses, taxon_ranks
 
@@ -141,10 +141,14 @@ def make_synonym_of(request):
 @api_view(['GET'])
 def update_computed_values(request):
     if settings.PRODUCTION:
+        async_task(run_remove_orphan_checklist_taxa)
+
         async_task(run_update_observation_dates)
         async_task(run_update_has_collections)
         async_task(run_update_observation_collectors)
     else:
+        run_remove_orphan_checklist_taxa()
+
         run_update_observation_dates()
         run_update_has_collections()
         run_update_observation_collectors()

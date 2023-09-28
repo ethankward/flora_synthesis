@@ -28,7 +28,6 @@ def get_match(name, all_aliases, all_collectors):
             return collector
 
 
-
 def get_matches(observer_str, all_aliases, all_collectors):
     names = split_observer_str(observer_str)
 
