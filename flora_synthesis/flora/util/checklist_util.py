@@ -7,7 +7,7 @@ from django.utils import timezone
 from flora import models
 from flora.models.taxon.choices import taxon_ranks
 from flora.util import taxon_name_util
-
+from flora.models.checklist.choices.checklist_types import ChecklistTypeChoices
 
 @dataclass
 class ChecklistReadItem:
@@ -71,7 +71,7 @@ class ChecklistReader:
 
             checklist_record.save()
 
-            if checklist_record.mapped_taxon is None:
+            if checklist_record.mapped_taxon is None or (self.checklist.checklist_type != ChecklistTypeChoices.FLORA):
                 mapped_taxon = taxon_name_util.TaxonName(checklist_taxon.taxon_name,
                                                          family=checklist_taxon.family.family,
                                                          given_rank=checklist_read_item.canonical_rank).get_db_item()
