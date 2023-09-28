@@ -3,7 +3,7 @@ from django.db import models
 
 class Collector(models.Model):
     name = models.TextField()
-    external_url = models.URLField(blank=True, null=True)
+    external_url = models.URLField(blank=True, null=True, max_length=1024)
 
     first_collection_year = models.IntegerField(blank=True, null=True)
     last_collection_year = models.IntegerField(blank=True, null=True)
