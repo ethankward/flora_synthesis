@@ -1,3 +1,5 @@
+from dataclasses import dataclass
+
 from django.db import models
 
 
