@@ -9,7 +9,7 @@ def split_observer_str(observer_str):
 
     for delimiter in delimiters:
         if delimiter in observer_str:
-            return observer_str.split(delimiter)
+            return [observer_str] + observer_str.split(delimiter)
 
     return [observer_str]
 
