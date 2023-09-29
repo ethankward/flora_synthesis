@@ -53,6 +53,8 @@ class Taxon(base_model.BaseModel):
 
     local_population_disjunct = models.BooleanField(blank=True, null=True)
 
+    occurrence_remarks = models.TextField(blank=True, null=True)
+
     class Meta:
         unique_together = [('taxon_name',)]
         indexes = [

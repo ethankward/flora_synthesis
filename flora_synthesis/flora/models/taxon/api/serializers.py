@@ -15,7 +15,8 @@ class TaxonUpdateSerializer(serializers.ModelSerializer):
         model = models.Taxon
         fields = ['id', 'taxon_name', 'family', 'seinet_id', 'inat_id', 'introduced', 'endemic', 'life_cycle',
                   'local_population_strict_northern_range_limit', 'local_population_strict_eastern_range_limit',
-                  'local_population_strict_western_range_limit', 'local_population_strict_southern_range_limit', ]
+                  'local_population_strict_western_range_limit', 'local_population_strict_southern_range_limit',
+                  'occurrence_remarks']
         extra_kwargs = {
             field: {'required': False} for field in fields
         }
@@ -50,7 +51,7 @@ class TaxonSerializer(serializers.ModelSerializer):
                   'local_population_strict_western_range_limit', 'local_population_strict_southern_range_limit',
                   'local_population_northern_edge_range_limit', 'local_population_eastern_edge_range_limit',
                   'local_population_western_edge_range_limit', 'local_population_southern_edge_range_limit',
-                  'local_population_disjunct', 'has_collections', 'primary_checklist']
+                  'local_population_disjunct', 'has_collections', 'primary_checklist', 'occurrence_remarks']
 
     def get_synonyms(self, obj):
         synonyms = obj.taxonsynonym_set.all()
