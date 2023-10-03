@@ -20,7 +20,7 @@ class ChecklistStaleRecordCountViewSet(viewsets.ModelViewSet):
 
 
 @api_view(["POST"])
-def update(request):
+def load_checklist(request):
     checklist_id = request.data["checklist_id"]
     checklist = models.Checklist.objects.get(pk=checklist_id)
 
@@ -33,7 +33,7 @@ def update(request):
 
 
 @api_view(["POST"])
-def retrieve(request):
+def retrieve_records(request):
     checklist_id = request.data["checklist_id"]
     n_records = request.data["n_records"]
 

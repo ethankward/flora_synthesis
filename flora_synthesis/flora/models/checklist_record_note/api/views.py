@@ -1,41 +1,32 @@
+from rest_framework import viewsets
 from rest_framework.exceptions import APIException
-from rest_framework.request import Request
+from rest_framework.mixins import UpdateModelMixin
 
 from flora import models
-from flora.util import api_crud
+from flora.models.checklist_record_note.api import serializers
 
 
-def update_checklist_record_note(
-    note_to_update: models.ChecklistRecordNote, request: Request
-):
-    note_text = request.data["note"]
-    note_to_update.note = note_text
+class ChecklistRecordNoteViewSet(viewsets.ModelViewSet, UpdateModelMixin):
+    queryset = models.ChecklistRecordNote.objects.all()
+    serializer_class = serializers.ChecklistRecordNoteSerializer
 
+    def create(self, request, *args, **kwargs):
+        result = super().create(request, *args, **kwargs)
 
-def create_checklist_record_note(request):
-    checklist_record_id = request.data["checklist_record_id"]
-    checklist_type = request.data["checklist_record_type"]
-    note = request.data["note"]
+        checklist_type = request.data.get("checklist_record_type", None)
+        checklist_record_id = request.data.get("checklist_record_id", None)
 
-    if checklist_type == "f":
-        record = models.FloraRecord.objects.get(pk=checklist_record_id)
-    elif checklist_type == "s":
-        record = models.SEINETRecord.objects.get(pk=checklist_record_id)
-    elif checklist_type == "i":
-        record = models.InatRecord.objects.get(pk=checklist_record_id)
-    else:
-        raise APIException()
+        note = models.ChecklistRecordNote.objects.get(pk=result.data['id'])
 
-    note = models.ChecklistRecordNote(note=note)
-    note.save()
-    record.notes.add(note)
+        if checklist_type is not None and checklist_record_id is not None:
+            if checklist_type == "f":
+                record = models.FloraRecord.objects.get(pk=checklist_record_id)
+            elif checklist_type == "s":
+                record = models.SEINETRecord.objects.get(pk=checklist_record_id)
+            elif checklist_type == "i":
+                record = models.InatRecord.objects.get(pk=checklist_record_id)
+            else:
+                raise APIException()
+            record.notes.add(note)
 
-    return note
-
-
-crud_generator = api_crud.CRUDViewGenerator(
-    model=models.ChecklistRecordNote,
-    model_name="checklist_record_note",
-    creation_function=create_checklist_record_note,
-    update_function=update_checklist_record_note,
-)
+        return result

@@ -4,4 +4,5 @@ from flora.models.checklist_record_note.api import views
 
 
 def get_urlpatterns(router: routers.DefaultRouter):
-    return views.crud_generator.get_urlpatterns()
+    router.register(r"checklist_record_notes", views.ChecklistRecordNoteViewSet, basename="checklist_record_notes")
+    return []
