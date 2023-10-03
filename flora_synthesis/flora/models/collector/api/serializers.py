@@ -55,10 +55,3 @@ class CollectorSerializer(serializers.ModelSerializer):
         for alias in obj.collector_aliases.all():
             result.append({"value": alias.id, "display": alias.alias})
         return result
-
-
-class CollectorUpdateSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.Collector
-        fields = ["id", "name", "external_url"]
-        extra_kwargs = {field: {"required": False} for field in fields}

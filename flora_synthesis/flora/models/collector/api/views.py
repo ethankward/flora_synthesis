@@ -24,9 +24,3 @@ class CollectorViewset(viewsets.ModelViewSet, UpdateModelMixin):
         .order_by("name")
     )
     serializer_class = serializers.CollectorSerializer
-
-    def get_serializer(self, *args, **kwargs):
-        if self.request.method == "GET":
-            return serializers.CollectorSerializer(*args, **kwargs)
-        else:
-            return serializers.CollectorUpdateSerializer(*args, **kwargs)
