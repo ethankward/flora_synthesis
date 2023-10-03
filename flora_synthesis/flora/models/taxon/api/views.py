@@ -33,12 +33,6 @@ class TaxonViewSet(viewsets.ModelViewSet, UpdateModelMixin):
     queryset = models.Taxon.objects.all()
     serializer_class = serializers.TaxonSerializer
 
-    def get_serializer(self, *args, **kwargs):
-        if self.request.method == "GET":
-            return serializers.TaxonSerializer(*args, **kwargs)
-        else:
-            return serializers.TaxonUpdateSerializer(*args, **kwargs)
-
     def get_queryset(self):
         result = (
             models.Taxon.objects.all()

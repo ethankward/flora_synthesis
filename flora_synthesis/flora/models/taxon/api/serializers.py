@@ -10,32 +10,11 @@ class TaxonNameSerializer(serializers.ModelSerializer):
         fields = ["id", "taxon_name"]
 
 
-class TaxonUpdateSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.Taxon
-        fields = [
-            "id",
-            "taxon_name",
-            "family",
-            "seinet_id",
-            "inat_id",
-            "introduced",
-            "endemic",
-            "life_cycle",
-            "local_population_strict_northern_range_limit",
-            "local_population_strict_eastern_range_limit",
-            "local_population_strict_western_range_limit",
-            "local_population_strict_southern_range_limit",
-            "occurrence_remarks",
-        ]
-        extra_kwargs = {field: {"required": False} for field in fields}
-
-
 class TaxonSerializer(serializers.ModelSerializer):
     synonyms = serializers.SerializerMethodField(read_only=False)
-    taxon_checklist_taxa = ChecklistTaxonSerializer(many=True)
-    parent_species = TaxonNameSerializer()
-    subtaxa = TaxonNameSerializer(many=True)
+    taxon_checklist_taxa = ChecklistTaxonSerializer(many=True, read_only=True)
+    parent_species = TaxonNameSerializer(read_only=True)
+    subtaxa = TaxonNameSerializer(many=True, read_only=True)
 
     life_cycle_display = serializers.CharField(source="get_life_cycle_display")
     endemic_display = serializers.CharField(source="get_endemic_display")
@@ -109,18 +88,6 @@ class TaxonSerializer(serializers.ModelSerializer):
 
     def get_observation_dates(self, obj):
         return []
-
-    def update(self, instance, validated_data):
-        instance.family = validated_data.get("family", instance.family)
-        instance.life_cycle = validated_data.get("life_cycle", instance.life_cycle)
-        instance.endemic = validated_data.get("endemic", instance.endemic)
-        instance.introduced = validated_data.get("introduced", instance.introduced)
-        instance.taxon_name = validated_data.get("taxon_name", instance.taxon_name)
-        instance.seinet_id = validated_data.get("seinet_id", instance.seinet_id)
-        instance.inat_id = validated_data.get("inat_id", instance.inat_id)
-
-        instance.save()
-        return instance
 
 
 class MinimalTaxonSerializer(serializers.ModelSerializer):
