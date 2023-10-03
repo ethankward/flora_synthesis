@@ -5,19 +5,17 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('flora', '0029_remove_taxon_observation_dates_and_more'),
-    ]
+    dependencies = [("flora", "0029_remove_taxon_observation_dates_and_more")]
 
     operations = [
         migrations.AddField(
-            model_name='taxon',
-            name='first_observation_date_url',
+            model_name="taxon",
+            name="first_observation_date_url",
             field=models.URLField(blank=True, null=True),
         ),
         migrations.AddField(
-            model_name='taxon',
-            name='last_observation_date_url',
+            model_name="taxon",
+            name="last_observation_date_url",
             field=models.URLField(blank=True, null=True),
         ),
     ]

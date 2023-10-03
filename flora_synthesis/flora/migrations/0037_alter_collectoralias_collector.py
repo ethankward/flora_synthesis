@@ -6,14 +6,16 @@ import django.db.models.deletion
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('flora', '0036_collector_collectoralias'),
-    ]
+    dependencies = [("flora", "0036_collector_collectoralias")]
 
     operations = [
         migrations.AlterField(
-            model_name='collectoralias',
-            name='collector',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='collector_aliases', to='flora.collector'),
-        ),
+            model_name="collectoralias",
+            name="collector",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="collector_aliases",
+                to="flora.collector",
+            ),
+        )
     ]

@@ -4,14 +4,22 @@ import typing
 from django.db import models
 
 from flora.models.records import record
-from flora.models.records.inat_record.choices.observation_types import InatObservationTypeChoices
+from flora.models.records.inat_record.choices.observation_types import (
+    InatObservationTypeChoices,
+)
 
 
 class InatRecord(record.Record):
-    observation_type = models.CharField(max_length=1, choices=InatObservationTypeChoices.choices)
+    observation_type = models.CharField(
+        max_length=1, choices=InatObservationTypeChoices.choices
+    )
 
-    latitude = models.DecimalField(max_digits=32, decimal_places=12, blank=True, null=True)
-    longitude = models.DecimalField(max_digits=32, decimal_places=12, blank=True, null=True)
+    latitude = models.DecimalField(
+        max_digits=32, decimal_places=12, blank=True, null=True
+    )
+    longitude = models.DecimalField(
+        max_digits=32, decimal_places=12, blank=True, null=True
+    )
 
     date = models.DateField(blank=True, null=True)
     observer = models.TextField(blank=True, null=True)
@@ -25,6 +33,7 @@ class InatRecord(record.Record):
 
     def save(self, *args, **kwargs):
         from flora.util import inat_util
+
         inat_util.InatUpdater(self).update_record()
 
         if self.observation_type == InatObservationTypeChoices.CASUAL:

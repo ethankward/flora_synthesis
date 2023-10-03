@@ -8,7 +8,9 @@ from flora.util import date_util
 
 class Checklist(base_model.BaseModel):
     checklist_name = models.TextField()
-    checklist_type = models.CharField(max_length=1, choices=checklist_types.ChecklistTypeChoices.choices)
+    checklist_type = models.CharField(
+        max_length=1, choices=checklist_types.ChecklistTypeChoices.choices
+    )
     checklist_state = models.CharField(max_length=32, blank=True, null=True)
     locality = models.TextField(blank=True, null=True)
 
@@ -17,7 +19,7 @@ class Checklist(base_model.BaseModel):
 
     latest_date_retrieved = models.DateField(blank=True, null=True)
 
-    earliest_year = models.IntegerField(blank=True, null=True)
+    earliest_year: int = models.IntegerField(blank=True, null=True)
 
     primary_checklist = models.BooleanField(default=False)
 
@@ -27,10 +29,10 @@ class Checklist(base_model.BaseModel):
     citation_url = models.URLField(blank=True, null=True)
 
     def __str__(self):
-        return '{} ({})'.format(self.checklist_name, self.get_checklist_type_display())
+        return "{} ({})".format(self.checklist_name, self.get_checklist_type_display())
 
     class Meta:
-        unique_together = [('checklist_name',)]
+        unique_together = [("checklist_name",)]
 
     def load(self, page=None):
         from flora.util import seinet_util, inat_util, local_flora_util
@@ -54,10 +56,13 @@ class Checklist(base_model.BaseModel):
         if self.latest_date_retrieved is not None:
             start_date = self.latest_date_retrieved
         elif self.earliest_year is not None:
-            start_date = timezone.datetime(year=int(self.earliest_year), month=1, day=1).date()
+            start_date = timezone.datetime(
+                year=int(self.earliest_year), month=1, day=1
+            ).date()
         else:
             return
 
         end_date = timezone.now().date() - timezone.timedelta(days=2)
         yield from date_util.combine_date_ranges(
-            list(date_util.date_range_list(start_date, end_date)))
+            list(date_util.date_range_list(start_date, end_date))
+        )

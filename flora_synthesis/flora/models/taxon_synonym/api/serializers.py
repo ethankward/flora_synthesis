@@ -6,4 +6,4 @@ from flora import models
 class TaxonSynonymSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.TaxonSynonym
-        fields = ['id', 'taxon', 'synonym']
+        fields = ["id", "taxon", "synonym"]

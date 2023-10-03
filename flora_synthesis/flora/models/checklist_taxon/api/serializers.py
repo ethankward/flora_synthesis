@@ -6,25 +6,34 @@ from flora import models
 class TaxonNameSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Taxon
-        fields = ['id', 'taxon_name']
+        fields = ["id", "taxon_name"]
 
 
 class ChecklistTaxonNameSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.ChecklistTaxon
-        fields = ['id', 'taxon_name']
+        fields = ["id", "taxon_name"]
 
 
 class ChecklistTaxonSerializer(serializers.ModelSerializer):
     family = serializers.SerializerMethodField()
     all_mapped_taxa = TaxonNameSerializer(many=True)
     primary_checklist = serializers.SerializerMethodField()
-    checklists = serializers.SerializerMethodField();
+    checklists = serializers.SerializerMethodField()
 
     class Meta:
         model = models.ChecklistTaxon
-        fields = ['id', 'taxon_name', 'family', 'external_id', 'rank', 'genus', 'checklists', 'all_mapped_taxa',
-                  'primary_checklist']
+        fields = [
+            "id",
+            "taxon_name",
+            "family",
+            "external_id",
+            "rank",
+            "genus",
+            "checklists",
+            "all_mapped_taxa",
+            "primary_checklist",
+        ]
 
     def get_family(self, obj):
         return obj.family.family

@@ -11,12 +11,14 @@ class Record(base_model.BaseModel):
     full_metadata = models.TextField(blank=True, null=True)
     last_refreshed = models.DateTimeField(blank=True, null=True)
     checklist_taxon = models.ForeignKey("ChecklistTaxon", on_delete=models.CASCADE)
-    mapped_taxon = models.ForeignKey("Taxon", on_delete=models.SET_NULL, blank=True, null=True)
+    mapped_taxon = models.ForeignKey(
+        "Taxon", on_delete=models.SET_NULL, blank=True, null=True
+    )
     notes = models.ManyToManyField("ChecklistRecordNote", blank=True)
 
     class Meta:
         abstract = True
-        unique_together = [('checklist', 'external_id')]
+        unique_together = [("checklist", "external_id")]
 
     def external_url(self):
         return

@@ -5,14 +5,21 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('flora', '0001_initial'),
-    ]
+    dependencies = [("flora", "0001_initial")]
 
     operations = [
         migrations.AlterField(
-            model_name='taxon',
-            name='introduced',
-            field=models.CharField(blank=True, choices=[('i', 'Introduced'), ('n', 'Native'), ('p', 'Possibly introduced')], max_length=1, null=True),
-        ),
+            model_name="taxon",
+            name="introduced",
+            field=models.CharField(
+                blank=True,
+                choices=[
+                    ("i", "Introduced"),
+                    ("n", "Native"),
+                    ("p", "Possibly introduced"),
+                ],
+                max_length=1,
+                null=True,
+            ),
+        )
     ]

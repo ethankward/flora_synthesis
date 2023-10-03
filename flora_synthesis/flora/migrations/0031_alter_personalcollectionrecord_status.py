@@ -5,14 +5,19 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('flora', '0030_taxon_first_observation_date_url_and_more'),
-    ]
+    dependencies = [("flora", "0030_taxon_first_observation_date_url_and_more")]
 
     operations = [
         migrations.AlterField(
-            model_name='personalcollectionrecord',
-            name='status',
-            field=models.CharField(choices=[('p', 'Personal collection'), ('h', 'Submitted to herbarium'), ('t', 'Thrown out')], max_length=1),
-        ),
+            model_name="personalcollectionrecord",
+            name="status",
+            field=models.CharField(
+                choices=[
+                    ("p", "Personal collection"),
+                    ("h", "Submitted to herbarium"),
+                    ("t", "Thrown out"),
+                ],
+                max_length=1,
+            ),
+        )
     ]

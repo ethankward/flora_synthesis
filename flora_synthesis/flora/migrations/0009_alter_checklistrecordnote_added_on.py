@@ -6,14 +6,16 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('flora', '0008_florarecord_notes_inatrecord_notes_and_more'),
-    ]
+    dependencies = [("flora", "0008_florarecord_notes_inatrecord_notes_and_more")]
 
     operations = [
         migrations.AlterField(
-            model_name='checklistrecordnote',
-            name='added_on',
-            field=models.DateTimeField(default=datetime.datetime(2023, 9, 10, 8, 3, 21, 787406, tzinfo=datetime.timezone.utc)),
-        ),
+            model_name="checklistrecordnote",
+            name="added_on",
+            field=models.DateTimeField(
+                default=datetime.datetime(
+                    2023, 9, 10, 8, 3, 21, 787406, tzinfo=datetime.timezone.utc
+                )
+            ),
+        )
     ]

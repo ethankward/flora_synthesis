@@ -5,5 +5,5 @@ from flora.models.checklist_taxon.api import serializers
 
 
 class ChecklistTaxonViewSet(viewsets.ModelViewSet):
-    queryset = models.ChecklistTaxon.objects.all().select_related('family', 'checklist')
+    queryset = models.ChecklistTaxon.objects.all().select_related("family", "checklist")
     serializer_class = serializers.ChecklistTaxonSerializer

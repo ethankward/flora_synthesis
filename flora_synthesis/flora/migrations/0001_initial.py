@@ -8,187 +8,449 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='Checklist',
+            name="Checklist",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('checklist_name', models.TextField()),
-                ('checklist_type', models.CharField(choices=[('i', 'iNaturalist'), ('s', 'SEINet'), ('f', 'Flora')], max_length=1)),
-                ('checklist_state', models.CharField(blank=True, max_length=32, null=True)),
-                ('locality', models.TextField(blank=True, null=True)),
-                ('external_checklist_id', models.IntegerField(blank=True, null=True)),
-                ('local_checklist_fn', models.CharField(blank=True, max_length=256, null=True)),
-                ('latest_date_retrieved', models.DateField(blank=True, null=True)),
-                ('earliest_year', models.IntegerField(blank=True, null=True)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("checklist_name", models.TextField()),
+                (
+                    "checklist_type",
+                    models.CharField(
+                        choices=[("i", "iNaturalist"), ("s", "SEINet"), ("f", "Flora")],
+                        max_length=1,
+                    ),
+                ),
+                (
+                    "checklist_state",
+                    models.CharField(blank=True, max_length=32, null=True),
+                ),
+                ("locality", models.TextField(blank=True, null=True)),
+                ("external_checklist_id", models.IntegerField(blank=True, null=True)),
+                (
+                    "local_checklist_fn",
+                    models.CharField(blank=True, max_length=256, null=True),
+                ),
+                ("latest_date_retrieved", models.DateField(blank=True, null=True)),
+                ("earliest_year", models.IntegerField(blank=True, null=True)),
             ],
-            options={
-                'unique_together': {('checklist_name',)},
-            },
+            options={"unique_together": {("checklist_name",)}},
         ),
         migrations.CreateModel(
-            name='ChecklistTaxon',
+            name="ChecklistTaxon",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('taxon_name', models.CharField(max_length=256)),
-                ('genus', models.CharField(blank=True, max_length=256, null=True)),
-                ('external_id', models.IntegerField(blank=True, null=True)),
-                ('rank', models.CharField(blank=True, max_length=256, null=True)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("taxon_name", models.CharField(max_length=256)),
+                ("genus", models.CharField(blank=True, max_length=256, null=True)),
+                ("external_id", models.IntegerField(blank=True, null=True)),
+                ("rank", models.CharField(blank=True, max_length=256, null=True)),
             ],
         ),
         migrations.CreateModel(
-            name='Taxon',
+            name="Taxon",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('taxon_name', models.CharField(max_length=256)),
-                ('rank', models.CharField(choices=[('S', 'Species'), ('U', 'Subspecies'), ('V', 'Variety'), ('Q', 'Subspecies variety'), ('H', 'Hybrid'), ('G', 'Genus')], max_length=1)),
-                ('genus', models.CharField(max_length=256)),
-                ('family', models.CharField(max_length=256)),
-                ('life_cycle', models.CharField(blank=True, choices=[('a', 'Annual'), ('p', 'Perennial'), ('u', 'Unknown')], max_length=1, null=True)),
-                ('introduced', models.CharField(blank=True, choices=[('i', 'introduced'), ('n', 'native'), ('p', 'possibly introduced')], max_length=1, null=True)),
-                ('endemic', models.CharField(blank=True, choices=[('n', 'Not endemic'), ('u', 'In the US only in Rincons but also occurs outside of the US'), ('z', 'In Arizona only found in Rincons but also occurs outside of Arizona'), ('a', 'Only found in Arizona'), ('r', 'Only found in Rincons')], max_length=1, null=True)),
-                ('inat_id', models.IntegerField(blank=True, null=True)),
-                ('seinet_id', models.IntegerField(blank=True, null=True)),
-                ('parent_species', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='taxon_parent_species', to='flora.taxon')),
-                ('subtaxa', models.ManyToManyField(blank=True, related_name='taxon_subtaxa', to='flora.taxon')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("taxon_name", models.CharField(max_length=256)),
+                (
+                    "rank",
+                    models.CharField(
+                        choices=[
+                            ("S", "Species"),
+                            ("U", "Subspecies"),
+                            ("V", "Variety"),
+                            ("Q", "Subspecies variety"),
+                            ("H", "Hybrid"),
+                            ("G", "Genus"),
+                        ],
+                        max_length=1,
+                    ),
+                ),
+                ("genus", models.CharField(max_length=256)),
+                ("family", models.CharField(max_length=256)),
+                (
+                    "life_cycle",
+                    models.CharField(
+                        blank=True,
+                        choices=[("a", "Annual"), ("p", "Perennial"), ("u", "Unknown")],
+                        max_length=1,
+                        null=True,
+                    ),
+                ),
+                (
+                    "introduced",
+                    models.CharField(
+                        blank=True,
+                        choices=[
+                            ("i", "introduced"),
+                            ("n", "native"),
+                            ("p", "possibly introduced"),
+                        ],
+                        max_length=1,
+                        null=True,
+                    ),
+                ),
+                (
+                    "endemic",
+                    models.CharField(
+                        blank=True,
+                        choices=[
+                            ("n", "Not endemic"),
+                            (
+                                "u",
+                                "In the US only in Rincons but also occurs outside of the US",
+                            ),
+                            (
+                                "z",
+                                "In Arizona only found in Rincons but also occurs outside of Arizona",
+                            ),
+                            ("a", "Only found in Arizona"),
+                            ("r", "Only found in Rincons"),
+                        ],
+                        max_length=1,
+                        null=True,
+                    ),
+                ),
+                ("inat_id", models.IntegerField(blank=True, null=True)),
+                ("seinet_id", models.IntegerField(blank=True, null=True)),
+                (
+                    "parent_species",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="taxon_parent_species",
+                        to="flora.taxon",
+                    ),
+                ),
+                (
+                    "subtaxa",
+                    models.ManyToManyField(
+                        blank=True, related_name="taxon_subtaxa", to="flora.taxon"
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='SEINETRecord',
+            name="SEINETRecord",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('active', models.BooleanField(default=True)),
-                ('is_placeholder', models.BooleanField(default=False)),
-                ('external_id', models.CharField(max_length=256)),
-                ('full_metadata', models.TextField(blank=True, null=True)),
-                ('last_refreshed', models.DateTimeField(blank=True, null=True)),
-                ('observation_type', models.CharField(choices=[('C', 'Collection'), ('G', 'General Research'), ('P', 'Placeholder note')], max_length=1)),
-                ('verbatim_coordinates', models.CharField(blank=True, max_length=32, null=True)),
-                ('latitude', models.DecimalField(blank=True, decimal_places=12, max_digits=32, null=True)),
-                ('longitude', models.DecimalField(blank=True, decimal_places=12, max_digits=32, null=True)),
-                ('verbatim_date', models.CharField(blank=True, max_length=32, null=True)),
-                ('date', models.DateField(blank=True, null=True)),
-                ('verbatim_elevation', models.CharField(blank=True, max_length=32, null=True)),
-                ('elevation_ft', models.IntegerField(blank=True, null=True)),
-                ('locality', models.TextField(blank=True, null=True)),
-                ('herbarium_institution', models.TextField(blank=True, null=True)),
-                ('observer', models.TextField(blank=True, null=True)),
-                ('checklist', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='flora.checklist')),
-                ('checklist_taxon', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='flora.checklisttaxon')),
-                ('mapped_taxon', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='flora.taxon')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("active", models.BooleanField(default=True)),
+                ("is_placeholder", models.BooleanField(default=False)),
+                ("external_id", models.CharField(max_length=256)),
+                ("full_metadata", models.TextField(blank=True, null=True)),
+                ("last_refreshed", models.DateTimeField(blank=True, null=True)),
+                (
+                    "observation_type",
+                    models.CharField(
+                        choices=[
+                            ("C", "Collection"),
+                            ("G", "General Research"),
+                            ("P", "Placeholder note"),
+                        ],
+                        max_length=1,
+                    ),
+                ),
+                (
+                    "verbatim_coordinates",
+                    models.CharField(blank=True, max_length=32, null=True),
+                ),
+                (
+                    "latitude",
+                    models.DecimalField(
+                        blank=True, decimal_places=12, max_digits=32, null=True
+                    ),
+                ),
+                (
+                    "longitude",
+                    models.DecimalField(
+                        blank=True, decimal_places=12, max_digits=32, null=True
+                    ),
+                ),
+                (
+                    "verbatim_date",
+                    models.CharField(blank=True, max_length=32, null=True),
+                ),
+                ("date", models.DateField(blank=True, null=True)),
+                (
+                    "verbatim_elevation",
+                    models.CharField(blank=True, max_length=32, null=True),
+                ),
+                ("elevation_ft", models.IntegerField(blank=True, null=True)),
+                ("locality", models.TextField(blank=True, null=True)),
+                ("herbarium_institution", models.TextField(blank=True, null=True)),
+                ("observer", models.TextField(blank=True, null=True)),
+                (
+                    "checklist",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="flora.checklist",
+                    ),
+                ),
+                (
+                    "checklist_taxon",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="flora.checklisttaxon",
+                    ),
+                ),
+                (
+                    "mapped_taxon",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        to="flora.taxon",
+                    ),
+                ),
             ],
-            options={
-                'abstract': False,
-            },
+            options={"abstract": False},
         ),
         migrations.CreateModel(
-            name='InatRecord',
+            name="InatRecord",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('active', models.BooleanField(default=True)),
-                ('is_placeholder', models.BooleanField(default=False)),
-                ('external_id', models.CharField(max_length=256)),
-                ('full_metadata', models.TextField(blank=True, null=True)),
-                ('last_refreshed', models.DateTimeField(blank=True, null=True)),
-                ('observation_type', models.CharField(choices=[('R', 'Research grade'), ('N', 'Needs ID'), ('C', 'Casual'), ('U', 'Unknown')], max_length=1)),
-                ('latitude', models.DecimalField(blank=True, decimal_places=12, max_digits=32, null=True)),
-                ('longitude', models.DecimalField(blank=True, decimal_places=12, max_digits=32, null=True)),
-                ('date', models.DateField(blank=True, null=True)),
-                ('observer', models.TextField(blank=True, null=True)),
-                ('checklist', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='flora.checklist')),
-                ('checklist_taxon', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='flora.checklisttaxon')),
-                ('mapped_taxon', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='flora.taxon')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("active", models.BooleanField(default=True)),
+                ("is_placeholder", models.BooleanField(default=False)),
+                ("external_id", models.CharField(max_length=256)),
+                ("full_metadata", models.TextField(blank=True, null=True)),
+                ("last_refreshed", models.DateTimeField(blank=True, null=True)),
+                (
+                    "observation_type",
+                    models.CharField(
+                        choices=[
+                            ("R", "Research grade"),
+                            ("N", "Needs ID"),
+                            ("C", "Casual"),
+                            ("U", "Unknown"),
+                        ],
+                        max_length=1,
+                    ),
+                ),
+                (
+                    "latitude",
+                    models.DecimalField(
+                        blank=True, decimal_places=12, max_digits=32, null=True
+                    ),
+                ),
+                (
+                    "longitude",
+                    models.DecimalField(
+                        blank=True, decimal_places=12, max_digits=32, null=True
+                    ),
+                ),
+                ("date", models.DateField(blank=True, null=True)),
+                ("observer", models.TextField(blank=True, null=True)),
+                (
+                    "checklist",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="flora.checklist",
+                    ),
+                ),
+                (
+                    "checklist_taxon",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="flora.checklisttaxon",
+                    ),
+                ),
+                (
+                    "mapped_taxon",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        to="flora.taxon",
+                    ),
+                ),
             ],
-            options={
-                'abstract': False,
-            },
+            options={"abstract": False},
         ),
         migrations.CreateModel(
-            name='FloraRecord',
+            name="FloraRecord",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('active', models.BooleanField(default=True)),
-                ('is_placeholder', models.BooleanField(default=False)),
-                ('external_id', models.CharField(max_length=256)),
-                ('full_metadata', models.TextField(blank=True, null=True)),
-                ('last_refreshed', models.DateTimeField(blank=True, null=True)),
-                ('observation_type', models.CharField(choices=[('P', 'Present'), ('M', 'Missing')], max_length=1)),
-                ('checklist', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='flora.checklist')),
-                ('checklist_taxon', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='flora.checklisttaxon')),
-                ('mapped_taxon', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='flora.taxon')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("active", models.BooleanField(default=True)),
+                ("is_placeholder", models.BooleanField(default=False)),
+                ("external_id", models.CharField(max_length=256)),
+                ("full_metadata", models.TextField(blank=True, null=True)),
+                ("last_refreshed", models.DateTimeField(blank=True, null=True)),
+                (
+                    "observation_type",
+                    models.CharField(
+                        choices=[("P", "Present"), ("M", "Missing")], max_length=1
+                    ),
+                ),
+                (
+                    "checklist",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="flora.checklist",
+                    ),
+                ),
+                (
+                    "checklist_taxon",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="flora.checklisttaxon",
+                    ),
+                ),
+                (
+                    "mapped_taxon",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        to="flora.taxon",
+                    ),
+                ),
             ],
-            options={
-                'abstract': False,
-            },
+            options={"abstract": False},
         ),
         migrations.CreateModel(
-            name='ChecklistTaxonFamily',
+            name="ChecklistTaxonFamily",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('family', models.CharField(max_length=256)),
-                ('external_id', models.CharField(blank=True, max_length=32, null=True)),
-                ('checklist', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='flora.checklist')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("family", models.CharField(max_length=256)),
+                ("external_id", models.CharField(blank=True, max_length=32, null=True)),
+                (
+                    "checklist",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="flora.checklist",
+                    ),
+                ),
             ],
         ),
         migrations.AddField(
-            model_name='checklisttaxon',
-            name='all_mapped_taxa',
-            field=models.ManyToManyField(blank=True, related_name='taxon_checklist_taxa', to='flora.taxon'),
+            model_name="checklisttaxon",
+            name="all_mapped_taxa",
+            field=models.ManyToManyField(
+                blank=True, related_name="taxon_checklist_taxa", to="flora.taxon"
+            ),
         ),
         migrations.AddField(
-            model_name='checklisttaxon',
-            name='checklist',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='flora.checklist'),
+            model_name="checklisttaxon",
+            name="checklist",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE, to="flora.checklist"
+            ),
         ),
         migrations.AddField(
-            model_name='checklisttaxon',
-            name='family',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='flora.checklisttaxonfamily'),
+            model_name="checklisttaxon",
+            name="family",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                to="flora.checklisttaxonfamily",
+            ),
         ),
         migrations.CreateModel(
-            name='TaxonSynonym',
+            name="TaxonSynonym",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('synonym', models.CharField(max_length=256)),
-                ('taxon', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='flora.taxon')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("synonym", models.CharField(max_length=256)),
+                (
+                    "taxon",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="flora.taxon"
+                    ),
+                ),
             ],
-            options={
-                'unique_together': {('synonym',)},
-            },
+            options={"unique_together": {("synonym",)}},
         ),
         migrations.AddIndex(
-            model_name='taxon',
-            index=models.Index(fields=['family', 'taxon_name'], name='flora_taxon_family_307205_idx'),
+            model_name="taxon",
+            index=models.Index(
+                fields=["family", "taxon_name"], name="flora_taxon_family_307205_idx"
+            ),
+        ),
+        migrations.AlterUniqueTogether(name="taxon", unique_together={("taxon_name",)}),
+        migrations.AlterUniqueTogether(
+            name="seinetrecord", unique_together={("checklist", "external_id")}
         ),
         migrations.AlterUniqueTogether(
-            name='taxon',
-            unique_together={('taxon_name',)},
+            name="inatrecord", unique_together={("checklist", "external_id")}
         ),
         migrations.AlterUniqueTogether(
-            name='seinetrecord',
-            unique_together={('checklist', 'external_id')},
-        ),
-        migrations.AlterUniqueTogether(
-            name='inatrecord',
-            unique_together={('checklist', 'external_id')},
-        ),
-        migrations.AlterUniqueTogether(
-            name='florarecord',
-            unique_together={('checklist', 'external_id')},
+            name="florarecord", unique_together={("checklist", "external_id")}
         ),
         migrations.AddIndex(
-            model_name='checklisttaxonfamily',
-            index=models.Index(fields=['family', 'checklist'], name='flora_check_family_8f9ff1_idx'),
+            model_name="checklisttaxonfamily",
+            index=models.Index(
+                fields=["family", "checklist"], name="flora_check_family_8f9ff1_idx"
+            ),
         ),
         migrations.AlterUniqueTogether(
-            name='checklisttaxonfamily',
-            unique_together={('checklist', 'family'), ('checklist', 'external_id')},
+            name="checklisttaxonfamily",
+            unique_together={("checklist", "family"), ("checklist", "external_id")},
         ),
         migrations.AlterUniqueTogether(
-            name='checklisttaxon',
-            unique_together={('checklist', 'taxon_name')},
+            name="checklisttaxon", unique_together={("checklist", "taxon_name")}
         ),
     ]

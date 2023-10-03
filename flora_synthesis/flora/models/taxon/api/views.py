@@ -8,12 +8,25 @@ from rest_framework.mixins import UpdateModelMixin
 from rest_framework.response import Response
 
 from flora import models
-from flora.management.commands.remove_orphan_checklist_taxa import run as run_remove_orphan_checklist_taxa
-from flora.management.commands.update_has_collections import run as run_update_has_collections
-from flora.management.commands.update_observation_collectors import run as run_update_observation_collectors
-from flora.management.commands.update_observation_dates import run as run_update_observation_dates
+from flora.management.commands.remove_orphan_checklist_taxa import (
+    run as run_remove_orphan_checklist_taxa,
+)
+from flora.management.commands.update_has_collections import (
+    run as run_update_has_collections,
+)
+from flora.management.commands.update_observation_collectors import (
+    run as run_update_observation_collectors,
+)
+from flora.management.commands.update_observation_dates import (
+    run as run_update_observation_dates,
+)
 from flora.models.taxon.api import serializers
-from flora.models.taxon.choices import taxon_endemic_statuses, taxon_life_cycles, taxon_introduced_statuses, taxon_ranks
+from flora.models.taxon.choices import (
+    taxon_endemic_statuses,
+    taxon_life_cycles,
+    taxon_introduced_statuses,
+    taxon_ranks,
+)
 
 
 class TaxonViewSet(viewsets.ModelViewSet, UpdateModelMixin):
@@ -27,25 +40,31 @@ class TaxonViewSet(viewsets.ModelViewSet, UpdateModelMixin):
             return serializers.TaxonUpdateSerializer(*args, **kwargs)
 
     def get_queryset(self):
-        result = models.Taxon.objects.all().prefetch_related('subtaxa', 'taxonsynonym_set',
+        result = (
+            models.Taxon.objects.all()
+            .prefetch_related("subtaxa", "taxonsynonym_set")
+            .select_related("parent_species")
+        )
 
-                                                             ).select_related(
-            'parent_species')
-
-        checklist_id = self.request.query_params.get('checklist', None)
-        genus = self.request.query_params.get('genus', None)
-        family = self.request.query_params.get('family', None)
+        checklist_id = self.request.query_params.get("checklist", None)
+        genus = self.request.query_params.get("genus", None)
+        family = self.request.query_params.get("family", None)
 
         if checklist_id is not None:
-            pf = Prefetch('taxon_checklist_taxa', queryset=models.ChecklistTaxon.objects.filter(checklist=checklist_id))
+            pf = Prefetch(
+                "taxon_checklist_taxa",
+                queryset=models.ChecklistTaxon.objects.filter(checklist=checklist_id),
+            )
             result = result.filter(taxon_checklist_taxa__checklist=checklist_id)
             result = result.prefetch_related(pf)
         else:
-            result = result.prefetch_related('taxon_checklist_taxa')
+            result = result.prefetch_related("taxon_checklist_taxa")
 
-        result = result.prefetch_related('taxon_checklist_taxa__checklist',
-                                         'taxon_checklist_taxa__all_mapped_taxa',
-                                         'taxon_checklist_taxa__family')
+        result = result.prefetch_related(
+            "taxon_checklist_taxa__checklist",
+            "taxon_checklist_taxa__all_mapped_taxa",
+            "taxon_checklist_taxa__family",
+        )
         if genus is not None:
             result = result.filter(genus=genus)
 
@@ -53,7 +72,7 @@ class TaxonViewSet(viewsets.ModelViewSet, UpdateModelMixin):
             result = result.filter(family=family)
 
         result = result.distinct()
-        result = result.order_by('family', 'taxon_name')
+        result = result.order_by("family", "taxon_name")
 
         return result
 
@@ -63,9 +82,10 @@ class PrimaryChecklistTaxonViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.MinimalTaxonSerializer
 
     def get_queryset(self):
-        result = models.Taxon.objects.all().order_by(
-            'taxon_name')
-        result = result.filter(taxon_checklist_taxa__checklist__primary_checklist=True).distinct()
+        result = models.Taxon.objects.all().order_by("taxon_name")
+        result = result.filter(
+            taxon_checklist_taxa__checklist__primary_checklist=True
+        ).distinct()
         return result
 
 
@@ -74,8 +94,8 @@ class TaxonAutocompleteViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.TaxonNameSerializer
 
     def get_queryset(self):
-        result = models.Taxon.objects.all().order_by('taxon_name')
-        search_term = self.request.query_params.get('search_term', None)
+        result = models.Taxon.objects.all().order_by("taxon_name")
+        search_term = self.request.query_params.get("search_term", None)
 
         if search_term is not None:
             result = result.filter(taxon_name__icontains=search_term)
@@ -85,60 +105,79 @@ class TaxonAutocompleteViewSet(viewsets.ModelViewSet):
 
 class FamiliesListView(views.APIView):
     def get(self, request):
-        data = models.Taxon.objects.all().filter(taxon_checklist_taxa__checklist__primary_checklist=True).order_by(
-            'family').values_list('family').distinct()
-        return Response(serializers.TaxonFamilySerializer([{'family': family[0]} for family in data], many=True).data)
+        data = (
+            models.Taxon.objects.all()
+            .filter(taxon_checklist_taxa__checklist__primary_checklist=True)
+            .order_by("family")
+            .values_list("family")
+            .distinct()
+        )
+        return Response(
+            serializers.TaxonFamilySerializer(
+                [{"family": family[0]} for family in data], many=True
+            ).data
+        )
 
 
 class LifeCycleView(views.APIView):
     def get(self, request):
         data = taxon_life_cycles.LifeCycleChoices.choices
         return Response(
-            serializers.LifeCycleSerializer([{'value': i[0], 'display': i[1]} for i in data], many=True).data)
+            serializers.LifeCycleSerializer(
+                [{"value": i[0], "display": i[1]} for i in data], many=True
+            ).data
+        )
 
 
 class EndemicView(views.APIView):
     def get(self, request):
         data = taxon_endemic_statuses.EndemicChoices.choices
-        return Response(serializers.EndemicSerializer([{'value': i[0], 'display': i[1]} for i in data], many=True).data)
+        return Response(
+            serializers.EndemicSerializer(
+                [{"value": i[0], "display": i[1]} for i in data], many=True
+            ).data
+        )
 
 
 class IntroducedView(views.APIView):
     def get(self, request):
         data = taxon_introduced_statuses.IntroducedChoices.choices
         return Response(
-            serializers.IntroducedSerializer([{'value': i[0], 'display': i[1]} for i in data], many=True).data)
+            serializers.IntroducedSerializer(
+                [{"value": i[0], "display": i[1]} for i in data], many=True
+            ).data
+        )
 
 
 class RankChoicesView(views.APIView):
     def get(self, request):
         data = taxon_ranks.TaxonRankChoices.choices
         return Response(
-            serializers.IntroducedSerializer([{'value': i[0], 'display': i[1]} for i in data], many=True).data)
+            serializers.IntroducedSerializer(
+                [{"value": i[0], "display": i[1]} for i in data], many=True
+            ).data
+        )
 
 
-@api_view(['POST'])
+@api_view(["POST"])
 def make_synonym_of(request):
-    if request.method != 'POST':
+    if request.method != "POST":
         return
 
-    taxon_id_1 = request.data['taxon_id_1']
-    taxon_id_2 = request.data['taxon_id_2']
+    taxon_id_1 = request.data["taxon_id_1"]
+    taxon_id_2 = request.data["taxon_id_2"]
 
     taxon_1 = models.Taxon.objects.get(pk=taxon_id_1)
     taxon_2 = models.Taxon.objects.get(pk=taxon_id_2)
 
-    synonym = models.TaxonSynonym(
-        synonym=taxon_1.taxon_name,
-        taxon=taxon_2
-    )
+    synonym = models.TaxonSynonym(synonym=taxon_1.taxon_name, taxon=taxon_2)
     with transaction.atomic():
         synonym.save()
 
     return Response(status=status.HTTP_200_OK)
 
 
-@api_view(['GET'])
+@api_view(["GET"])
 def update_computed_values(request):
     if settings.PRODUCTION:
         async_task(run_remove_orphan_checklist_taxa)

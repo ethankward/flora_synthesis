@@ -6,31 +6,47 @@ import django.db.models.deletion
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('flora', '0035_seinetrecord_unknown_date'),
-    ]
+    dependencies = [("flora", "0035_seinetrecord_unknown_date")]
 
     operations = [
         migrations.CreateModel(
-            name='Collector',
+            name="Collector",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.TextField()),
-                ('external_url', models.URLField(blank=True, null=True)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.TextField()),
+                ("external_url", models.URLField(blank=True, null=True)),
             ],
-            options={
-                'unique_together': {('name',)},
-            },
+            options={"unique_together": {("name",)}},
         ),
         migrations.CreateModel(
-            name='CollectorAlias',
+            name="CollectorAlias",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('alias', models.TextField()),
-                ('collector', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='flora.collector')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("alias", models.TextField()),
+                (
+                    "collector",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="flora.collector",
+                    ),
+                ),
             ],
-            options={
-                'unique_together': {('alias',)},
-            },
+            options={"unique_together": {("alias",)}},
         ),
     ]

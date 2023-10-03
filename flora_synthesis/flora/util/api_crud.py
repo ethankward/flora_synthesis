@@ -8,25 +8,30 @@ from rest_framework.response import Response
 
 
 class CRUDViewGenerator:
-    def __init__(self, model, model_name: str, creation_function: typing.Callable,
-                 update_function: typing.Callable):
+    def __init__(
+        self,
+        model,
+        model_name: str,
+        creation_function: typing.Callable,
+        update_function: typing.Callable,
+    ):
         self.model = model
         self.model_name = model_name
         self.creation_function = creation_function
         self.update_function = update_function
 
     def get_creation_view(self) -> typing.Callable[[Request], Response]:
-        @api_view(['PUT'])
+        @api_view(["PUT"])
         def create_object(request: Request):
             new_object = self.creation_function(request)
-            return Response(status=status.HTTP_201_CREATED, data={'id': new_object.pk})
+            return Response(status=status.HTTP_201_CREATED, data={"id": new_object.pk})
 
         return create_object
 
     def get_deletion_view(self) -> typing.Callable[[Request], Response]:
-        @api_view(['POST'])
+        @api_view(["POST"])
         def delete_object(request: Request) -> Response:
-            object_id = request.data['id']
+            object_id = request.data["id"]
             object_to_delete = self.model.objects.get(pk=object_id)
             object_to_delete.delete()
 
@@ -35,9 +40,9 @@ class CRUDViewGenerator:
         return delete_object
 
     def get_update_view(self) -> typing.Callable[[Request], Response]:
-        @api_view(['POST'])
+        @api_view(["POST"])
         def update_object(request: Request) -> Response:
-            object_id = request.data['id']
+            object_id = request.data["id"]
 
             object_to_update = self.model.objects.get(pk=object_id)
             self.update_function(object_to_update, request)
@@ -53,7 +58,7 @@ class CRUDViewGenerator:
         update_view = self.get_update_view()
 
         return [
-            path('api/create_new_{}/'.format(self.model_name), creation_view),
-            path('api/delete_{}/'.format(self.model_name), deletion_view),
-            path('api/update_{}/'.format(self.model_name), update_view),
+            path("api/create_new_{}/".format(self.model_name), creation_view),
+            path("api/delete_{}/".format(self.model_name), deletion_view),
+            path("api/update_{}/".format(self.model_name), update_view),
         ]

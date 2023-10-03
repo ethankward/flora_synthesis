@@ -1,5 +1,7 @@
 from django.db import models
 
+from flora.models.base_model import BaseModel
+
 
 class StatusTypes(models.TextChoices):
     p = "p", "Personal collection"
@@ -7,7 +9,7 @@ class StatusTypes(models.TextChoices):
     t = "t", "Thrown out"
 
 
-class PersonalCollectionRecord(models.Model):
+class PersonalCollectionRecord(BaseModel):
     collection_number = models.IntegerField()
     date = models.DateField()
     family = models.CharField(max_length=256)
@@ -17,10 +19,16 @@ class PersonalCollectionRecord(models.Model):
     inat_record_id = models.IntegerField(blank=True, null=True)
     seinet_record_id = models.IntegerField(blank=True, null=True)
 
-    specific_taxon = models.ForeignKey("Taxon", blank=True, null=True, on_delete=models.SET_NULL)
+    specific_taxon = models.ForeignKey(
+        "Taxon", blank=True, null=True, on_delete=models.SET_NULL
+    )
 
-    latitude = models.DecimalField(max_digits=32, decimal_places=12, blank=True, null=True)
-    longitude = models.DecimalField(max_digits=32, decimal_places=12, blank=True, null=True)
+    latitude = models.DecimalField(
+        max_digits=32, decimal_places=12, blank=True, null=True
+    )
+    longitude = models.DecimalField(
+        max_digits=32, decimal_places=12, blank=True, null=True
+    )
 
     elevation_ft = models.IntegerField(blank=True, null=True)
     time = models.TimeField(blank=True, null=True)

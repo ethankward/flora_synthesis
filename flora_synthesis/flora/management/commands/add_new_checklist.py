@@ -6,19 +6,19 @@ from flora.models.checklist.choices import checklist_types
 
 def get_validated_input_choices(prompt, choices):
     while True:
-        value = input("{} ({}): ".format(prompt, ', '.join(choices)))
+        value = input("{} ({}): ".format(prompt, ", ".join(choices)))
         if value in choices:
             return value
 
 
 class Command(BaseCommand):
-
     def handle(self, *args, **options):
-        print('Creating new checklist')
+        print("Creating new checklist")
         result = models.Checklist()
 
-        result.checklist_type = get_validated_input_choices("Checklist type",
-                                                            checklist_types.ChecklistTypeChoices.values)
+        result.checklist_type = get_validated_input_choices(
+            "Checklist type", checklist_types.ChecklistTypeChoices.values
+        )
         result.checklist_name = input("Checklist name: ")
 
         result.checklist_state = input("Checklist state: ")

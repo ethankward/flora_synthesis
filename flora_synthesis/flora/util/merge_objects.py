@@ -1,6 +1,10 @@
 from django.db import transaction
 from django.db.models.fields.related import ManyToManyField
-from django.db.models.fields.reverse_related import ManyToOneRel, ManyToManyRel, OneToOneRel
+from django.db.models.fields.reverse_related import (
+    ManyToOneRel,
+    ManyToManyRel,
+    OneToOneRel,
+)
 
 
 def merge_objects(object_to_delete, object_to_keep):

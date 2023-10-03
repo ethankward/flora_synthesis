@@ -5,17 +5,23 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('flora', '0006_taxon_flora_taxon_taxon_n_5ca925_idx_and_more'),
-    ]
+    dependencies = [("flora", "0006_taxon_flora_taxon_taxon_n_5ca925_idx_and_more")]
 
     operations = [
         migrations.CreateModel(
-            name='ChecklistRecordNote',
+            name="ChecklistRecordNote",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('note', models.TextField()),
-                ('added_on', models.DateTimeField()),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("note", models.TextField()),
+                ("added_on", models.DateTimeField()),
             ],
-        ),
+        )
     ]

@@ -1,7 +1,9 @@
 from rest_framework import serializers
 
 from flora.models.checklist.api.serializers import ChecklistSerializer
-from flora.models.checklist_record_note.api.serializers import ChecklistRecordNoteSerializer
+from flora.models.checklist_record_note.api.serializers import (
+    ChecklistRecordNoteSerializer,
+)
 from flora.models.checklist_taxon.api.serializers import ChecklistTaxonNameSerializer
 from flora.models.taxon.api.serializers import TaxonNameSerializer
 

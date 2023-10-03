@@ -6,8 +6,8 @@ from flora.util import taxon_name_util
 
 
 def load_data(fn):
-    result = open("flora/data/{}.txt".format(fn)).read().split('\n')
-    return [i.split('\t') for i in result]
+    result = open("flora/data/{}.txt".format(fn)).read().split("\n")
+    return [i.split("\t") for i in result]
 
 
 def import_synonyms():
@@ -15,7 +15,9 @@ def import_synonyms():
 
     for taxon_name, synonym, family in data:
         taxon = taxon_name_util.TaxonName(taxon_name, family=family).get_db_item()
-        s_db, _ = models.TaxonSynonym.objects.get_or_create(synonym=synonym, taxon=taxon)
+        s_db, _ = models.TaxonSynonym.objects.get_or_create(
+            synonym=synonym, taxon=taxon
+        )
         s_db.taxon = taxon
         s_db.save()
 

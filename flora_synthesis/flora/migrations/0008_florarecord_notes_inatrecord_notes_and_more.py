@@ -5,24 +5,22 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('flora', '0007_checklistrecordnote'),
-    ]
+    dependencies = [("flora", "0007_checklistrecordnote")]
 
     operations = [
         migrations.AddField(
-            model_name='florarecord',
-            name='notes',
-            field=models.ManyToManyField(blank=True, to='flora.checklistrecordnote'),
+            model_name="florarecord",
+            name="notes",
+            field=models.ManyToManyField(blank=True, to="flora.checklistrecordnote"),
         ),
         migrations.AddField(
-            model_name='inatrecord',
-            name='notes',
-            field=models.ManyToManyField(blank=True, to='flora.checklistrecordnote'),
+            model_name="inatrecord",
+            name="notes",
+            field=models.ManyToManyField(blank=True, to="flora.checklistrecordnote"),
         ),
         migrations.AddField(
-            model_name='seinetrecord',
-            name='notes',
-            field=models.ManyToManyField(blank=True, to='flora.checklistrecordnote'),
+            model_name="seinetrecord",
+            name="notes",
+            field=models.ManyToManyField(blank=True, to="flora.checklistrecordnote"),
         ),
     ]

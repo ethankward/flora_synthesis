@@ -5,14 +5,12 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('flora', '0019_alter_checklist_checklist_type'),
-    ]
+    dependencies = [("flora", "0019_alter_checklist_checklist_type")]
 
     operations = [
         migrations.AddField(
-            model_name='personalcollectionrecord',
-            name='collection_number',
+            model_name="personalcollectionrecord",
+            name="collection_number",
             field=models.IntegerField(blank=True, null=True),
-        ),
+        )
     ]

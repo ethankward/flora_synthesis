@@ -1,4 +1,4 @@
-from rest_framework.pagination import LimitOffsetPagination, BasePagination
+from rest_framework.pagination import LimitOffsetPagination
 
 
 class GetAllToggle(LimitOffsetPagination):

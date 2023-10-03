@@ -5,14 +5,22 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('flora', '0032_taxon_local_population_disjunct_and_more'),
-    ]
+    dependencies = [("flora", "0032_taxon_local_population_disjunct_and_more")]
 
     operations = [
         migrations.AlterField(
-            model_name='taxon',
-            name='life_cycle',
-            field=models.CharField(blank=True, choices=[('a', 'Annual'), ('p', 'Perennial'), ('b', 'Biennial'), ('u', 'Unknown')], max_length=1, null=True),
-        ),
+            model_name="taxon",
+            name="life_cycle",
+            field=models.CharField(
+                blank=True,
+                choices=[
+                    ("a", "Annual"),
+                    ("p", "Perennial"),
+                    ("b", "Biennial"),
+                    ("u", "Unknown"),
+                ],
+                max_length=1,
+                null=True,
+            ),
+        )
     ]

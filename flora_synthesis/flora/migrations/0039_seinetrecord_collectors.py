@@ -5,14 +5,12 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('flora', '0038_collector_first_collection_year_and_more'),
-    ]
+    dependencies = [("flora", "0038_collector_first_collection_year_and_more")]
 
     operations = [
         migrations.AddField(
-            model_name='seinetrecord',
-            name='collectors',
-            field=models.ManyToManyField(blank=True, to='flora.collector'),
-        ),
+            model_name="seinetrecord",
+            name="collectors",
+            field=models.ManyToManyField(blank=True, to="flora.collector"),
+        )
     ]

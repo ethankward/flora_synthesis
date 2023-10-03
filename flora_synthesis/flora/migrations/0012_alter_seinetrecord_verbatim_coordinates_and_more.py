@@ -5,24 +5,22 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('flora', '0011_alter_seinetrecord_verbatim_date_and_more'),
-    ]
+    dependencies = [("flora", "0011_alter_seinetrecord_verbatim_date_and_more")]
 
     operations = [
         migrations.AlterField(
-            model_name='seinetrecord',
-            name='verbatim_coordinates',
+            model_name="seinetrecord",
+            name="verbatim_coordinates",
             field=models.TextField(blank=True, null=True),
         ),
         migrations.AlterField(
-            model_name='seinetrecord',
-            name='verbatim_date',
+            model_name="seinetrecord",
+            name="verbatim_date",
             field=models.TextField(blank=True, null=True),
         ),
         migrations.AlterField(
-            model_name='seinetrecord',
-            name='verbatim_elevation',
+            model_name="seinetrecord",
+            name="verbatim_elevation",
             field=models.TextField(blank=True, null=True),
         ),
     ]

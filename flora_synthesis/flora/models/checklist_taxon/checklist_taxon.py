@@ -15,10 +15,12 @@ class ChecklistTaxon(base_model.BaseModel):
     external_id = models.IntegerField(blank=True, null=True)
     rank = models.CharField(max_length=256, blank=True, null=True)
 
-    all_mapped_taxa = models.ManyToManyField("Taxon", blank=True, related_name="taxon_checklist_taxa")
+    all_mapped_taxa = models.ManyToManyField(
+        "Taxon", blank=True, related_name="taxon_checklist_taxa"
+    )
 
     class Meta:
-        unique_together = [('checklist', 'taxon_name')]
+        unique_together = [("checklist", "taxon_name")]
 
     def save(self, *args, **kwargs):
         from flora import models
@@ -26,9 +28,15 @@ class ChecklistTaxon(base_model.BaseModel):
         if self.pk is not None:
             self.all_mapped_taxa.clear()
 
-            seinet_records = models.SEINETRecord.objects.filter(checklist_taxon=self, active=True)
-            inat_records = models.InatRecord.objects.filter(checklist_taxon=self, active=True)
-            flora_records = models.FloraRecord.objects.filter(checklist_taxon=self, active=True)
+            seinet_records = models.SEINETRecord.objects.filter(
+                checklist_taxon=self, active=True
+            )
+            inat_records = models.InatRecord.objects.filter(
+                checklist_taxon=self, active=True
+            )
+            flora_records = models.FloraRecord.objects.filter(
+                checklist_taxon=self, active=True
+            )
             for record in itertools.chain(seinet_records, inat_records, flora_records):
                 mapped_taxon = record.mapped_taxon
                 if mapped_taxon is not None:

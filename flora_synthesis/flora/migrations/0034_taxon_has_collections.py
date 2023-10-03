@@ -5,14 +5,12 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('flora', '0033_alter_taxon_life_cycle'),
-    ]
+    dependencies = [("flora", "0033_alter_taxon_life_cycle")]
 
     operations = [
         migrations.AddField(
-            model_name='taxon',
-            name='has_collections',
+            model_name="taxon",
+            name="has_collections",
             field=models.BooleanField(blank=True, null=True),
-        ),
+        )
     ]

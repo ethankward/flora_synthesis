@@ -5,14 +5,12 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('flora', '0041_alter_collector_external_url'),
-    ]
+    dependencies = [("flora", "0041_alter_collector_external_url")]
 
     operations = [
         migrations.AddField(
-            model_name='taxon',
-            name='occurrence_remarks',
+            model_name="taxon",
+            name="occurrence_remarks",
             field=models.TextField(blank=True, null=True),
-        ),
+        )
     ]

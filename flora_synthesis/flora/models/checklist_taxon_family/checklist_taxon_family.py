@@ -9,8 +9,8 @@ class ChecklistTaxonFamily(base_model.BaseModel):
     external_id = models.CharField(max_length=32, blank=True, null=True)
 
     class Meta:
-        unique_together = [('checklist', 'family'), ('checklist', 'external_id')]
-        indexes = [models.Index(fields=['family', 'checklist'])]
+        unique_together = [("checklist", "family"), ("checklist", "external_id")]
+        indexes = [models.Index(fields=["family", "checklist"])]
 
     def __str__(self):
-        return '{}'.format(self.family)
+        return "{}".format(self.family)

@@ -5,17 +5,19 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('flora', '0005_taxon_first_observation_date_and_more'),
-    ]
+    dependencies = [("flora", "0005_taxon_first_observation_date_and_more")]
 
     operations = [
         migrations.AddIndex(
-            model_name='taxon',
-            index=models.Index(fields=['taxon_name'], name='flora_taxon_taxon_n_5ca925_idx'),
+            model_name="taxon",
+            index=models.Index(
+                fields=["taxon_name"], name="flora_taxon_taxon_n_5ca925_idx"
+            ),
         ),
         migrations.AddIndex(
-            model_name='taxonsynonym',
-            index=models.Index(fields=['synonym'], name='flora_taxon_synonym_72d240_idx'),
+            model_name="taxonsynonym",
+            index=models.Index(
+                fields=["synonym"], name="flora_taxon_synonym_72d240_idx"
+            ),
         ),
     ]

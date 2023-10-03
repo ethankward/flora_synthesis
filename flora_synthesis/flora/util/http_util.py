@@ -6,7 +6,12 @@ from requests_ratelimiter import LimiterSession
 def get_session() -> LimiterSession:
     session = LimiterSession(per_second=1)
 
-    session.mount('http://', HTTPAdapter(max_retries=Retry(total=5,
-                                                           backoff_factor=2,
-                                                           status_forcelist=[429, 500, 502, 503, 504])))
+    session.mount(
+        "http://",
+        HTTPAdapter(
+            max_retries=Retry(
+                total=5, backoff_factor=2, status_forcelist=[429, 500, 502, 503, 504]
+            )
+        ),
+    )
     return session

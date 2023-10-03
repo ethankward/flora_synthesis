@@ -12,9 +12,12 @@ class ChecklistUtilUpdateTests(TestCase):
         t1 = factory.TaxonFactory(taxon_name="A b")
         t2 = factory.TaxonFactory(taxon_name="B c")
 
-        checklist_record = factory.FloraRecordFactory(mapped_taxon=t1,
-                                                      full_metadata=json.dumps(
-                                                          {"mapped_taxon_name": "B c", "observation_type": "True"}))
+        checklist_record = factory.FloraRecordFactory(
+            mapped_taxon=t1,
+            full_metadata=json.dumps(
+                {"mapped_taxon_name": "B c", "observation_type": "True"}
+            ),
+        )
 
         updater = local_flora_util.LocalFloraUpdater(record=checklist_record)
         updater.update_record()
@@ -23,9 +26,12 @@ class ChecklistUtilUpdateTests(TestCase):
         self.assertEqual(checklist_record.mapped_taxon, t1)
 
     def test_local_flora_update_mapped_taxon_null(self):
-        checklist_record = factory.FloraRecordFactory(mapped_taxon=None,
-                                                      full_metadata=json.dumps(
-                                                          {"mapped_taxon_name": None, "observation_type": "True"}))
+        checklist_record = factory.FloraRecordFactory(
+            mapped_taxon=None,
+            full_metadata=json.dumps(
+                {"mapped_taxon_name": None, "observation_type": "True"}
+            ),
+        )
 
         updater = local_flora_util.LocalFloraUpdater(record=checklist_record)
         updater.update_record()

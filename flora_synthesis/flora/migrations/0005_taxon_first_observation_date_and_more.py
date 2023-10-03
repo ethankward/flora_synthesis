@@ -6,24 +6,34 @@ import django.db.models.deletion
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('flora', '0004_observationdate'),
-    ]
+    dependencies = [("flora", "0004_observationdate")]
 
     operations = [
         migrations.AddField(
-            model_name='taxon',
-            name='first_observation_date',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='first_observation_date', to='flora.observationdate'),
+            model_name="taxon",
+            name="first_observation_date",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                related_name="first_observation_date",
+                to="flora.observationdate",
+            ),
         ),
         migrations.AddField(
-            model_name='taxon',
-            name='last_observation_date',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='last_observation_date', to='flora.observationdate'),
+            model_name="taxon",
+            name="last_observation_date",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                related_name="last_observation_date",
+                to="flora.observationdate",
+            ),
         ),
         migrations.AddField(
-            model_name='taxon',
-            name='observation_dates',
-            field=models.ManyToManyField(blank=True, to='flora.observationdate'),
+            model_name="taxon",
+            name="observation_dates",
+            field=models.ManyToManyField(blank=True, to="flora.observationdate"),
         ),
     ]

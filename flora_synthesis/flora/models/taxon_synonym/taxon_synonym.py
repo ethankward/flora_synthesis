@@ -8,13 +8,12 @@ class TaxonSynonym(base_model.BaseModel):
     synonym = models.CharField(max_length=256)
 
     class Meta:
-        unique_together = [('synonym',)]
-        indexes = [
-            models.Index(fields=['synonym']),
-        ]
+        unique_together = [("synonym",)]
+        indexes = [models.Index(fields=["synonym"])]
 
     def save(self, *args, **kwargs):
         from flora.models import Taxon
+
         super().save(*args, **kwargs)
 
         with transaction.atomic():

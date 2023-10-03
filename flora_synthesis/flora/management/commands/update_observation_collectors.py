@@ -5,7 +5,7 @@ from flora import models
 
 
 def split_observer_str(observer_str):
-    delimiters = [', ', ' & ', ' and ', '|', '; ', ' or ']
+    delimiters = [", ", " & ", " and ", "|", "; ", " or "]
 
     for delimiter in delimiters:
         if delimiter in observer_str:
@@ -15,7 +15,7 @@ def split_observer_str(observer_str):
 
 
 def get_canonical_name(name):
-    return name.replace(' ', '').replace('.', '').lower()
+    return name.replace(" ", "").replace(".", "").lower()
 
 
 def get_match(name, all_aliases, all_collectors):
@@ -38,7 +38,7 @@ def get_matches(observer_str, all_aliases, all_collectors):
 
 
 def run():
-    all_aliases = list(models.CollectorAlias.objects.all().select_related('collector'))
+    all_aliases = list(models.CollectorAlias.objects.all().select_related("collector"))
     all_collectors = list(models.Collector.objects.all())
 
     collector_dates = {}
@@ -51,7 +51,9 @@ def run():
 
         seinet_record_collectors_through_model.objects.all().delete()
 
-        for seinet_record in models.SEINETRecord.objects.filter(observer__isnull=False, active=True):
+        for seinet_record in models.SEINETRecord.objects.filter(
+            observer__isnull=False, active=True
+        ):
             # seinet_record.collectors.clear()
 
             observer_str = seinet_record.observer
@@ -67,11 +69,17 @@ def run():
 
                 through_object_set.add((collector.id, seinet_record.id))
 
-        through_objects = [seinet_record_collectors_through_model(collector_id=i[0], seinetrecord_id=i[1]) for i in
-                           through_object_set]
+        through_objects = [
+            seinet_record_collectors_through_model(
+                collector_id=i[0], seinetrecord_id=i[1]
+            )
+            for i in through_object_set
+        ]
         seinet_record_collectors_through_model.objects.bulk_create(through_objects)
 
-        models.Collector.objects.update(first_collection_year=None, last_collection_year=None)
+        models.Collector.objects.update(
+            first_collection_year=None, last_collection_year=None
+        )
         for collector in collector_dates:
 
             if collector_dates[collector]:

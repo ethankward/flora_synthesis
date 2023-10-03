@@ -5,14 +5,20 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('flora', '0014_alter_florarecord_observation_type'),
-    ]
+    dependencies = [("flora", "0014_alter_florarecord_observation_type")]
 
     operations = [
         migrations.AlterField(
-            model_name='florarecord',
-            name='observation_type',
-            field=models.CharField(choices=[('P', 'Present'), ('M', 'Missing'), ('S', 'Suspected'), ('U', 'Unknown')], max_length=1),
-        ),
+            model_name="florarecord",
+            name="observation_type",
+            field=models.CharField(
+                choices=[
+                    ("P", "Present"),
+                    ("M", "Missing"),
+                    ("S", "Suspected"),
+                    ("U", "Unknown"),
+                ],
+                max_length=1,
+            ),
+        )
     ]

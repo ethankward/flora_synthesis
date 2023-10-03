@@ -5,14 +5,12 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('flora', '0002_alter_taxon_introduced'),
-    ]
+    dependencies = [("flora", "0002_alter_taxon_introduced")]
 
     operations = [
         migrations.AddField(
-            model_name='checklist',
-            name='primary_checklist',
+            model_name="checklist",
+            name="primary_checklist",
             field=models.BooleanField(default=False),
-        ),
+        )
     ]

@@ -8,7 +8,9 @@ from flora.models.checklist.choices import checklist_types
 
 
 def run():
-    for checklist in models.Checklist.objects.filter(checklist_type=checklist_types.ChecklistTypeChoices.SEINET):
+    for checklist in models.Checklist.objects.filter(
+        checklist_type=checklist_types.ChecklistTypeChoices.SEINET
+    ):
         print(checklist)
         t1 = time.time()
         with transaction.atomic():

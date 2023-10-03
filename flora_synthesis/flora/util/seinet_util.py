@@ -6,7 +6,9 @@ from django.db.models import Q
 from django.utils import timezone
 
 from flora import models
-from flora.models.records.seinet_record.choices.observation_types import SEINETObservationTypeChoices
+from flora.models.records.seinet_record.choices.observation_types import (
+    SEINETObservationTypeChoices,
+)
 from flora.models.taxon.choices import taxon_ranks
 from flora.util import checklist_util, taxon_name_util, http_util
 
@@ -21,19 +23,19 @@ def get_canonical_rank(name: str) -> typing.Optional[taxon_ranks.TaxonRankChoice
 
 
 def parse_seinet_date(date_str: str) -> typing.Optional[timezone.datetime]:
-    if date_str in ['s.d.', 'unknown']:
+    if date_str in ["s.d.", "unknown"]:
         return None
 
-    if ' - ' in date_str:
-        date_str = date_str.split(' - ')[0]
+    if " - " in date_str:
+        date_str = date_str.split(" - ")[0]
 
-    if re.match(r'\d\d\d\d-00-00', date_str):
-        year = int(date_str.split('-')[0])
+    if re.match(r"\d\d\d\d-00-00", date_str):
+        year = int(date_str.split("-")[0])
         if year != 0:
             return timezone.datetime(year=year, month=1, day=1)
-    if re.match(r'\d\d\d\d-\d\d-00', date_str):
-        year = int(date_str.split('-')[0])
-        month = int(date_str.split('-')[1])
+    if re.match(r"\d\d\d\d-\d\d-00", date_str):
+        year = int(date_str.split("-")[0])
+        month = int(date_str.split("-")[1])
         if year != 0:
             return timezone.datetime(year=year, month=month, day=1)
 
@@ -47,18 +49,20 @@ def parse_seinet_date(date_str: str) -> typing.Optional[timezone.datetime]:
 
 
 class SEINetUpdater(checklist_util.RecordUpdater):
-    def get_div_value_if_present(self, div_id: str, func: typing.Callable[[str], typing.Any]) -> typing.Optional[str]:
+    def get_div_value_if_present(
+        self, div_id: str, func: typing.Callable[[str], typing.Any]
+    ) -> typing.Optional[str]:
         try:
-            text = self.data.find('div', attrs={'id': div_id}).text
+            text = self.data.find("div", attrs={"id": div_id}).text
         except AttributeError:
             return
-        return func(text.replace('\t', '').replace('\xa0', ' ').strip())
+        return func(text.replace("\t", "").replace("\xa0", " ").strip())
 
     def get_title(self) -> str:
-        return self.data.find('div', attrs={'class': 'title1-div'}).text.strip()
+        return self.data.find("div", attrs={"class": "title1-div"}).text.strip()
 
     def is_general_research_observation(self) -> bool:
-        return 'General Research Observations' in self.get_title()
+        return "General Research Observations" in self.get_title()
 
     def is_collection(self) -> bool:
         return not self.is_general_research_observation()
@@ -74,35 +78,47 @@ class SEINetUpdater(checklist_util.RecordUpdater):
             return self.get_title()
 
     def get_verbatim_date(self) -> str:
-        return self.get_div_value_if_present('verbeventid-div', lambda t: t.split(': ')[1])
+        return self.get_div_value_if_present(
+            "verbeventid-div", lambda t: t.split(": ")[1]
+        )
 
     def get_date(self) -> str:
         if self.record.date is not None:
             return self.record.date
-        return self.get_div_value_if_present('eventdate-div', lambda t: parse_seinet_date(t.split(': ')[1]))
+        return self.get_div_value_if_present(
+            "eventdate-div", lambda t: parse_seinet_date(t.split(": ")[1])
+        )
 
     def get_verbatim_coordinates(self) -> str:
-        return self.get_div_value_if_present('latlngdiv', lambda t: t)
+        return self.get_div_value_if_present("latlngdiv", lambda t: t)
 
-    def get_coordinates(self) -> typing.Tuple[typing.Optional[float], typing.Optional[float]]:
+    def get_coordinates(
+        self
+    ) -> typing.Tuple[typing.Optional[float], typing.Optional[float]]:
         verbatim_coordinates = self.get_verbatim_coordinates()
         if verbatim_coordinates is not None:
-            latitude = float(verbatim_coordinates.split(' ')[0])
-            longitude = float(verbatim_coordinates.split(' ')[2])
+            latitude = float(verbatim_coordinates.split(" ")[0])
+            longitude = float(verbatim_coordinates.split(" ")[2])
             return latitude, longitude
         return None, None
 
     def get_verbatim_elevation(self) -> str:
-        return self.get_div_value_if_present('elev-div', lambda t: t.split('\n')[-1])
+        return self.get_div_value_if_present("elev-div", lambda t: t.split("\n")[-1])
 
     def get_observer(self) -> str:
-        return self.get_div_value_if_present('recordedby-div', lambda t: t.split('\n')[1])
+        return self.get_div_value_if_present(
+            "recordedby-div", lambda t: t.split("\n")[1]
+        )
 
     def get_locality(self) -> str:
-        return self.get_div_value_if_present('locality-div', lambda t: t.split('Locality: ')[1])
+        return self.get_div_value_if_present(
+            "locality-div", lambda t: t.split("Locality: ")[1]
+        )
 
     def get_type_status(self) -> str:
-        return self.get_div_value_if_present('typestatus-div', lambda t: t.split('Type Status: ')[1])
+        return self.get_div_value_if_present(
+            "typestatus-div", lambda t: t.split("Type Status: ")[1]
+        )
 
     def update_record(self):
         if self.data is not None:
@@ -118,7 +134,9 @@ class SEINetUpdater(checklist_util.RecordUpdater):
             self.record.type_status = self.get_type_status()
         else:
             if self.record.is_placeholder:
-                self.record.observation_type = SEINETObservationTypeChoices.NOTE_PLACEHOLDER
+                self.record.observation_type = (
+                    SEINETObservationTypeChoices.NOTE_PLACEHOLDER
+                )
 
         if self.record.mapped_taxon is not None:
             mapped_taxon = self.record.mapped_taxon
@@ -127,17 +145,23 @@ class SEINetUpdater(checklist_util.RecordUpdater):
 
 
 class SEINETRecordReader(checklist_util.RecordReader):
-    def read_records(self, records: typing.Optional[typing.List[models.SEINETRecord]] = None, limit: int = 10):
+    def read_records(
+        self,
+        records: typing.Optional[typing.List[models.SEINETRecord]] = None,
+        limit: int = 10,
+    ):
         if records is None:
             records = models.SEINETRecord.objects.filter(
-                Q(last_refreshed__isnull=True) | Q(last_refreshed__lt=timezone.now() - timezone.timedelta(days=60)),
+                Q(last_refreshed__isnull=True)
+                | Q(last_refreshed__lt=timezone.now() - timezone.timedelta(days=60)),
                 checklist_taxon__checklist=self.checklist,
-                is_placeholder=False
-            ).order_by('?')
+                is_placeholder=False,
+            ).order_by("?")
 
         for record in records[:limit]:
             url = "https://swbiodiversity.org/seinet/collections/individual/index.php?occid={}".format(
-                record.external_id)
+                record.external_id
+            )
             record.full_metadata = SESSION.get(url).text
             record.last_refreshed = timezone.now()
             record.save()
@@ -149,19 +173,26 @@ class SEINETChecklistReader(checklist_util.ChecklistReader):
     def __init__(self, checklist: models.Checklist):
         super().__init__(checklist)
         self.seinet_checklist_id = checklist.external_checklist_id
-        self.base_url = "https://swbiodiversity.org/seinet/checklists/checklist.php?clid=%s"%self.seinet_checklist_id
+        self.base_url = (
+            "https://swbiodiversity.org/seinet/checklists/checklist.php?clid=%s"
+            % self.seinet_checklist_id
+        )
 
     def get_soup(self, page: int):
-        return BeautifulSoup(SESSION.get(self.base_url, params={'pagenumber': page}).text, 'html.parser')
+        return BeautifulSoup(
+            SESSION.get(self.base_url, params={"pagenumber": page}).text, "html.parser"
+        )
 
     def total_pages(self) -> typing.Optional[int]:
         soup = self.get_soup(1)
 
-        for div in soup.find_all('div', {'class': 'printoff'}):
-            if 'Page 1 of ' in div.text:
-                return int(div.text.split('1 of ')[1].split(':')[0])
+        for div in soup.find_all("div", {"class": "printoff"}):
+            if "Page 1 of " in div.text:
+                return int(div.text.split("1 of ")[1].split(":")[0])
 
-    def generate_data(self, page=None) -> typing.Generator[checklist_util.ChecklistReadItem, None, None]:
+    def generate_data(
+        self, page=None
+    ) -> typing.Generator[checklist_util.ChecklistReadItem, None, None]:
         total_pages = self.total_pages()
         if total_pages is None:
             return
@@ -175,31 +206,33 @@ class SEINETChecklistReader(checklist_util.ChecklistReader):
         for page in pages:
             soup = self.get_soup(page)
 
-            taxalist_div = soup.find('div', attrs={'id': 'taxalist-div'})
+            taxalist_div = soup.find("div", attrs={"id": "taxalist-div"})
 
-            for div in taxalist_div.find_all('div'):
-                classes = div.get('class', [])
-                if 'family-div' in classes:
+            for div in taxalist_div.find_all("div"):
+                classes = div.get("class", [])
+                if "family-div" in classes:
                     family_name = div.text.strip().title()
                     family, _ = models.ChecklistTaxonFamily.objects.get_or_create(
                         checklist=self.checklist, family=family_name
                     )
 
-                if 'taxon-container' in classes:
-                    taxon_name = div.find('span', attrs={'class': 'taxon-span'}).text
-                    notes_div = div.find('div', attrs={'class': 'note-div'})
-                    taxon_id = int(div.get('id').split('-')[1])
+                if "taxon-container" in classes:
+                    taxon_name = div.find("span", attrs={"class": "taxon-span"}).text
+                    notes_div = div.find("div", attrs={"class": "note-div"})
+                    taxon_id = int(div.get("id").split("-")[1])
                     count = 0
-                    canonical_rank = get_canonical_rank(
-                        taxon_name)
+                    canonical_rank = get_canonical_rank(taxon_name)
                     if canonical_rank is not None:
                         if notes_div is not None:
-                            for record_a in notes_div.find_all('a'):
-                                record_id = int(record_a.get('onclick').split('(')[1].split(')')[0])
-                                record_css_id = record_a.get('id', '')
+                            for record_a in notes_div.find_all("a"):
+                                record_id = int(
+                                    record_a.get("onclick").split("(")[1].split(")")[0]
+                                )
+                                record_css_id = record_a.get("id", "")
 
-                                if not record_css_id.startswith('lessvouch') and not record_css_id.startswith(
-                                        'morevouch'):
+                                if not record_css_id.startswith(
+                                    "lessvouch"
+                                ) and not record_css_id.startswith("morevouch"):
                                     yield checklist_util.ChecklistReadItem(
                                         checklist_family=family,
                                         taxon_name=taxon_name,
@@ -207,22 +240,27 @@ class SEINETChecklistReader(checklist_util.ChecklistReader):
                                         record_id=str(record_id),
                                         observation_data=None,
                                         given_rank=canonical_rank.name.lower(),
-                                        canonical_rank=canonical_rank
+                                        canonical_rank=canonical_rank,
                                     )
                                     count += 1
                         if count == 0:
-                            yield checklist_util.ChecklistReadItem(checklist_family=family,
-                                                                   taxon_name=taxon_name,
-                                                                   taxon_id=str(taxon_id),
-                                                                   record_id="placeholder_{}_{}".format(taxon_name,
-                                                                                                        taxon_id),
-                                                                   observation_data=None,
-                                                                   given_rank=canonical_rank.name.lower(),
-                                                                   is_placeholder=True,
-                                                                   canonical_rank=canonical_rank)
+                            yield checklist_util.ChecklistReadItem(
+                                checklist_family=family,
+                                taxon_name=taxon_name,
+                                taxon_id=str(taxon_id),
+                                record_id="placeholder_{}_{}".format(
+                                    taxon_name, taxon_id
+                                ),
+                                observation_data=None,
+                                given_rank=canonical_rank.name.lower(),
+                                is_placeholder=True,
+                                canonical_rank=canonical_rank,
+                            )
 
     def load_checklist(self, page=None):
-        models.SEINETRecord.objects.filter(checklist_taxon__checklist=self.checklist).update(active=False)
+        models.SEINETRecord.objects.filter(
+            checklist_taxon__checklist=self.checklist
+        ).update(active=False)
         self.read_all(reactivate=True, page=page)
 
         self.checklist.latest_date_retrieved = timezone.now().date()

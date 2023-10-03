@@ -5,14 +5,12 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('flora', '0023_personalcollectionrecord_identification_notes'),
-    ]
+    dependencies = [("flora", "0023_personalcollectionrecord_identification_notes")]
 
     operations = [
         migrations.AddField(
-            model_name='personalcollectionrecord',
-            name='description',
+            model_name="personalcollectionrecord",
+            name="description",
             field=models.TextField(blank=True, null=True),
-        ),
+        )
     ]

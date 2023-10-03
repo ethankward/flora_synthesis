@@ -6,14 +6,12 @@ import django.utils.timezone
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('flora', '0009_alter_checklistrecordnote_added_on'),
-    ]
+    dependencies = [("flora", "0009_alter_checklistrecordnote_added_on")]
 
     operations = [
         migrations.AlterField(
-            model_name='checklistrecordnote',
-            name='added_on',
+            model_name="checklistrecordnote",
+            name="added_on",
             field=models.DateTimeField(default=django.utils.timezone.now),
-        ),
+        )
     ]
