@@ -8,9 +8,11 @@ from flora.util import taxon_name_util
 
 class TaxonNameTests(TestCase):
     def test_single_word(self):
+        """Test a single genus name without any given rank."""
         self.assertRaises(ValueError, lambda: taxon_name_util.TaxonName("Heterotheca"))
 
     def test_species(self):
+        """Test species name is recognized without any given rank."""
         t1 = taxon_name_util.TaxonName("Heterotheca marginata")
         self.assertEqual(t1.rank, taxon_ranks.TaxonRankChoices.SPECIES)
         self.assertEqual(t1.canonical_name, "Heterotheca marginata")
@@ -22,6 +24,7 @@ class TaxonNameTests(TestCase):
         self.assertEqual(t2.genus, "A")
 
     def test_3_part(self):
+        """Test 3 part names (varieties, subspecies)."""
         self.assertRaises(ValueError, lambda: taxon_name_util.TaxonName("a b c"))
 
         t1 = taxon_name_util.TaxonName(
@@ -41,6 +44,7 @@ class TaxonNameTests(TestCase):
         self.assertEqual(t2.parent_species_name, "X y")
 
     def test_4_part(self):
+        """Test 4 part names (variety, subspecies)."""
         self.assertRaises(ValueError, lambda: taxon_name_util.TaxonName("a b c d"))
         self.assertRaises(
             ValueError,
@@ -86,6 +90,7 @@ class TaxonNameTests(TestCase):
         self.assertEqual(t4.parent_species_name, None)
 
     def test_5_part(self):
+        """Test 5 part hybrid names."""
         self.assertRaises(ValueError, lambda: taxon_name_util.TaxonName("a b c d e"))
 
         t1 = taxon_name_util.TaxonName("a b x c d")
@@ -95,6 +100,7 @@ class TaxonNameTests(TestCase):
         self.assertEqual(t1.parent_species_name, None)
 
     def test_6_part(self):
+        """Test 6 part names (variety of a subspecies)."""
         self.assertRaises(ValueError, lambda: taxon_name_util.TaxonName("a b x c x d"))
 
         t1 = taxon_name_util.TaxonName("a b subsp. c var. d")
@@ -104,6 +110,7 @@ class TaxonNameTests(TestCase):
         self.assertEqual(t1.parent_species_name, "A b")
 
     def test_get_db_item_synonym(self):
+        """Test getting a taxon name that has a synonym."""
         taxon = factory.TaxonFactory(taxon_name="Platanus wrightii")
         factory.TaxonSynonymFactory(synonym="Phacelia crenulata", taxon=taxon)
 
@@ -111,6 +118,7 @@ class TaxonNameTests(TestCase):
         self.assertEqual(t1.taxon_name, "Platanus wrightii")
 
     def test_get_db_item_existing(self):
+        """Test getting an already existing name."""
         factory.TaxonFactory(taxon_name="Platanus wrightii")
         self.assertEqual(1, models.Taxon.objects.all().count())
         t1 = taxon_name_util.TaxonName("Platanus wrightii").get_db_item()
@@ -118,6 +126,7 @@ class TaxonNameTests(TestCase):
         self.assertEqual(t1.taxon_name, "Platanus wrightii")
 
     def test_get_db_item_new(self):
+        """Test creating name with parent taxon."""
         self.assertEqual(0, models.Taxon.objects.all().count())
         t1 = taxon_name_util.TaxonName("A b var. c", family="Asteraceae").get_db_item()
         self.assertEqual(2, models.Taxon.objects.all().count())
@@ -126,11 +135,13 @@ class TaxonNameTests(TestCase):
         self.assertEqual(t1.parent_species.family, "Asteraceae")
 
     def test_name_sp(self):
+        """Test genus name format."""
         t1 = taxon_name_util.TaxonName("Heterotheca sp.", family="Asteraceae")
         self.assertEqual(t1.rank, taxon_ranks.TaxonRankChoices.GENUS)
         self.assertEqual(t1.canonical_name, "Heterotheca sp.")
 
     def test_hybrid_with_rank(self):
+        """Test hybrid name with rank."""
         t1 = taxon_name_util.TaxonName(
             "Apocynum x floribundum",
             family="Apocynaceae",
@@ -139,6 +150,7 @@ class TaxonNameTests(TestCase):
         self.assertEqual(t1.canonical_name, "Apocynum × floribundum")
 
     def test_hybrid_4(self):
+        """Test hybrid 4 part format."""
         t1 = taxon_name_util.TaxonName(
             "a b x c",
             family="Apocynaceae",
@@ -147,5 +159,6 @@ class TaxonNameTests(TestCase):
         self.assertEqual(t1.canonical_name, "A b × c")
 
     def test_hybrid_5(self):
+        """Test hybrid 5 part format."""
         t1 = taxon_name_util.TaxonName("a b × c d")
         self.assertEqual(t1.canonical_name, "A b × c d")

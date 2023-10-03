@@ -8,6 +8,13 @@ from django.db.models.fields.reverse_related import (
 
 
 def merge_objects(object_to_delete, object_to_keep):
+    """
+    Merge two database objects, keeping track of their relationships.
+
+    :param object_to_delete: Object to be merged and then deleted
+    :param object_to_keep: Object to retain
+    :return:
+    """
     fields = object_to_delete._meta.get_fields()
 
     o2ol = []

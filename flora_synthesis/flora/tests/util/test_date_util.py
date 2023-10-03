@@ -6,6 +6,7 @@ from flora.util import date_util
 
 class DateUtilNameTests(TestCase):
     def test_basic(self):
+        """Test date interval generation."""
         start_date = timezone.datetime(year=2020, month=1, day=1).date()
         end_date = timezone.datetime(year=2023, month=8, day=5).date()
 

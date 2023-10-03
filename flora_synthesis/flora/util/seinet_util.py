@@ -152,8 +152,7 @@ class SEINETRecordReader(checklist_util.RecordReader):
     ):
         if records is None:
             records = models.SEINETRecord.objects.filter(
-                Q(last_refreshed__isnull=True)
-                | Q(last_refreshed__lt=timezone.now() - timezone.timedelta(days=60)),
+                Q(last_refreshed__isnull=True) | Q(last_refreshed__lt=timezone.now() - timezone.timedelta(days=60)),
                 checklist_taxon__checklist=self.checklist,
                 is_placeholder=False,
             ).order_by("?")

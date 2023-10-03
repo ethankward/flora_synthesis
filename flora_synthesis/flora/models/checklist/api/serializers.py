@@ -41,8 +41,7 @@ class ChecklistStaleRecordCount(serializers.ModelSerializer):
             raise ValueError
 
         return records.objects.filter(
-            Q(last_refreshed__isnull=True)
-            | Q(last_refreshed__lt=timezone.now() - timezone.timedelta(days=60)),
+            Q(last_refreshed__isnull=True) | Q(last_refreshed__lt=timezone.now() - timezone.timedelta(days=60)),
             checklist_taxon__checklist=obj,
             is_placeholder=False,
         ).count()

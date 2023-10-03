@@ -9,8 +9,9 @@ from flora.util import local_flora_util
 
 class ChecklistUtilUpdateTests(TestCase):
     def test_local_flora_update(self):
+        """Test updating local flora records."""
         t1 = factory.TaxonFactory(taxon_name="A b")
-        t2 = factory.TaxonFactory(taxon_name="B c")
+        factory.TaxonFactory(taxon_name="B c")
 
         checklist_record = factory.FloraRecordFactory(
             mapped_taxon=t1,
@@ -26,6 +27,7 @@ class ChecklistUtilUpdateTests(TestCase):
         self.assertEqual(checklist_record.mapped_taxon, t1)
 
     def test_local_flora_update_mapped_taxon_null(self):
+        """Test updating mapped taxon when not previously defined."""
         checklist_record = factory.FloraRecordFactory(
             mapped_taxon=None,
             full_metadata=json.dumps(

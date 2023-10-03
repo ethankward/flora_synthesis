@@ -102,9 +102,9 @@ class InatApi:
             yield base_url
         else:
             size = 30
-            for i in range(len(ids)//size + 1):
+            for i in range(len(ids) // size + 1):
                 taxon_ids_comma_delimited = ",".join(
-                    map(str, ids[size*i: size*(i + 1)])
+                    map(str, ids[size * i: size * (i + 1)])
                 )
                 url = base_url + "/" + taxon_ids_comma_delimited
                 yield url
@@ -135,8 +135,7 @@ class InatRecordsReader(checklist_util.RecordReader):
     ):
         if records is None:
             records = models.InatRecord.objects.filter(
-                Q(last_refreshed__isnull=True)
-                | Q(last_refreshed__lt=timezone.now() - timezone.timedelta(days=60)),
+                Q(last_refreshed__isnull=True) | Q(last_refreshed__lt=timezone.now() - timezone.timedelta(days=60)),
                 checklist_taxon__checklist=self.checklist,
             ).order_by("?")
 

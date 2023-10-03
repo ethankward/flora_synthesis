@@ -179,17 +179,16 @@ def make_synonym_of(request):
 
 @api_view(["GET"])
 def update_computed_values(request):
-    if settings.PRODUCTION:
-        async_task(run_remove_orphan_checklist_taxa)
-
-        async_task(run_update_observation_dates)
-        async_task(run_update_has_collections)
-        async_task(run_update_observation_collectors)
-    else:
-        run_remove_orphan_checklist_taxa()
-
-        run_update_observation_dates()
-        run_update_has_collections()
-        run_update_observation_collectors()
+    tasks = [
+        run_remove_orphan_checklist_taxa,
+        run_update_observation_dates,
+        run_update_has_collections,
+        run_update_observation_collectors,
+    ]
+    for task in tasks:
+        if settings.PRODUCTION:
+            async_task(task)
+        else:
+            task()
 
     return Response(status=status.HTTP_200_OK)

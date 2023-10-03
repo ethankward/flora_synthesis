@@ -7,6 +7,7 @@ from flora.tests import factory
 
 class TaxonTests(TestCase):
     def test_synonymize_parent_sub(self):
+        """Test that subtaxa are moved when synonymizing."""
         t1 = factory.TaxonFactory(
             taxon_name="Acmispon oroboides", rank=taxon_ranks.TaxonRankChoices.SPECIES
         )
@@ -29,6 +30,7 @@ class TaxonTests(TestCase):
         self.assertTrue(t2 in t3.subtaxa.all())
 
     def test_synonymize_with_subtaxa(self):
+        """Test that taxa do not become their own subtaxon when synonymizing."""
         t1 = factory.TaxonFactory(
             taxon_name="Mammlilaria gummifera",
             rank=taxon_ranks.TaxonRankChoices.SPECIES,
@@ -43,6 +45,7 @@ class TaxonTests(TestCase):
         self.assertEqual(0, t2.subtaxa.all().count())
 
     def test_save_genus(self):
+        """Test that genus is set when saving a taxon."""
         t1 = factory.TaxonFactory(taxon_name="A b", genus="C")
         t2 = factory.TaxonFactory(taxon_name="A c", genus=None)
 

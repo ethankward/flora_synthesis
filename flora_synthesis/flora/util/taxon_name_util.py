@@ -1,3 +1,4 @@
+"""Taxon name parsing, formatting and retrieval."""
 from dataclasses import dataclass
 from typing import Optional
 
@@ -7,6 +8,8 @@ from flora.models.taxon.choices import taxon_ranks
 
 @dataclass
 class TaxonName:
+    """Handle and parse raw taxon name strings."""
+
     original_name: str
     family: Optional[str] = None
     rank: Optional[taxon_ranks.TaxonRankChoices] = None
@@ -15,11 +18,18 @@ class TaxonName:
     canonical_name: Optional[str] = None
 
     def __init__(
-        self,
-        original_name: str,
-        family: Optional[str] = None,
-        given_rank: Optional[taxon_ranks.TaxonRankChoices] = None,
+            self,
+            original_name: str,
+            family: Optional[str] = None,
+            given_rank: Optional[taxon_ranks.TaxonRankChoices] = None,
     ):
+        """
+        Take a string representing a taxon name and parse, reformat, and retrieve a matching taxon from the database.
+
+        :param original_name: The string representing the taxon
+        :param family: The taxon family. If the taxon needs to be newly created this is required.
+        :param given_rank: The taxon rank, if the name is in an ambigious format.
+        """
         self.original_name = original_name
         self.family = family
 
@@ -78,11 +88,13 @@ class TaxonName:
             self.raise_parse_exception()
 
     def raise_parse_exception(self):
+        """Error when the name format is not recognized."""
         raise ValueError(
             "Could not parse name: {}, {}".format(self.original_name, self.rank)
         )
 
     def parse_species(self, parts):
+        """Parse a name of the format a b."""
         self.rank = taxon_ranks.TaxonRankChoices.SPECIES
 
         genus = parts[0].title()
@@ -95,6 +107,7 @@ class TaxonName:
         self.canonical_name = "{} {}".format(genus, specific_epithet)
 
     def parse_variety(self, parts, var_index=2):
+        """Parse a name of the format a b var. c."""
         self.rank = taxon_ranks.TaxonRankChoices.VARIETY
 
         genus = parts[0].title()
@@ -106,6 +119,7 @@ class TaxonName:
         self.canonical_name = "{} {} var. {}".format(genus, specific_epithet, variety)
 
     def parse_subspecies(self, parts, ssp_index=2):
+        """Parse a name of the format a b subsp. c."""
         self.rank = taxon_ranks.TaxonRankChoices.SUBSPECIES
 
         genus = parts[0].title()
@@ -119,6 +133,7 @@ class TaxonName:
         )
 
     def parse_subspecies_variety(self, parts):
+        """Parse a name of the format a b subsp. c var. d."""
         self.rank = taxon_ranks.TaxonRankChoices.SUBSPECIES_VARIETY
         genus = parts[0].title()
         specific_epithet = parts[1].lower()
@@ -132,6 +147,7 @@ class TaxonName:
         )
 
     def parse_hybrid_3(self, parts):
+        """Parse a 3-part hybrid name of the form a × c."""
         self.rank = taxon_ranks.TaxonRankChoices.HYBRID
 
         genus = parts[0].title()
@@ -141,6 +157,7 @@ class TaxonName:
         self.canonical_name = "{} × {}".format(genus, name)
 
     def parse_hybrid_4(self, parts):
+        """Parse a 4-part hybrid name of the form a b × c."""
         self.rank = taxon_ranks.TaxonRankChoices.HYBRID
 
         genus = parts[0].title()
@@ -150,6 +167,7 @@ class TaxonName:
         self.canonical_name = "{} {} × {}".format(genus, parts[1], name)
 
     def parse_hybrid_5(self, parts):
+        """Parse a 5-part hybrid name of the form a b × c d."""
         self.rank = taxon_ranks.TaxonRankChoices.HYBRID
 
         genus = parts[0].title()
@@ -159,6 +177,11 @@ class TaxonName:
         )
 
     def get_db_item(self):
+        """
+        Get a matching database record for the name.
+
+        Create a new record if necessary, and take into account synonyms.
+        """
         try:
             synonym = models.TaxonSynonym.objects.get(synonym=self.canonical_name)
             return synonym.taxon

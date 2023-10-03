@@ -10,6 +10,7 @@ from flora.util import local_flora_util
 
 class TaxonTests(TestCase):
     def test_update_mapped_taxon(self):
+        """Test updated mapped taxon is not overwritten."""
         t1 = factory.TaxonFactory(taxon_name="A b")
         t2 = factory.TaxonFactory(taxon_name="B c")
 
@@ -25,8 +26,11 @@ class TaxonTests(TestCase):
         self.assertEqual(record.mapped_taxon, t2)
 
         updater = local_flora_util.LocalFloraUpdater(record=record)
+        updater.update_record()
+        self.assertEqual(record.mapped_taxon, t2)
 
     def test_exclude_inat_casual(self):
+        """Test that inat casual records are marked inactive."""
         taxon = factory.TaxonFactory()
 
         i1 = factory.InatRecordFactory(
