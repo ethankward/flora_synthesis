@@ -61,6 +61,7 @@ class TaxonSerializer(serializers.ModelSerializer):
             "has_collections",
             "primary_checklist",
             "occurrence_remarks",
+            "author"
         ]
 
     def get_synonyms(self, obj):
@@ -121,6 +122,7 @@ class MinimalTaxonSerializer(serializers.ModelSerializer):
             "local_population_western_edge_range_limit",
             "local_population_southern_edge_range_limit",
             "local_population_disjunct",
+            "author"
         ]
 
     def get_life_cycle(self, obj):

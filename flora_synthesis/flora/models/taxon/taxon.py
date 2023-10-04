@@ -87,6 +87,8 @@ class Taxon(base_model.BaseModel):
 
     occurrence_remarks = models.TextField(blank=True, null=True)
 
+    author = models.TextField(blank=True, null=True)
+
     class Meta:
         unique_together = [("taxon_name",)]
         indexes = [
