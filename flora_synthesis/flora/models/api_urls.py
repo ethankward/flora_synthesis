@@ -7,6 +7,7 @@ from flora.models.checklist_taxon.api import urls as checklist_taxon_urls
 from flora.models.checklist_taxon_family.api import urls as checklist_taxon_family_urls
 from flora.models.collector.api import urls as collector_urls
 from flora.models.collector_alias.api import urls as collector_alias_urls
+from flora.models.herbarium_report.api import urls as herbarium_report_urls
 from flora.models.personal_collection_record.api import (
     urls as personal_collection_record_urls,
 )
@@ -25,6 +26,7 @@ all_url_modules = [
     personal_collection_record_urls,
     collector_urls,
     collector_alias_urls,
+    herbarium_report_urls
 ]
 
 router = routers.DefaultRouter()

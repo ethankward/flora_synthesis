@@ -12,6 +12,7 @@ __all__ = [
     "SEINETRecord",
     "Taxon",
     "TaxonSynonym",
+    "HerbariumReport"
 ]
 
 from flora.models.checklist.checklist import Checklist
@@ -22,6 +23,7 @@ from flora.models.checklist_taxon_family.checklist_taxon_family import (
 )
 from flora.models.collector.collector import Collector
 from flora.models.collector_alias.collector_alias import CollectorAlias
+from flora.models.herbarium_report.herbarium_report import HerbariumReport
 from flora.models.personal_collection_record.personal_collection_record import (
     PersonalCollectionRecord,
 )

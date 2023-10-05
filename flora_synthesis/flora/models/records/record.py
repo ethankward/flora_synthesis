@@ -15,6 +15,7 @@ class Record(base_model.BaseModel):
         "Taxon", on_delete=models.SET_NULL, blank=True, null=True
     )
     notes = models.ManyToManyField("ChecklistRecordNote", blank=True)
+    missing_from_herbarium = models.BooleanField(default=False)
 
     class Meta:
         abstract = True

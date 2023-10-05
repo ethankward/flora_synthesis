@@ -21,6 +21,7 @@ class ChecklistRecordSerializer(serializers.Serializer):
     observation_type = serializers.CharField()
     notes = ChecklistRecordNoteSerializer(many=True)
     active = serializers.BooleanField()
+    missing_from_herbarium = serializers.BooleanField()
 
 
 class ChecklistRecordNoCollectorSerializer(serializers.Serializer):

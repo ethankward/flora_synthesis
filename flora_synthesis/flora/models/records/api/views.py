@@ -27,6 +27,7 @@ def get_checklist_record_data_item(record):
         "observation_type": record.get_observation_type_display(),
         "notes": list(record.notes.all()),
         "active": record.active,
+        "missing_from_herbarium": record.missing_from_herbarium
     }
 
     if hasattr(record, "date"):
