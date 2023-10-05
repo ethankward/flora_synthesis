@@ -20,4 +20,5 @@ jobs:
       - name: Run tests
         run: |
           cd flora_synthesis
+          python manage.py migrate
           python manage.py test
