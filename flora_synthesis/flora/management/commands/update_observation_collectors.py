@@ -1,10 +1,12 @@
+import typing
+
 from django.core.management import BaseCommand
 from django.db import transaction
 
 from flora import models
 
 
-def split_observer_str(observer_str):
+def split_observer_str(observer_str: str) -> typing.List[str]:
     delimiters = [", ", " & ", " and ", "|", "; ", " or "]
 
     for delimiter in delimiters:
@@ -14,11 +16,12 @@ def split_observer_str(observer_str):
     return [observer_str]
 
 
-def get_canonical_name(name):
+def get_canonical_name(name: str) -> str:
     return name.replace(" ", "").replace(".", "").lower()
 
 
-def get_match(name, all_aliases, all_collectors):
+def get_match(name: str, all_aliases: typing.List[models.CollectorAlias],
+              all_collectors: typing.List[models.Collector]) -> models.Collector:
     for alias in all_aliases:
         if get_canonical_name(alias.alias) == get_canonical_name(name):
             return alias.collector
@@ -28,7 +31,8 @@ def get_match(name, all_aliases, all_collectors):
             return collector
 
 
-def get_matches(observer_str, all_aliases, all_collectors):
+def get_matches(observer_str: str, all_aliases: typing.List[models.CollectorAlias],
+                all_collectors: typing.List[models.Collector]) -> typing.Generator[models.Collector, None, None]:
     names = split_observer_str(observer_str)
 
     for name in names:
@@ -52,9 +56,8 @@ def run():
         seinet_record_collectors_through_model.objects.all().delete()
 
         for seinet_record in models.SEINETRecord.objects.filter(
-            observer__isnull=False, active=True
+                observer__isnull=False, active=True
         ):
-            # seinet_record.collectors.clear()
 
             observer_str = seinet_record.observer
 
@@ -67,7 +70,7 @@ def run():
                 if seinet_record.date is not None:
                     collector_dates[collector].append(seinet_record.date)
 
-                through_object_set.add((collector.id, seinet_record.id))
+                through_object_set.add((collector.pk, seinet_record.id))
 
         through_objects = [
             seinet_record_collectors_through_model(
