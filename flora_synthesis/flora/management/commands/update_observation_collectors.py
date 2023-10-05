@@ -94,7 +94,6 @@ def run():
                 collector.last_collection_year = last_year
                 collector.save()
 
-print(x)
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
