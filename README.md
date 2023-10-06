@@ -15,7 +15,7 @@ Use the `manage.py add_new_checklist` command to create a new checklist from one
 Local flora data can be provided as a list in JSON format with the following fields:
 * `external_id` (optional): an external ID for the record
 * `checklist_taxon_name`: the taxon name as it appears in the checklist
-* `checklist_family`: the taxon family as it appears in the checklist
+* `checklist_taxon_family`: the taxon family as it appears in the checklist
 * `observation_type` (optional): One of `present`, `missing`, `suspected`, or `unknown`.
 * `mapped_taxon_name` (optional): A canonical taxon for the checklist record
 * `note` (optional): any note for the taxon
