@@ -1,3 +1,6 @@
+"""
+Mark taxa that have collections.
+"""
 from django.core.management import BaseCommand
 
 from flora import models

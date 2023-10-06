@@ -1,3 +1,6 @@
+"""
+Attempt to parse raw collector strings into canonical collectors.
+"""
 import typing
 
 from django.core.management import BaseCommand

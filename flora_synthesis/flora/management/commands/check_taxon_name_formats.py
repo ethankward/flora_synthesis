@@ -1,3 +1,6 @@
+"""
+Check taxon name formats.
+"""
 from django.core.management import BaseCommand
 
 from flora import models

@@ -1,4 +1,4 @@
-import os
+import json
 import typing
 
 from flora import models
@@ -11,6 +11,12 @@ from flora.util import checklist_util, taxon_name_util
 
 def get_canonical_rank(name: str) -> taxon_ranks.TaxonRankChoices:
     return taxon_name_util.TaxonName(name).rank
+
+
+def get_canonical_observation_type(observation_type: str):
+    for choice in FloraObservationTypeChoices:
+        if choice.name.lower() == observation_type:
+            return choice
 
 
 class LocalFloraUpdater(checklist_util.RecordUpdater):
@@ -47,29 +53,23 @@ class LocalFloraReader(checklist_util.ChecklistReader):
 
     def __init__(self, checklist: models.Checklist):
         super().__init__(checklist)
-        self.path = os.path.join(
-            "flora", "data", "{}.txt".format(checklist.local_checklist_fn)
-        )
-        self.data = open(self.path).read().split("\n")
+        self.path = checklist.local_checklist_fn
+        self.data = json.loads(open(self.path).read())
 
     def generate_data(
-        self, page=None
+            self, page=None
     ) -> typing.Generator[checklist_util.ChecklistReadItem, None, None]:
         for row in self.data:
-            if len(row.split("\t")) == 5:
-                external_id, checklist_taxon_name, checklist_family, obs_type, mapped_taxon_name = row.split(
-                    "\t"
-                )
-                note = None
-            else:
-                external_id, checklist_taxon_name, checklist_family, obs_type, mapped_taxon_name, note = row.split(
-                    "\t"
-                )
+            print(row)
+            external_id = row.get('external_id', None)
+            checklist_taxon_name = row['checklist_taxon_name']
+            checklist_family = row['checklist_taxon_family']
+            observation_type = get_canonical_observation_type(row.get('observation_type', None))
+            mapped_taxon_name = row.get('mapped_taxon_name', None)
+            note = row.get('note', None)
 
-            if mapped_taxon_name == "None":
-                mapped_taxon_name = None
             data = {
-                "observation_type": obs_type,
+                "observation_type": observation_type,
                 "mapped_taxon_name": mapped_taxon_name,
             }
             family, _ = models.ChecklistTaxonFamily.objects.get_or_create(

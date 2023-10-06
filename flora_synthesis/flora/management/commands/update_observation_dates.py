@@ -1,3 +1,6 @@
+"""
+Update first and last seen dates for taxa.
+"""
 from django.core.management import BaseCommand
 from django.db import transaction
 

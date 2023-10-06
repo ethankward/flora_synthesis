@@ -1,23 +1,20 @@
+"""
+Load data for a SEINet checklist.
+"""
 from django.core.management import BaseCommand
 from django.db import transaction
 
 from flora import models
 from flora.models.checklist.choices import checklist_types
-from flora.util import inat_util
 
 
 def run():
     for checklist in models.Checklist.objects.filter(
-        checklist_type=checklist_types.ChecklistTypeChoices.INAT
+            checklist_type=checklist_types.ChecklistTypeChoices.SEINET
     ):
-        checklist.load()
-        inat_util.InatRecordsReader(checklist).read_records(limit=10)
-
+        print(checklist)
         with transaction.atomic():
-            for record in models.InatRecord.objects.filter(
-                checklist_taxon__checklist=checklist
-            ):
-                record.save()
+            checklist.load()
 
 
 class Command(BaseCommand):

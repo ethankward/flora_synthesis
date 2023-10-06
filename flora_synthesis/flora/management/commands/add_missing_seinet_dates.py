@@ -1,3 +1,6 @@
+"""
+Check for SEINET items with missing dates and prompt for manual entry.
+"""
 import datetime
 import webbrowser
 

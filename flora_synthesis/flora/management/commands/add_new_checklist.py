@@ -1,4 +1,8 @@
+"""
+Add a new checklist to the database.
+"""
 from django.core.management import BaseCommand
+from django.db import transaction
 
 from flora import models
 from flora.models.checklist.choices import checklist_types
@@ -31,6 +35,8 @@ class Command(BaseCommand):
         elif result.checklist_type == checklist_types.ChecklistTypeChoices.SEINET:
             result.external_checklist_id = input("SEINet checklist ID: ")
         elif result.checklist_type == checklist_types.ChecklistTypeChoices.FLORA:
-            result.local_checklist_fn = input("Local filename: ")
+            result.local_checklist_fn = input("Local file path: ")
 
-        result.save()
+        with transaction.atomic():
+            result.save()
+            result.load()

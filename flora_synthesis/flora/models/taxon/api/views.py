@@ -1,25 +1,12 @@
-from django.conf import settings
 from django.db import transaction
 from django.db.models import Prefetch
-from django_q.tasks import async_task
 from rest_framework import viewsets, views, status
 from rest_framework.decorators import api_view
 from rest_framework.mixins import UpdateModelMixin
 from rest_framework.response import Response
 
 from flora import models
-from flora.management.commands.remove_orphan_checklist_taxa import (
-    run as run_remove_orphan_checklist_taxa,
-)
-from flora.management.commands.update_has_collections import (
-    run as run_update_has_collections,
-)
-from flora.management.commands.update_observation_collectors import (
-    run as run_update_observation_collectors,
-)
-from flora.management.commands.update_observation_dates import (
-    run as run_update_observation_dates,
-)
+from flora.management.commands import update_computed_values
 from flora.models.taxon.api import serializers
 from flora.models.taxon.choices import (
     taxon_endemic_statuses,
@@ -36,8 +23,8 @@ class TaxonViewSet(viewsets.ModelViewSet, UpdateModelMixin):
     def get_queryset(self):
         result = (
             models.Taxon.objects.all()
-            .prefetch_related("subtaxa", "taxonsynonym_set")
-            .select_related("parent_species")
+                .prefetch_related("subtaxa", "taxonsynonym_set")
+                .select_related("parent_species")
         )
 
         checklist_id = self.request.query_params.get("checklist", None)
@@ -101,10 +88,10 @@ class FamiliesListView(views.APIView):
     def get(self, request):
         data = (
             models.Taxon.objects.all()
-            .filter(taxon_checklist_taxa__checklist__primary_checklist=True)
-            .order_by("family")
-            .values_list("family")
-            .distinct()
+                .filter(taxon_checklist_taxa__checklist__primary_checklist=True)
+                .order_by("family")
+                .values_list("family")
+                .distinct()
         )
         return Response(
             serializers.TaxonFamilySerializer(
@@ -173,16 +160,6 @@ def make_synonym_of(request):
 
 @api_view(["GET"])
 def update_computed_values(request):
-    tasks = [
-        run_remove_orphan_checklist_taxa,
-        run_update_observation_dates,
-        run_update_has_collections,
-        run_update_observation_collectors,
-    ]
-    for task in tasks:
-        if settings.PRODUCTION:
-            async_task(task)
-        else:
-            task()
+    update_computed_values.run()
 
     return Response(status=status.HTTP_200_OK)

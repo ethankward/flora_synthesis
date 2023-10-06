@@ -1,3 +1,6 @@
+"""
+Manually import a specific iNaturalist observation.
+"""
 from django.core.management import BaseCommand
 
 from flora import models
