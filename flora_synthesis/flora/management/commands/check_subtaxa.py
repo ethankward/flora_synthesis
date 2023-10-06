@@ -11,12 +11,12 @@ def run():
     all_subtaxa_ranks = [TaxonRankChoices.SUBSPECIES, TaxonRankChoices.VARIETY]
 
     for taxon in (
-            models.Taxon.objects.all()
-                    .select_related("parent_species")
-                    .prefetch_related(
-                "subtaxa", "parent_species__subtaxa", "subtaxa__parent_species"
-            )
-                    .order_by("taxon_name")
+        models.Taxon.objects.all()
+        .select_related("parent_species")
+        .prefetch_related(
+            "subtaxa", "parent_species__subtaxa", "subtaxa__parent_species"
+        )
+        .order_by("taxon_name")
     ):
 
         parent = taxon.parent_species

@@ -23,8 +23,8 @@ class TaxonViewSet(viewsets.ModelViewSet, UpdateModelMixin):
     def get_queryset(self):
         result = (
             models.Taxon.objects.all()
-                .prefetch_related("subtaxa", "taxonsynonym_set")
-                .select_related("parent_species")
+            .prefetch_related("subtaxa", "taxonsynonym_set")
+            .select_related("parent_species")
         )
 
         checklist_id = self.request.query_params.get("checklist", None)
@@ -88,10 +88,10 @@ class FamiliesListView(views.APIView):
     def get(self, request):
         data = (
             models.Taxon.objects.all()
-                .filter(taxon_checklist_taxa__checklist__primary_checklist=True)
-                .order_by("family")
-                .values_list("family")
-                .distinct()
+            .filter(taxon_checklist_taxa__checklist__primary_checklist=True)
+            .order_by("family")
+            .values_list("family")
+            .distinct()
         )
         return Response(
             serializers.TaxonFamilySerializer(
@@ -159,7 +159,7 @@ def make_synonym_of(request):
 
 
 @api_view(["GET"])
-def update_computed_values(request):
+def do_update(request):
     update_computed_values.run()
 
     return Response(status=status.HTTP_200_OK)

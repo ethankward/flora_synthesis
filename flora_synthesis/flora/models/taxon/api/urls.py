@@ -24,7 +24,7 @@ def get_urlpatterns(router: routers.DefaultRouter):
         path("api/make_synonym_of/", views.make_synonym_of),
         path(
             "api/update_computed_values/",
-            views.update_computed_values,
+            views.do_update,
             name="update_computed_values",
         ),
     ]
