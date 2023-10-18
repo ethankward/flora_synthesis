@@ -136,19 +136,23 @@ class MinimalTaxonSerializer(serializers.ModelSerializer):
 
 
 class TaxonFamilySerializer(serializers.Serializer):
+    id = serializers.IntegerField()
     family = serializers.CharField()
 
 
 class LifeCycleSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
     value = serializers.CharField()
     display = serializers.CharField()
 
 
 class EndemicSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
     value = serializers.CharField()
     display = serializers.CharField()
 
 
 class IntroducedSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
     value = serializers.CharField()
     display = serializers.CharField()

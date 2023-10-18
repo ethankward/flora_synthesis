@@ -11,6 +11,11 @@ def get_urlpatterns(router: routers.DefaultRouter):
         views.ChecklistStaleRecordCountViewSet,
         basename="checklist_stale_record_counts",
     )
+    router.register(
+        r"checklist_stale_records",
+        views.ChecklistStaleRecordViewSet,
+        basename="checklist_stale_records",
+    )
 
     return [
         path("api/load_checklist/", views.load_checklist, name="load_checklist"),

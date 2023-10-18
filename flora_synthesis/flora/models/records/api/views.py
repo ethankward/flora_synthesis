@@ -20,6 +20,7 @@ def get_checklist_record_data_item(record):
         "checklist_taxon": record.checklist_taxon,
         "mapped_taxon": record.mapped_taxon,
         "checklist": record.checklist_taxon.checklist,
+        "checklist_type": record.checklist_taxon.checklist.checklist_type,
         "date": None,
         "observer": None,
         "sort_key": None,
@@ -126,8 +127,8 @@ def update_checklist_record_mapped_taxon(request):
         return
 
     checklist_type = request.data["checklist_type"]
-    checklist_record_id = request.data["checklist_record_id"]
-    mapped_to_id = request.data["mapped_to_id"]
+    checklist_record_id = request.data["id"]
+    mapped_to_id = request.data["mapped_taxon"]['id']
 
     mapped_taxon = models.Taxon.objects.get(pk=mapped_to_id)
 

@@ -186,3 +186,5 @@ Q_CLUSTER = {
     "orm": "default",
     "poll": 30,
 }
+
+CORS_ORIGIN_ALLOW_ALL = True

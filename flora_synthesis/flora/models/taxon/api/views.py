@@ -23,8 +23,8 @@ class TaxonViewSet(viewsets.ModelViewSet, UpdateModelMixin):
     def get_queryset(self):
         result = (
             models.Taxon.objects.all()
-            .prefetch_related("subtaxa", "taxonsynonym_set")
-            .select_related("parent_species")
+                .prefetch_related("subtaxa", "taxonsynonym_set")
+                .select_related("parent_species")
         )
 
         checklist_id = self.request.query_params.get("checklist", None)
@@ -88,14 +88,15 @@ class FamiliesListView(views.APIView):
     def get(self, request):
         data = (
             models.Taxon.objects.all()
-            .filter(taxon_checklist_taxa__checklist__primary_checklist=True)
-            .order_by("family")
-            .values_list("family")
-            .distinct()
+                .filter(taxon_checklist_taxa__checklist__primary_checklist=True)
+                .order_by("family")
+                .values_list("family")
+                .distinct()
         )
+        result = [{"family": family[0], 'id': i} for (i, family) in enumerate(data)]
         return Response(
             serializers.TaxonFamilySerializer(
-                [{"family": family[0]} for family in data], many=True
+                result, many=True
             ).data
         )
 
@@ -103,9 +104,11 @@ class FamiliesListView(views.APIView):
 class LifeCycleView(views.APIView):
     def get(self, request):
         data = taxon_life_cycles.LifeCycleChoices.choices
+        result = [{"id": i, "value": choice[0], "display": choice[1]} for (i, choice) in enumerate(data)]
+
         return Response(
             serializers.LifeCycleSerializer(
-                [{"value": i[0], "display": i[1]} for i in data], many=True
+                result, many=True
             ).data
         )
 
@@ -113,9 +116,11 @@ class LifeCycleView(views.APIView):
 class EndemicView(views.APIView):
     def get(self, request):
         data = taxon_endemic_statuses.EndemicChoices.choices
+        result = [{"id": i, "value": choice[0], "display": choice[1]} for (i, choice) in enumerate(data)]
+
         return Response(
             serializers.EndemicSerializer(
-                [{"value": i[0], "display": i[1]} for i in data], many=True
+                result, many=True
             ).data
         )
 
@@ -123,9 +128,11 @@ class EndemicView(views.APIView):
 class IntroducedView(views.APIView):
     def get(self, request):
         data = taxon_introduced_statuses.IntroducedChoices.choices
+        result = [{"id": i, "value": choice[0], "display": choice[1]} for (i, choice) in enumerate(data)]
+
         return Response(
             serializers.IntroducedSerializer(
-                [{"value": i[0], "display": i[1]} for i in data], many=True
+                result, many=True
             ).data
         )
 

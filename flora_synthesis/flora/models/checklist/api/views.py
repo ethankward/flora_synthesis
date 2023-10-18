@@ -19,6 +19,11 @@ class ChecklistStaleRecordCountViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.ChecklistStaleRecordCount
 
 
+class ChecklistStaleRecordViewSet(viewsets.ModelViewSet):
+    queryset = models.Checklist.objects.all()
+    serializer_class = serializers.ChecklistStaleRecordsSerializer
+
+
 @api_view(["POST"])
 def load_checklist(request):
     checklist_id = request.data["checklist_id"]

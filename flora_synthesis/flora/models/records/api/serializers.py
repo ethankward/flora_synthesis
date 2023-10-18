@@ -13,6 +13,7 @@ class ChecklistRecordSerializer(serializers.Serializer):
     external_id = serializers.CharField()
     last_refreshed = serializers.DateTimeField()
     checklist_taxon = ChecklistTaxonNameSerializer()
+    checklist_type = serializers.CharField(required=False)
     mapped_taxon = TaxonNameSerializer()
     checklist = ChecklistSerializer()
     date = serializers.DateField()

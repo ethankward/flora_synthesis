@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import Q
 from django.utils import timezone
 
 from flora.models import base_model
@@ -65,4 +66,24 @@ class Checklist(base_model.BaseModel):
         end_date = timezone.now().date() - timezone.timedelta(days=2)
         yield from date_util.combine_date_ranges(
             list(date_util.date_range_list(start_date, end_date))
+        )
+
+    def stale_records(self):
+        from flora import models
+
+        checklist_type = self.checklist_type
+
+        if checklist_type == "i":
+            records = models.InatRecord
+        elif checklist_type == "s":
+            records = models.SEINETRecord
+        elif checklist_type == "f":
+            records = models.FloraRecord
+        else:
+            raise ValueError
+
+        return records.objects.filter(
+            Q(last_refreshed__isnull=True) | Q(last_refreshed__lt=timezone.now() - timezone.timedelta(days=60)),
+            checklist_taxon__checklist=self,
+            is_placeholder=False,
         )

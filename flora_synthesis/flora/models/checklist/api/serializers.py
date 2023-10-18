@@ -1,5 +1,3 @@
-from django.db.models import Q
-from django.utils import timezone
 from rest_framework import serializers
 
 from flora import models
@@ -31,17 +29,17 @@ class ChecklistStaleRecordCount(serializers.ModelSerializer):
         fields = ["id", "stale_record_count"]
 
     def get_stale_record_count(self, obj):
-        if obj.checklist_type == "i":
-            records = models.InatRecord
-        elif obj.checklist_type == "s":
-            records = models.SEINETRecord
-        elif obj.checklist_type == "f":
-            records = models.FloraRecord
-        else:
-            raise ValueError
+        return obj.stale_records().count()
 
-        return records.objects.filter(
-            Q(last_refreshed__isnull=True) | Q(last_refreshed__lt=timezone.now() - timezone.timedelta(days=60)),
-            checklist_taxon__checklist=obj,
-            is_placeholder=False,
-        ).count()
+
+class ChecklistStaleRecordsSerializer(serializers.ModelSerializer):
+    from flora.models.records.api.serializers import ChecklistRecordSerializer
+
+    stale_records = ChecklistRecordSerializer(many=True)
+
+    class Meta:
+        model = models.Checklist
+        fields = ['id', 'stale_records']
+
+    def get_stale_records(self, obj):
+        return obj.stale_records()
