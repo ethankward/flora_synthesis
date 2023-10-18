@@ -1,5 +1,8 @@
+from functools import reduce
+
 from django.db import transaction
 from django.db.models import Prefetch
+from django.db.models import Q
 from rest_framework import viewsets, views, status
 from rest_framework.decorators import api_view
 from rest_framework.mixins import UpdateModelMixin
@@ -79,7 +82,13 @@ class TaxonAutocompleteViewSet(viewsets.ModelViewSet):
         search_term = self.request.query_params.get("search_term", None)
 
         if search_term is not None:
-            result = result.filter(taxon_name__icontains=search_term)
+            parts = search_term.split(' ')
+            query = []
+            for part in parts:
+                if part:
+                    query.append(Q(taxon_name__icontains=part))
+
+            result = result.filter(reduce(lambda x, y: x & y, query))
 
         return result
 
