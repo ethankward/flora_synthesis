@@ -37,6 +37,7 @@ class Command(BaseCommand):
         elif result.checklist_type == checklist_types.ChecklistTypeChoices.FLORA:
             result.local_checklist_fn = input("Local file path: ")
 
-        with transaction.atomic():
-            result.save()
-            result.load()
+        result.save()
+        # with transaction.atomic():
+        #     result.save()
+        #     result.load()

@@ -27,7 +27,7 @@ SECRET_KEY = os.getenv(
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get("DEBUG", "false") == "true"
 PRODUCTION = os.environ.get("PRODUCTION", "false") == "true"
-RAILWAY = False
+RAILWAY = True
 
 if not PRODUCTION:
     DEBUG = True

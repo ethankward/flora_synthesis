@@ -59,7 +59,7 @@ def run():
         seinet_record_collectors_through_model.objects.all().delete()
 
         for seinet_record in models.SEINETRecord.objects.filter(
-                observer__isnull=False, active=True
+                observer__isnull=False, active=True, checklist__primary_checklist=True
         ):
 
             observer_str = seinet_record.observer
