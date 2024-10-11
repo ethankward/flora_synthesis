@@ -7,6 +7,7 @@ from rest_framework.response import Response
 from flora import models
 from flora.management.commands.import_inat_obs import import_inat_obs
 from flora.models.checklist.api import serializers
+from flora.models.checklist.choices import checklist_types
 
 
 class ChecklistViewSet(viewsets.ModelViewSet):
@@ -55,18 +56,24 @@ def retrieve_records(request):
 
 @api_view(["POST"])
 def retrieve_checklist_record(request):
-    print('retrievign checklist record')
+    print('retrieving checklist record')
     record_id = request.data["record_id"]
-    print(record_id)
-    record = models.Record.objects.get(pk=record_id)
-    print(record)
+    checklist_type = request.data["checklist_type"]
+
+    if checklist_type == checklist_types.ChecklistTypeChoices.INAT:
+        record = models.InatRecord.objects.get(pk=record_id)
+    elif checklist_type == checklist_types.ChecklistTypeChoices.SEINET:
+        record = models.SEINETRecord.objects.get(pk=record_id)
+    else:
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+
     checklist = models.Checklist.objects.get(pk=record.checklist.pk)
-    print(checklist)
 
     if settings.PRODUCTION:
         async_task(checklist.read_specific_record_data, records=[record])
     else:
         checklist.read_specific_record_data(records=[record])
+    return Response(status=status.HTTP_200_OK)
 
 
 @api_view(["POST"])
