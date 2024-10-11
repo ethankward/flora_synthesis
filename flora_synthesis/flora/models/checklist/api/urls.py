@@ -20,6 +20,8 @@ def get_urlpatterns(router: routers.DefaultRouter):
     return [
         path("api/load_checklist/", views.load_checklist, name="load_checklist"),
         path("api/retrieve_checklist/", views.retrieve_records, name="retrieve_records"),
+        path("api/retrieve_checklist_record/", views.retrieve_checklist_record, name="retrieve_checklist_record"),
+
         path(
             "api/import_inat_observation/",
             views.import_inat_observation,

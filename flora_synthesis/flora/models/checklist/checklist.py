@@ -45,6 +45,14 @@ class Checklist(base_model.BaseModel):
         elif self.checklist_type == checklist_types.ChecklistTypeChoices.FLORA:
             local_flora_util.LocalFloraReader(self).load_checklist()
 
+    def read_specific_record_data(self, records):
+        from flora.util import seinet_util, inat_util
+
+        if self.checklist_type == checklist_types.ChecklistTypeChoices.SEINET:
+            seinet_util.SEINETRecordReader(self).read_records(records=records)
+        elif self.checklist_type == checklist_types.ChecklistTypeChoices.INAT:
+            inat_util.InatRecordsReader(self).read_records(records=records)
+
     def read_record_data(self, limit=10):
         from flora.util import seinet_util, inat_util
 

@@ -54,6 +54,18 @@ def retrieve_records(request):
 
 
 @api_view(["POST"])
+def retrieve_checklist_record(request):
+    record_id = request.data["record_id"]
+    record = models.Record.objects.get(pk=record_id)
+    checklist = models.Checklist.objects.get(pk=record.checklist)
+
+    if settings.PRODUCTION:
+        async_task(checklist.read_specific_record_data, records=[record])
+    else:
+        checklist.read_specific_record_data(records=[record])
+
+
+@api_view(["POST"])
 def import_inat_observation(request):
     checklist_id = request.data["checklist_id"]
     observation_id = request.data["observation_id"]
