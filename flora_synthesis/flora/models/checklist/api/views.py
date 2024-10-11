@@ -57,7 +57,7 @@ def retrieve_records(request):
 def retrieve_checklist_record(request):
     record_id = request.data["record_id"]
     record = models.Record.objects.get(pk=record_id)
-    checklist = models.Checklist.objects.get(pk=record.checklist)
+    checklist = models.Checklist.objects.get(pk=record.checklist.pk)
 
     if settings.PRODUCTION:
         async_task(checklist.read_specific_record_data, records=[record])
