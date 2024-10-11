@@ -55,9 +55,13 @@ def retrieve_records(request):
 
 @api_view(["POST"])
 def retrieve_checklist_record(request):
+    print('retrievign checklist record')
     record_id = request.data["record_id"]
+    print(record_id)
     record = models.Record.objects.get(pk=record_id)
+    print(record)
     checklist = models.Checklist.objects.get(pk=record.checklist.pk)
+    print(checklist)
 
     if settings.PRODUCTION:
         async_task(checklist.read_specific_record_data, records=[record])
